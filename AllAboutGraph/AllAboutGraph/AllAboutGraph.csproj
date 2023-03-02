@@ -48,7 +48,10 @@
   <ItemGroup>
     <Compile Include="MVC\Controller\Controller.cs" />
     <Compile Include="MVC\Controller\IViewModel.cs" />
+    <Compile Include="MVC\Model\GraphEdge.cs" />
+    <Compile Include="MVC\Model\GraphVertex.cs" />
     <Compile Include="MVC\Model\Model.cs" />
+    <Compile Include="MVC\Model\MyGraph.cs" />
     <Compile Include="MVC\View\View.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -57,6 +60,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MVC\View\View.resx">
+      <DependentUpon>View.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

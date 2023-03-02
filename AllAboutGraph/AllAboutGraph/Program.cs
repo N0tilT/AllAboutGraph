@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AllAboutGraph.MVC.Controller;
+using AllAboutGraph.MVC.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +16,10 @@ namespace AllAboutGraph
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new View());
+            View view = new View();
+            view.Visible = false;
+            Controller controller = new Controller(view);
+            view.ShowDialog();
         }
     }
 }
