@@ -49,6 +49,7 @@ namespace AllAboutGraph.MVC.Model
         }
         #endregion
 
+        #region Contrusctors
         public GraphEdge()
         {
 
@@ -56,9 +57,13 @@ namespace AllAboutGraph.MVC.Model
 
         public GraphEdge(GraphVertex vertexOut, GraphVertex vertexIn, float weight, bool isDirected)
         {
-
+            VertexOut = vertexOut;
+            VertexIn = vertexIn;
+            Weight = weight;
+            Directed = isDirected;
         }
 
+        #endregion
 
     }
 }

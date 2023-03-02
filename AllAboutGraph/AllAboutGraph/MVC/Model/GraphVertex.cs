@@ -54,18 +54,29 @@ namespace AllAboutGraph.MVC.Model
 
         #endregion
 
+        #region Constructor
         public GraphVertex()
         {
+            _inEdges= new List<GraphEdge>();
+            _outEdges = new List<GraphEdge>();
+        }
 
+        public GraphVertex(string name)
+        {
+            Name = name;
+            _inEdges = new List<GraphEdge>();
+            _outEdges = new List<GraphEdge>();
         }
 
         public GraphVertex(string name, List<GraphEdge> inEdges, List<GraphEdge> outEdges)
         {
             Name = name;
-            InEdges = inEdges;
-            OutEdges = outEdges;
+            _inEdges = inEdges;
+            _outEdges = outEdges;
         }
+        #endregion
 
+        #region Methods
         public List<GraphEdge> GetAllEdges()
         {
             List<GraphEdge> allVertexEdges = new List<GraphEdge>();
@@ -82,5 +93,6 @@ namespace AllAboutGraph.MVC.Model
 
             return allVertexEdges;
         }
+        #endregion
     }
 }
