@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ namespace AllAboutGraph.MVC.Model
 
         private List<GraphEdge> _inEdges;
         private List<GraphEdge> _outEdges;
+
+        private PointF _location;
+        private SizeF _size = SizeF.Empty;
         #endregion
 
         #region Properties
@@ -27,31 +31,43 @@ namespace AllAboutGraph.MVC.Model
         {
             get { return _outEdges; }
         }
-        public List<GraphEdge> InVertices
+        public List<GraphEdge> InEdges
         {
             get { return _inEdges; }
         }
 
-        private bool isOriented 
-        {
-            get { return OutEdges.Count == InVertices.Count; }
-        }
-
+        /// <summary>
+        /// Возвращает количетсво исходящих рёбер
+        /// </summary>
         public int Degree
         {
-            get 
-            {
-                if (isOriented)
-                {
-                    return OutEdges.Count;
-                }
-                else 
-                { 
-                    return OutEdges.Count + InVertices.Count; 
-                }
-            }
+            get { return OutEdges.Count; }
         }
 
+        public PointF Location
+        {
+            get { return _location; }
+            set { _location = value; }
+        }
+
+        public SizeF Size
+        {
+            get { return _size; }
+            set { _size = value; }
+        }
+
+        public PointF Center 
+        { 
+            get 
+            {
+                RectangleF bound = new RectangleF(Location, Size);
+
+                float x = bound.X + bound.Width / 2;
+                float y = bound.Y + bound.Height / 2;
+
+                return new PointF(x,y); 
+            } 
+        }
         #endregion
 
         #region Constructor
@@ -86,13 +102,20 @@ namespace AllAboutGraph.MVC.Model
                 allVertexEdges.Add(edge);
             }
 
-            foreach (GraphEdge edge in InVertices)
+            foreach (GraphEdge edge in InEdges)
             {
                 allVertexEdges.Add(edge);
             }
 
             return allVertexEdges;
         }
+
+        public void Draw(Graphics g, Pen pen, PointF location)
+        {
+            Location= location;
+            g.DrawEllipse(pen, new RectangleF(Location,Size));
+        }
+
         #endregion
     }
 }

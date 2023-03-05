@@ -51,16 +51,16 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
-        public AdjacencyMatrix(List<int[]> adjList)
+        public AdjacencyMatrix(AdjacencyList adjList)
         {
-            _matrix = new int[adjList.Count,adjList.Count];
+            _matrix = new int[adjList.CountVertices, adjList.CountVertices];
 
             ResetMatrix();
-            FillAdjacencyMatrixFromAdjacencyList(adjList);
+            FillAdjacencyMatrixFromAdjacencyList(adjList.List);
 
         }
 
-        private void FillAdjacencyMatrixFromAdjacencyList(List<int[]> adjList)
+        private void FillAdjacencyMatrixFromAdjacencyList(List<List<int>> adjList)
         {
             for (int currentVertex = 0; currentVertex < Rank; currentVertex++)
             {
@@ -81,16 +81,16 @@ namespace AllAboutGraph.MVC.Model
                 }
             }
         }
-        public AdjacencyMatrix(List<GraphVertex> vertices)
+
+        public List<int> GetAdjacentVertices(int vertexIndex)
         {
-            foreach(GraphVertex vertex in vertices)
+            List<int> adjacnetRow = new List<int>();
+            for (int i = 0; i < Rank; i++)
             {
-                foreach(GraphEdge edge in vertex.GetAllEdges)
-                {
-
-                }
+                if (_matrix[vertexIndex,i] != 0)
+                    adjacnetRow.Add(i);
             }
+            return adjacnetRow;
         }
-
     }
 }

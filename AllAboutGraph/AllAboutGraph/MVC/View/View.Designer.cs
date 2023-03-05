@@ -30,8 +30,8 @@
         {
             this.panelMain = new System.Windows.Forms.Panel();
             this.panelCanvas = new System.Windows.Forms.Panel();
-            this.panelTools = new System.Windows.Forms.Panel();
             this.Canvas = new System.Windows.Forms.PictureBox();
+            this.panelTools = new System.Windows.Forms.Panel();
             this.panelMain.SuspendLayout();
             this.panelCanvas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
@@ -58,15 +58,6 @@
             this.panelCanvas.Size = new System.Drawing.Size(1056, 610);
             this.panelCanvas.TabIndex = 0;
             // 
-            // panelTools
-            // 
-            this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.panelTools.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTools.Location = new System.Drawing.Point(1056, 0);
-            this.panelTools.Name = "panelTools";
-            this.panelTools.Size = new System.Drawing.Size(236, 610);
-            this.panelTools.TabIndex = 1;
-            // 
             // Canvas
             // 
             this.Canvas.BackColor = System.Drawing.Color.White;
@@ -76,6 +67,19 @@
             this.Canvas.Size = new System.Drawing.Size(1056, 610);
             this.Canvas.TabIndex = 0;
             this.Canvas.TabStop = false;
+            this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
+            this.Canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseDown);
+            this.Canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseMove);
+            this.Canvas.Resize += new System.EventHandler(this.Canvas_Resize);
+            // 
+            // panelTools
+            // 
+            this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.panelTools.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelTools.Location = new System.Drawing.Point(1056, 0);
+            this.panelTools.Name = "panelTools";
+            this.panelTools.Size = new System.Drawing.Size(236, 610);
+            this.panelTools.TabIndex = 1;
             // 
             // View
             // 

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="MVC\Controller\Controller.cs" />
     <Compile Include="MVC\Controller\IViewModel.cs" />
+    <Compile Include="MVC\Model\AdjacencyList.cs" />
     <Compile Include="MVC\Model\AdjacencyMatrix.cs" />
     <Compile Include="MVC\Model\GraphEdge.cs" />
     <Compile Include="MVC\Model\GraphVertex.cs" />
