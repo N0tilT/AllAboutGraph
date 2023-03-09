@@ -114,43 +114,6 @@ namespace AllAboutGraph
             Point cursorPosition = GetCurrentCursorPosition();
             Graphics g = GetSmoothGraphicsFromCanvas();
 
-            ////Рисование мышью
-            //if (_doMouseDraw)
-            //{
-            //    if (e.Button == MouseButtons.Left)
-            //    {
-            //        g.DrawLine(SelectedPen, PreviousPoint, cursorPosition);
-            //    }
-            //}
-
-            ////Рисование фигуры
-            //if (_doDrawShapes && SelectedShape != null)
-            //{
-            //    if (e.Button == MouseButtons.Left)
-            //    {
-            //        //Изменение размера фигуры (Растягивание)
-            //        if (_doResizeShapes)
-            //        {
-            //            SelectedShape.Size = GetCurrentSize(e);
-            //        }
-
-            //        //Изменение поворота фигуры (Вращение)
-            //        if (_doRotateShapes)
-            //        {
-            //            float angleRad = GetAngleFromCursorPosition(ref cursorPosition);
-            //            SelectedShape.Angle = GetAngleDegree(angleRad, ref cursorPosition);
-            //        }
-            //    }
-
-            //    //Изменение положения фигуры на экране (Перетаскивание)
-            //    if (e.Button == MouseButtons.Right)
-            //    {
-            //        SelectedShape.Location = GetCurrentShapePosition(e);
-            //        MouseDownLocation = e.Location;
-
-            //    }
-
-            //}
             Canvas.Invalidate();
             PreviousPoint = cursorPosition;
         }
@@ -177,7 +140,6 @@ namespace AllAboutGraph
         /// </summary>
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
-
         }
         #endregion
     }
