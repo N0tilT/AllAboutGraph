@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,6 +82,9 @@ namespace AllAboutGraph.MVC.Model
             CreateGraphFromAdjacencyList(adjList);
         }
 
+
+        #region Methods
+
         private void CreateGraphFromAdjacencyList(AdjacencyList adjList)
         {
             for (int i = 0; i < adjList.CountVertices; i++)
@@ -102,7 +106,43 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
-        #region Methods
+        public void AddVertex(GraphVertex vertex)
+        {
+            _graphVertices.Add(vertex);
+        }
+
+        public void RemoveVertex(GraphVertex vertex)
+        {
+            _graphVertices.Remove(vertex);
+        }
+
+        public void AddEdge(GraphEdge edge)
+        {
+            _graphEdges.Add(edge);
+        }
+
+        public void RemoveEdge(GraphEdge edge)
+        {
+            _graphEdges.Remove(edge);
+        }
+
+        public void LinkVertices(int firstVertexIndex, int secondVertexIndex, int edgeIndex)
+        {
+            GraphVertices[firstVertexIndex].OutEdges.Add(GraphEdges[edgeIndex]);
+            GraphVertices[secondVertexIndex].InEdges.Add(GraphEdges[edgeIndex]);
+        }
+
+        public void DrawGraph(Graphics Graphics,Pen pen)
+        {
+            foreach(GraphVertex vertex in GraphVertices)
+            {
+                vertex.DrawVertex(Graphics,pen);
+            }
+            foreach(GraphEdge edge in GraphEdges)
+            {
+                edge.DrawEdge(Graphics, pen);
+            }
+        }
 
         #endregion
 

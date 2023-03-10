@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,5 +66,12 @@ namespace AllAboutGraph.MVC.Model
 
         #endregion
 
+        #region Methods
+
+        public void DrawEdge(Graphics graphics, Pen pen)
+        {
+            graphics.DrawLine(pen,VertexIn.Location,VertexOut.Location);
+        }
+        #endregion
     }
 }

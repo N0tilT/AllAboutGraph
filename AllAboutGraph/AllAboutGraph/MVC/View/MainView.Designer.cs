@@ -1,6 +1,6 @@
 ﻿namespace AllAboutGraph
 {
-    partial class View
+    partial class MainView
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -32,11 +32,11 @@
             this.panelCanvas = new System.Windows.Forms.Panel();
             this.Canvas = new System.Windows.Forms.PictureBox();
             this.panelTools = new System.Windows.Forms.Panel();
+            this.comboBoxAlgorithms = new System.Windows.Forms.ComboBox();
             this.AddVertexButton = new System.Windows.Forms.Button();
             this.ConnectVerticesButton = new System.Windows.Forms.Button();
             this.RemoveObjButton = new System.Windows.Forms.Button();
             this.CreateGraphButton = new System.Windows.Forms.Button();
-            this.comboBoxAlgorithms = new System.Windows.Forms.ComboBox();
             this.panelMain.SuspendLayout();
             this.panelCanvas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
@@ -61,7 +61,7 @@
             this.panelCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCanvas.Location = new System.Drawing.Point(0, 0);
             this.panelCanvas.Name = "panelCanvas";
-            this.panelCanvas.Size = new System.Drawing.Size(1026, 610);
+            this.panelCanvas.Size = new System.Drawing.Size(1029, 610);
             this.panelCanvas.TabIndex = 0;
             // 
             // Canvas
@@ -70,7 +70,7 @@
             this.Canvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Canvas.Location = new System.Drawing.Point(0, 0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(1026, 610);
+            this.Canvas.Size = new System.Drawing.Size(1029, 610);
             this.Canvas.TabIndex = 0;
             this.Canvas.TabStop = false;
             this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
@@ -87,49 +87,14 @@
             this.panelTools.Controls.Add(this.RemoveObjButton);
             this.panelTools.Controls.Add(this.CreateGraphButton);
             this.panelTools.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTools.Location = new System.Drawing.Point(1026, 0);
+            this.panelTools.Location = new System.Drawing.Point(1029, 0);
             this.panelTools.Name = "panelTools";
-            this.panelTools.Size = new System.Drawing.Size(266, 610);
+            this.panelTools.Size = new System.Drawing.Size(263, 610);
             this.panelTools.TabIndex = 1;
-            // 
-            // AddVertexButton
-            // 
-            this.AddVertexButton.Location = new System.Drawing.Point(17, 51);
-            this.AddVertexButton.Name = "AddVertexButton";
-            this.AddVertexButton.Size = new System.Drawing.Size(139, 23);
-            this.AddVertexButton.TabIndex = 8;
-            this.AddVertexButton.Text = "Add vertex";
-            this.AddVertexButton.UseVisualStyleBackColor = true;
-            // 
-            // ConnectVerticesButton
-            // 
-            this.ConnectVerticesButton.Location = new System.Drawing.Point(17, 80);
-            this.ConnectVerticesButton.Name = "ConnectVerticesButton";
-            this.ConnectVerticesButton.Size = new System.Drawing.Size(139, 23);
-            this.ConnectVerticesButton.TabIndex = 7;
-            this.ConnectVerticesButton.Text = "Connect vertices";
-            this.ConnectVerticesButton.UseVisualStyleBackColor = true;
-            // 
-            // RemoveObjButton
-            // 
-            this.RemoveObjButton.Location = new System.Drawing.Point(17, 109);
-            this.RemoveObjButton.Name = "RemoveObjButton";
-            this.RemoveObjButton.Size = new System.Drawing.Size(139, 23);
-            this.RemoveObjButton.TabIndex = 6;
-            this.RemoveObjButton.Text = "Remove object";
-            this.RemoveObjButton.UseVisualStyleBackColor = true;
-            // 
-            // CreateGraphButton
-            // 
-            this.CreateGraphButton.Location = new System.Drawing.Point(17, 22);
-            this.CreateGraphButton.Name = "CreateGraphButton";
-            this.CreateGraphButton.Size = new System.Drawing.Size(139, 23);
-            this.CreateGraphButton.TabIndex = 0;
-            this.CreateGraphButton.Text = "Create graph";
-            this.CreateGraphButton.UseVisualStyleBackColor = true;
             // 
             // comboBoxAlgorithms
             // 
+            this.comboBoxAlgorithms.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.comboBoxAlgorithms.FormattingEnabled = true;
             this.comboBoxAlgorithms.Items.AddRange(new object[] {
             "10.1 Breadth-first search",
@@ -153,19 +118,64 @@
             "2. Dijkstra`s algorithm",
             "3. Floyd`s algorithm",
             "4. Bellman-Ford`s algorithm"});
-            this.comboBoxAlgorithms.Location = new System.Drawing.Point(17, 138);
+            this.comboBoxAlgorithms.Location = new System.Drawing.Point(6, 361);
             this.comboBoxAlgorithms.Name = "comboBoxAlgorithms";
-            this.comboBoxAlgorithms.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxAlgorithms.Size = new System.Drawing.Size(224, 29);
             this.comboBoxAlgorithms.TabIndex = 9;
             this.comboBoxAlgorithms.Text = "Choose algorithm";
             // 
-            // View
+            // AddVertexButton
+            // 
+            this.AddVertexButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.AddVertexButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AddVertexButton.Location = new System.Drawing.Point(6, 230);
+            this.AddVertexButton.Name = "AddVertexButton";
+            this.AddVertexButton.Size = new System.Drawing.Size(224, 35);
+            this.AddVertexButton.TabIndex = 8;
+            this.AddVertexButton.Text = "Add vertex";
+            this.AddVertexButton.UseVisualStyleBackColor = false;
+            // 
+            // ConnectVerticesButton
+            // 
+            this.ConnectVerticesButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ConnectVerticesButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ConnectVerticesButton.Location = new System.Drawing.Point(6, 310);
+            this.ConnectVerticesButton.Name = "ConnectVerticesButton";
+            this.ConnectVerticesButton.Size = new System.Drawing.Size(224, 35);
+            this.ConnectVerticesButton.TabIndex = 7;
+            this.ConnectVerticesButton.Text = "Connect vertices";
+            this.ConnectVerticesButton.UseVisualStyleBackColor = false;
+            // 
+            // RemoveObjButton
+            // 
+            this.RemoveObjButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.RemoveObjButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.RemoveObjButton.Location = new System.Drawing.Point(6, 272);
+            this.RemoveObjButton.Name = "RemoveObjButton";
+            this.RemoveObjButton.Size = new System.Drawing.Size(224, 32);
+            this.RemoveObjButton.TabIndex = 6;
+            this.RemoveObjButton.Text = "Remove object";
+            this.RemoveObjButton.UseVisualStyleBackColor = false;
+            // 
+            // CreateGraphButton
+            // 
+            this.CreateGraphButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.CreateGraphButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CreateGraphButton.Location = new System.Drawing.Point(17, 22);
+            this.CreateGraphButton.Name = "CreateGraphButton";
+            this.CreateGraphButton.Size = new System.Drawing.Size(225, 35);
+            this.CreateGraphButton.TabIndex = 0;
+            this.CreateGraphButton.Text = "Create graph";
+            this.CreateGraphButton.UseVisualStyleBackColor = false;
+            this.CreateGraphButton.Click += new System.EventHandler(this.CreateGraphButton_Click);
+            // 
+            // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1292, 610);
             this.Controls.Add(this.panelMain);
-            this.Name = "View";
+            this.Name = "MainView";
             this.Text = "All about graph";
             this.panelMain.ResumeLayout(false);
             this.panelCanvas.ResumeLayout(false);

@@ -16,7 +16,7 @@ namespace AllAboutGraph
         [STAThread]
         static void Main()
         {
-            View view = new View();
+            MainView view = new MainView();
             view.Visible = false;
             Controller controller = new Controller(view);
             view.ShowDialog();

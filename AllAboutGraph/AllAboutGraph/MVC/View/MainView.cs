@@ -1,4 +1,5 @@
 ﻿using AllAboutGraph.MVC.Controller;
+using AllAboutGraph.MVC.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,13 +13,14 @@ using System.Windows.Forms;
 
 namespace AllAboutGraph
 {
-    public partial class View : Form
+    public partial class MainView : Form
     {
         #region Fields
         private Controller _controller;
         private Pen _selectedPen;
 
-
+        private MyGraph graph;
+        
         /// <summary>
         /// Точка на экране, где последний раз был курсор
         /// </summary>
@@ -61,9 +63,15 @@ namespace AllAboutGraph
             set { _selectedPen = value; }
         }
         #endregion
-        public View()
+        public MainView()
         {
             InitializeComponent();
+
+            graph = new MyGraph()
+            {
+            };
+
+
             SetDefailtPen();
             InitializeCanvas();
         }
@@ -101,6 +109,8 @@ namespace AllAboutGraph
             if (e.Button == MouseButtons.Left)
             {
                 MouseDownLocation = e.Location;
+
+
                 g.DrawEllipse(SelectedPen, cursorPosition.X-25, cursorPosition.Y-25, 50, 50);
             }
             if (e.Button == MouseButtons.Right)
@@ -140,7 +150,14 @@ namespace AllAboutGraph
         /// </summary>
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
+            graph.DrawGraph(e.Graphics,SelectedPen);
         }
         #endregion
+
+        private void CreateGraphButton_Click(object sender, EventArgs e)
+        {
+            graph = new MyGraph();
+
+        }
     }
 }

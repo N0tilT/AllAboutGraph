@@ -110,9 +110,8 @@ namespace AllAboutGraph.MVC.Model
             return allVertexEdges;
         }
 
-        public void Draw(Graphics g, Pen pen, PointF location)
+        public void DrawVertex(Graphics g, Pen pen)
         {
-            Location= location;
             g.DrawEllipse(pen, new RectangleF(Location,Size));
         }
 
