@@ -116,6 +116,7 @@
             // 
             // textBoxGraphRepresentation
             // 
+            this.textBoxGraphRepresentation.Font = new System.Drawing.Font("Segoe UI Historic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxGraphRepresentation.Location = new System.Drawing.Point(37, 170);
             this.textBoxGraphRepresentation.Multiline = true;
             this.textBoxGraphRepresentation.Name = "textBoxGraphRepresentation";
