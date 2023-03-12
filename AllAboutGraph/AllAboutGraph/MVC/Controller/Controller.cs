@@ -8,10 +8,10 @@ namespace AllAboutGraph.MVC.Controller
 {
     public class Controller
     {
-        private View _view;
+        private MainView _view;
 
 
-        public Controller(View view)
+        public Controller(MainView view)
         {
             _view = view;
             view.SetController(this);

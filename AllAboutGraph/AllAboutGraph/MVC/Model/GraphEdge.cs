@@ -70,7 +70,7 @@ namespace AllAboutGraph.MVC.Model
 
         public void DrawEdge(Graphics graphics, Pen pen)
         {
-            graphics.DrawLine(pen,VertexIn.Location,VertexOut.Location);
+            graphics.DrawLine(pen, VertexIn.Center, VertexOut.Center);
         }
         #endregion
     }

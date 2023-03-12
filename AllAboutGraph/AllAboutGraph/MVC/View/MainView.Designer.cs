@@ -28,15 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panelMain = new System.Windows.Forms.Panel();
             this.panelCanvas = new System.Windows.Forms.Panel();
             this.Canvas = new System.Windows.Forms.PictureBox();
             this.panelTools = new System.Windows.Forms.Panel();
+            this.AdjacencyMatrixLabel = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxNumberOfVertices = new System.Windows.Forms.TextBox();
+            this.comboBoxCreationMethodSelector = new System.Windows.Forms.ComboBox();
             this.comboBoxAlgorithms = new System.Windows.Forms.ComboBox();
             this.AddVertexButton = new System.Windows.Forms.Button();
             this.ConnectVerticesButton = new System.Windows.Forms.Button();
             this.RemoveObjButton = new System.Windows.Forms.Button();
             this.CreateGraphButton = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panelMain.SuspendLayout();
             this.panelCanvas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
@@ -81,6 +88,11 @@
             // panelTools
             // 
             this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.panelTools.Controls.Add(this.AdjacencyMatrixLabel);
+            this.panelTools.Controls.Add(this.textBox1);
+            this.panelTools.Controls.Add(this.label1);
+            this.panelTools.Controls.Add(this.textBoxNumberOfVertices);
+            this.panelTools.Controls.Add(this.comboBoxCreationMethodSelector);
             this.panelTools.Controls.Add(this.comboBoxAlgorithms);
             this.panelTools.Controls.Add(this.AddVertexButton);
             this.panelTools.Controls.Add(this.ConnectVerticesButton);
@@ -91,6 +103,57 @@
             this.panelTools.Name = "panelTools";
             this.panelTools.Size = new System.Drawing.Size(263, 610);
             this.panelTools.TabIndex = 1;
+            // 
+            // AdjacencyMatrixLabel
+            // 
+            this.AdjacencyMatrixLabel.AutoSize = true;
+            this.AdjacencyMatrixLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AdjacencyMatrixLabel.Location = new System.Drawing.Point(14, 146);
+            this.AdjacencyMatrixLabel.Name = "AdjacencyMatrixLabel";
+            this.AdjacencyMatrixLabel.Size = new System.Drawing.Size(124, 21);
+            this.AdjacencyMatrixLabel.TabIndex = 14;
+            this.AdjacencyMatrixLabel.Text = "AdjacencyMatrix";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(37, 170);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(186, 186);
+            this.textBox1.TabIndex = 13;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(14, 98);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(143, 21);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Number of vertices";
+            // 
+            // textBoxNumberOfVertices
+            // 
+            this.textBoxNumberOfVertices.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxNumberOfVertices.Location = new System.Drawing.Point(163, 98);
+            this.textBoxNumberOfVertices.Name = "textBoxNumberOfVertices";
+            this.textBoxNumberOfVertices.Size = new System.Drawing.Size(79, 29);
+            this.textBoxNumberOfVertices.TabIndex = 11;
+            this.textBoxNumberOfVertices.TextChanged += new System.EventHandler(this.textBoxNumberOfVertices_TextChanged);
+            // 
+            // comboBoxCreationMethodSelector
+            // 
+            this.comboBoxCreationMethodSelector.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.comboBoxCreationMethodSelector.FormattingEnabled = true;
+            this.comboBoxCreationMethodSelector.Items.AddRange(new object[] {
+            "Adjacency matrix",
+            "Adjacency list"});
+            this.comboBoxCreationMethodSelector.Location = new System.Drawing.Point(18, 63);
+            this.comboBoxCreationMethodSelector.Name = "comboBoxCreationMethodSelector";
+            this.comboBoxCreationMethodSelector.Size = new System.Drawing.Size(224, 29);
+            this.comboBoxCreationMethodSelector.TabIndex = 10;
+            this.comboBoxCreationMethodSelector.Text = "Choose creation method";
+            this.comboBoxCreationMethodSelector.SelectedIndexChanged += new System.EventHandler(this.comboBoxCreationMethodSelector_SelectedIndexChanged);
             // 
             // comboBoxAlgorithms
             // 
@@ -118,7 +181,7 @@
             "2. Dijkstra`s algorithm",
             "3. Floyd`s algorithm",
             "4. Bellman-Ford`s algorithm"});
-            this.comboBoxAlgorithms.Location = new System.Drawing.Point(6, 361);
+            this.comboBoxAlgorithms.Location = new System.Drawing.Point(17, 531);
             this.comboBoxAlgorithms.Name = "comboBoxAlgorithms";
             this.comboBoxAlgorithms.Size = new System.Drawing.Size(224, 29);
             this.comboBoxAlgorithms.TabIndex = 9;
@@ -128,7 +191,7 @@
             // 
             this.AddVertexButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.AddVertexButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AddVertexButton.Location = new System.Drawing.Point(6, 230);
+            this.AddVertexButton.Location = new System.Drawing.Point(17, 383);
             this.AddVertexButton.Name = "AddVertexButton";
             this.AddVertexButton.Size = new System.Drawing.Size(224, 35);
             this.AddVertexButton.TabIndex = 8;
@@ -139,7 +202,7 @@
             // 
             this.ConnectVerticesButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ConnectVerticesButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ConnectVerticesButton.Location = new System.Drawing.Point(6, 310);
+            this.ConnectVerticesButton.Location = new System.Drawing.Point(17, 463);
             this.ConnectVerticesButton.Name = "ConnectVerticesButton";
             this.ConnectVerticesButton.Size = new System.Drawing.Size(224, 35);
             this.ConnectVerticesButton.TabIndex = 7;
@@ -150,7 +213,7 @@
             // 
             this.RemoveObjButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.RemoveObjButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RemoveObjButton.Location = new System.Drawing.Point(6, 272);
+            this.RemoveObjButton.Location = new System.Drawing.Point(17, 425);
             this.RemoveObjButton.Name = "RemoveObjButton";
             this.RemoveObjButton.Size = new System.Drawing.Size(224, 32);
             this.RemoveObjButton.TabIndex = 6;
@@ -169,6 +232,11 @@
             this.CreateGraphButton.UseVisualStyleBackColor = false;
             this.CreateGraphButton.Click += new System.EventHandler(this.CreateGraphButton_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,6 +249,7 @@
             this.panelCanvas.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
             this.panelTools.ResumeLayout(false);
+            this.panelTools.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -196,6 +265,12 @@
         private System.Windows.Forms.Button RemoveObjButton;
         private System.Windows.Forms.Button CreateGraphButton;
         private System.Windows.Forms.ComboBox comboBoxAlgorithms;
+        private System.Windows.Forms.ComboBox comboBoxCreationMethodSelector;
+        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.TextBox textBoxNumberOfVertices;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Label AdjacencyMatrixLabel;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

@@ -53,19 +53,24 @@ namespace AllAboutGraph.MVC.Model
 
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
+            PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank,200,new PointF(500,500));
+
             for (int i = 0; i < adjMatrix.Rank; i++)
             {
-                GraphVertices.Add(new GraphVertex(i.ToString()));
+                GraphVertex vertex = new GraphVertex(i.ToString());
+                vertex.Size = new SizeF(50, 50);
+                vertex.Location = verticesPoints[i];
+                GraphVertices.Add(vertex);
             }
 
-            int edgeIndex = 0;
+            int edgeIndex = -1;
             for (int i = 0; i < adjMatrix.Rank; i++)
             {
                 for (int j = 0; j < adjMatrix.Rank; j++)
                 {
                     if (adjMatrix.Matrix[i, j] != 0)
                     {
-                        GraphEdges.Add(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i,j],false));
+                        GraphEdges.Add(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], false));
                         edgeIndex++;
 
                         GraphVertices[i].OutEdges.Add(GraphEdges[edgeIndex]);
@@ -74,6 +79,21 @@ namespace AllAboutGraph.MVC.Model
 
                 }
             }
+        }
+
+        private PointF[] GetGraphVerticesPoints(int numberOfVertices,float radius, PointF center)
+        {
+            PointF[] points = new PointF[numberOfVertices];
+
+            for (int i = 0; i < numberOfVertices; i++)
+            {
+                float x = center.X + radius * (float)Math.Cos(2 * Math.PI * i / numberOfVertices);
+                float y = center.Y + radius * (float)Math.Sin(2 * Math.PI * i / numberOfVertices);
+
+                points[i] = new PointF(x, y);
+            }
+
+            return points;
         }
 
         public MyGraph(AdjacencyList adjList)

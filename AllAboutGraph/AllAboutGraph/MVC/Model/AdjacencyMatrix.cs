@@ -20,7 +20,7 @@ namespace AllAboutGraph.MVC.Model
 
         public int Rank
         {
-            get {return Matrix.Length; }
+            get {return Matrix.GetLength(0); }
         }
 
         public AdjacencyMatrix() 
@@ -36,15 +36,15 @@ namespace AllAboutGraph.MVC.Model
 
         public AdjacencyMatrix(int[,] matrix)
         {
-            _matrix = new int[matrix.GetUpperBound(0), matrix.GetUpperBound(1)];
+            _matrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
             FillMatrixCopying(matrix);
         }
 
         private void FillMatrixCopying(int[,] matrix)
         {
-            for (int i = 0; i < matrix.Length; i++)
+            for (int i = 0; i < this.Rank; i++)
             {
-                for (int j = 0; j < matrix.Length; j++)
+                for (int j = 0; j < this.Rank; j++)
                 {
                     _matrix[i, j] = matrix[i, j];
                 }

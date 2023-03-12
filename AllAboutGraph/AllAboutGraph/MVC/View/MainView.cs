@@ -36,6 +36,8 @@ namespace AllAboutGraph
         /// </summary>
         private Bitmap _whitePlaneBitmap;
 
+        private int _numOfVertices;
+
         #endregion
         
         #region Properties
@@ -62,6 +64,13 @@ namespace AllAboutGraph
             get { return _selectedPen; }
             set { _selectedPen = value; }
         }
+
+        public int NumOfVertices
+        {
+            get { return _numOfVertices; }
+            set { _numOfVertices = value; }
+        }
+
         #endregion
         public MainView()
         {
@@ -156,8 +165,25 @@ namespace AllAboutGraph
 
         private void CreateGraphButton_Click(object sender, EventArgs e)
         {
-            graph = new MyGraph();
+            int[,] adjMatrix = new int[,] { 
+                { 0, 1, 1, 1, 1, 0},
+                { 1, 0, 0, 1, 0, 0},
+                { 1, 0, 0, 0, 1, 0},
+                { 1, 1, 0, 0, 1, 0},
+                { 1, 0, 1, 1, 0, 1},
+                { 0, 0, 0, 0, 0, 0}
+            }; 
+            graph = new MyGraph(new AdjacencyMatrix(adjMatrix));
+            Canvas.Invalidate();
+        }
 
+        private void comboBoxCreationMethodSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void textBoxNumberOfVertices_TextChanged(object sender, EventArgs e)
+        {
+            NumOfVertices = int.Parse(textBoxNumberOfVertices.Text);
         }
     }
 }

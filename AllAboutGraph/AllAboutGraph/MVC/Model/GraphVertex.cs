@@ -16,7 +16,7 @@ namespace AllAboutGraph.MVC.Model
         private List<GraphEdge> _outEdges;
 
         private PointF _location;
-        private SizeF _size = SizeF.Empty;
+        private SizeF _size = new SizeF(50,50);
         #endregion
 
         #region Properties
@@ -49,7 +49,6 @@ namespace AllAboutGraph.MVC.Model
             get { return _location; }
             set { _location = value; }
         }
-
         public SizeF Size
         {
             get { return _size; }
