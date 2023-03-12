@@ -45,6 +45,7 @@ namespace AllAboutGraph
         private Bitmap _whitePlaneBitmap;
 
         private int _numOfVertices;
+
         private int[,] _adjMatrix = new int[,] {
                 { 0, 1, 1, 1, 1, 0},
                 { 1, 0, 0, 1, 0, 0},
@@ -53,6 +54,7 @@ namespace AllAboutGraph
                 { 1, 0, 1, 1, 0, 1},
                 { 0, 0, 0, 0, 0, 0}
             };
+        private bool dataGotSuccessfully = true;
         #endregion
 
         #region Properties
@@ -199,21 +201,161 @@ namespace AllAboutGraph
         #region CreateGraph
         private void CreateGraphButton_Click(object sender, EventArgs e)
         {
-            if(comboBoxCreationMethodSelector.Text == matrixMethod)
-                GetAdjacencyMatrixFromUser();
+            dataGotSuccessfully= true;
 
-            graph = new MyGraph(new AdjacencyMatrix(TestAdjMatrix));
+            if(comboBoxCreationMethodSelector.Text == matrixMethod)
+            {
+                AdjacencyMatrix matrix = GetAdjacencyMatrixFromUser();
+                if (dataGotSuccessfully)
+                {
+                    graph = new MyGraph(matrix);
+                }
+            }
+            else if (comboBoxCreationMethodSelector.Text == listMethod)
+            {
+                AdjacencyList list = GetAdjacencyListFromUser(); 
+                if (dataGotSuccessfully)
+                {
+                    graph = new MyGraph(list);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Не выбран метод создания графа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             Canvas.Invalidate();
         }
 
-        private static void GetAdjacencyMatrixFromUser()
+        #region GetGraphDataFromUser
+        private AdjacencyMatrix GetAdjacencyMatrixFromUser()
         {
-            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix();
+            int[,] matrix = new int[0,0];
+
+            try
+            {
+                matrix = GetMatrixRepresentation(textBoxGraphRepresentation.Text);
+                if(matrix.GetLength(0) != matrix.GetLength(1))
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Неверно указана матрица смежности", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGotSuccessfully = false;
+                return new AdjacencyMatrix();
+            }
+
+            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(matrix);
+
+            return adjacencyMatrix;
         }
-        private static void GetAdjacencyListFromUser()
+        private int[,] GetMatrixRepresentation(string userInput)
         {
-            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix();
+            List<int[]> listMatrix = new List<int[]>();
+
+            string[] matrixRows = GetRepresentationRows(userInput);
+
+            foreach (string row in matrixRows)
+            {
+                listMatrix.Add(GetIntRowRepresentation(row).ToArray());
+            }
+
+            int[,] arrayMatrix = ConvertListMatrixToArrayMatrix(listMatrix);
+
+            return arrayMatrix;
         }
+
+        private AdjacencyList GetAdjacencyListFromUser()
+        {
+            List<List<int>> list = new List<List<int>>();
+
+            try
+            {
+                list = GetListRepresentation(textBoxGraphRepresentation.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Неверно указана матрица смежности", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGotSuccessfully = false;
+                return new AdjacencyList();
+            }
+
+            AdjacencyList adjacencyList = new AdjacencyList(list);
+
+            return adjacencyList;
+        }
+
+        private List<List<int>> GetListRepresentation(string userInput)
+        {
+            List<List<int>> list = new List<List<int>>();
+
+            string[] listRows = GetRepresentationRows(userInput);
+
+            foreach(string row in listRows)
+            {
+                List<int> intRow = GetIntRowRepresentation(row);
+                if(intRow.Count == 0)
+                {
+                    dataGotSuccessfully= false;
+                    return new List<List<int>>();
+                }
+                list.Add(intRow);
+            }
+
+            return list;
+
+        }
+
+
+        #region InputConvertManipulations
+        private string[] GetRepresentationRows(string userInput)
+        {
+            string[] tmp = new string[0];
+
+            try
+            {
+                tmp = userInput.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                if (tmp.Length != NumOfVertices)
+                {
+                    throw new Exception();
+                }
+
+                return tmp;
+            }
+            catch
+            {
+                MessageBox.Show("Нарушено количество строк представления графа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGotSuccessfully = false;
+                return new string[0];
+            }
+
+        }
+
+        private List<int> GetIntRowRepresentation(string row)
+        {
+            List<int> intRow = new List<int>();
+
+            string[] splitedRow = row.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string item in splitedRow)
+            {
+                try
+                {
+                    intRow.Add(int.Parse(item));
+                }
+                catch
+                {
+                    MessageBox.Show("Неверно указан элемент представления графа","Ошибка", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    dataGotSuccessfully = false;
+                    return new List<int>();
+                }
+            }
+            return intRow;
+        }
+        #endregion
+
+        #endregion
 
         private void comboBoxCreationMethodSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -236,6 +378,25 @@ namespace AllAboutGraph
             {
                 MessageBox.Show("Неверное число вершин","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
+        }
+
+        #endregion
+
+        #region AdditionalMethods
+
+        private int[,] ConvertListMatrixToArrayMatrix(List<int[]> listMatrix)
+        {
+            int[,] convertedMatrix = new int[listMatrix.Count, listMatrix[0].Length];
+
+            for (int i = 0; i < convertedMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < convertedMatrix.GetLength(1); j++)
+                {
+                    convertedMatrix[i, j] = listMatrix[i][j];
+                }
+            }
+
+            return convertedMatrix;
         }
 
         #endregion

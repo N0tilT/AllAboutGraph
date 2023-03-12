@@ -73,8 +73,7 @@ namespace AllAboutGraph.MVC.Model
                         GraphEdges.Add(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], false));
                         edgeIndex++;
 
-                        GraphVertices[i].OutEdges.Add(GraphEdges[edgeIndex]);
-                        GraphVertices[j].InEdges.Add(GraphEdges[edgeIndex]);
+                        LinkVertices(i, j, edgeIndex);
                     }
 
                 }
@@ -112,7 +111,7 @@ namespace AllAboutGraph.MVC.Model
                 GraphVertices.Add(new GraphVertex(i.ToString()));
             }
 
-            int edgeIndex = 0;
+            int edgeIndex = -1;
             for (int i = 0; i < adjList.CountVertices; i++)
             {
                 for (int j = 0; j < adjList.List[i].Count; j++)
@@ -120,8 +119,7 @@ namespace AllAboutGraph.MVC.Model
                     GraphEdges.Add(new GraphEdge(GraphVertices[i], GraphVertices[j], 1, false));
                     edgeIndex++;
 
-                    GraphVertices[i].OutEdges.Add(GraphEdges[edgeIndex]);
-                    GraphVertices[j].InEdges.Add(GraphEdges[edgeIndex]);
+                    LinkVertices(i, j, edgeIndex);
                 }
             }
         }

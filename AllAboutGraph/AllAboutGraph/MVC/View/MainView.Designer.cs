@@ -34,7 +34,7 @@
             this.Canvas = new System.Windows.Forms.PictureBox();
             this.panelTools = new System.Windows.Forms.Panel();
             this.CreationMethodLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBoxGraphRepresentation = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxNumberOfVertices = new System.Windows.Forms.TextBox();
             this.comboBoxCreationMethodSelector = new System.Windows.Forms.ComboBox();
@@ -89,7 +89,7 @@
             // 
             this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.panelTools.Controls.Add(this.CreationMethodLabel);
-            this.panelTools.Controls.Add(this.textBox1);
+            this.panelTools.Controls.Add(this.textBoxGraphRepresentation);
             this.panelTools.Controls.Add(this.label1);
             this.panelTools.Controls.Add(this.textBoxNumberOfVertices);
             this.panelTools.Controls.Add(this.comboBoxCreationMethodSelector);
@@ -114,13 +114,13 @@
             this.CreationMethodLabel.TabIndex = 14;
             this.CreationMethodLabel.Text = "AdjacencyMatrix";
             // 
-            // textBox1
+            // textBoxGraphRepresentation
             // 
-            this.textBox1.Location = new System.Drawing.Point(37, 170);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(186, 186);
-            this.textBox1.TabIndex = 13;
+            this.textBoxGraphRepresentation.Location = new System.Drawing.Point(37, 170);
+            this.textBoxGraphRepresentation.Multiline = true;
+            this.textBoxGraphRepresentation.Name = "textBoxGraphRepresentation";
+            this.textBoxGraphRepresentation.Size = new System.Drawing.Size(186, 186);
+            this.textBoxGraphRepresentation.TabIndex = 13;
             // 
             // label1
             // 
@@ -271,7 +271,7 @@
         public System.Windows.Forms.TextBox textBoxNumberOfVertices;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label CreationMethodLabel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxGraphRepresentation;
     }
 }
 
