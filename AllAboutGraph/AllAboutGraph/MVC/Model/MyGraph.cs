@@ -150,15 +150,16 @@ namespace AllAboutGraph.MVC.Model
             GraphVertices[secondVertexIndex].InEdges.Add(GraphEdges[edgeIndex]);
         }
 
-        public void DrawGraph(Graphics Graphics,Pen pen)
+        public void DrawGraph(Graphics Graphics,Pen pen,Brush backgroundBrush,Brush fontBrush, Font font, StringFormat format)
         {
-            foreach(GraphVertex vertex in GraphVertices)
-            {
-                vertex.DrawVertex(Graphics,pen);
-            }
-            foreach(GraphEdge edge in GraphEdges)
+            foreach (GraphEdge edge in GraphEdges)
             {
                 edge.DrawEdge(Graphics, pen);
+            }
+
+            foreach (GraphVertex vertex in GraphVertices)
+            {
+                vertex.DrawVertex(Graphics,pen,backgroundBrush,fontBrush,font,format);
             }
         }
 

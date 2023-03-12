@@ -109,9 +109,11 @@ namespace AllAboutGraph.MVC.Model
             return allVertexEdges;
         }
 
-        public void DrawVertex(Graphics g, Pen pen)
+        public void DrawVertex(Graphics g, Pen pen, Brush backgroundBrush, Brush fontBrush, Font font,StringFormat format)
         {
-            g.DrawEllipse(pen, new RectangleF(Location,Size));
+            g.FillEllipse(backgroundBrush, new RectangleF(Location, Size));
+            g.DrawEllipse(pen, new RectangleF(Location, Size));
+            g.DrawString(Name, font, fontBrush, Center.X,Center.Y,format);
         }
 
         #endregion

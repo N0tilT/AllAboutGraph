@@ -15,8 +15,11 @@ namespace AllAboutGraph
 {
     public partial class MainView : Form
     {
+        #region Contants
         private const string matrixMethod = "Adjacency matrix";
         private const string listMethod = "Adjacency list";
+        #endregion
+
         #region Fields
         string[] creationMethods = new string[] 
         {
@@ -26,7 +29,11 @@ namespace AllAboutGraph
 
         private Controller _controller;
         private Pen _selectedPen;
-        
+        private Brush _selectedVertexBackGroundBrush;
+        private Brush _selectedFontBrush;
+        private Font _selectedFont;
+        private StringFormat _selectedStringFormat;
+
         private MyGraph graph;
         
         /// <summary>
@@ -88,9 +95,32 @@ namespace AllAboutGraph
             set { _numOfVertices = value; }
         }
 
-        public int[,] TestAdjMatrix
+        public AdjacencyMatrix TestAdjMatrix
         {
-            get { return _adjMatrix; }
+            get { return new AdjacencyMatrix(_adjMatrix); }
+        }
+
+        public Brush SelectedBackgroundBrush 
+        {
+            get { return _selectedVertexBackGroundBrush; }
+            set { _selectedVertexBackGroundBrush = value; }
+        }
+        public Brush SelectedFontBrush
+        {
+            get { return _selectedFontBrush; }
+            set { _selectedFontBrush = value; }
+        }
+
+        public Font SelectedFont 
+        {
+            get {return _selectedFont; }
+            set { _selectedFont = value; }
+        }
+
+        public StringFormat SelectedStringFormat 
+        {
+            get { return _selectedStringFormat; }
+            set { _selectedStringFormat = value; } 
         }
 
         #endregion
@@ -111,8 +141,39 @@ namespace AllAboutGraph
 
 
             SetDefailtPen();
+            SetDefaultFont();
+            SetDefaultFontBrush();
+            SetDefaultVertexBackgroundBrush();
+            SetDefaultStringFormat();
             InitializeCreationMethodsComboBox(creationMethods);
             InitializeCanvas();
+        }
+
+        private void SetDefailtPen()
+        {
+            SelectedPen = new Pen(Color.Black, 3);
+            SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
+        }
+        private void SetDefaultVertexBackgroundBrush()
+        {
+            SelectedBackgroundBrush= new SolidBrush(Color.Indigo);
+        }
+
+        private void SetDefaultFont()
+        {
+            SelectedFont = new Font("Segoe UI", 14);
+        }
+
+        private void SetDefaultFontBrush()
+        {
+            SelectedFontBrush = new SolidBrush(Color.White);
+        }
+
+        private void SetDefaultStringFormat()
+        {
+            SelectedStringFormat = new StringFormat();
+            SelectedStringFormat.Alignment = StringAlignment.Center;
+            SelectedStringFormat.LineAlignment = StringAlignment.Center;
         }
 
         private void InitializeCreationMethodsComboBox(string[] creationMethods)
@@ -129,11 +190,6 @@ namespace AllAboutGraph
             Canvas.Image = WhitePlaneBitmap;
         }
 
-        private void SetDefailtPen()
-        {
-            SelectedPen = new Pen(Color.Black,3);
-            SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
-        }
 
         #endregion
 
@@ -194,7 +250,7 @@ namespace AllAboutGraph
         /// </summary>
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
-            graph.DrawGraph(e.Graphics,SelectedPen);
+            graph.DrawGraph(e.Graphics,SelectedPen,SelectedBackgroundBrush,SelectedFontBrush, SelectedFont, SelectedStringFormat);
         }
         #endregion
 
@@ -223,6 +279,8 @@ namespace AllAboutGraph
             {
                 MessageBox.Show("Не выбран метод создания графа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            graph = new MyGraph(TestAdjMatrix);
 
             Canvas.Invalidate();
         }
