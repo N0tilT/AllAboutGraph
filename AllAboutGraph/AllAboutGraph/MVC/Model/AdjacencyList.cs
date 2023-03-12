@@ -25,6 +25,7 @@ namespace AllAboutGraph.MVC.Model
 
         public AdjacencyList(AdjacencyMatrix adjacencyMatrix)
         {
+            _list  = new List<List<int>>();
             ResetList();
             FillAdjacencyListFromAdjacencyMatrix(adjacencyMatrix);
         }

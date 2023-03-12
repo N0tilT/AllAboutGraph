@@ -48,6 +48,8 @@ namespace AllAboutGraph.MVC.Model
             get { return _weight; }
             set { _weight = value; }
         }
+
+
         #endregion
 
         #region Contrusctors

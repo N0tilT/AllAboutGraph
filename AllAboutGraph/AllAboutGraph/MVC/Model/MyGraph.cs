@@ -49,11 +49,13 @@ namespace AllAboutGraph.MVC.Model
         {
             _adjacencyMatrix = adjMatrix.Matrix;
             CreateGraphFromAdjacencyMatrix(adjMatrix);
+            AdjacencyList list = new AdjacencyList(adjMatrix);
+            _adjacencyList = list.List;
         }
 
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
-            PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank,200,new PointF(250,250));
+            PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank, 200, new PointF(250, 250));
 
             for (int i = 0; i < adjMatrix.Rank; i++)
             {
@@ -107,10 +109,15 @@ namespace AllAboutGraph.MVC.Model
 
         private void CreateGraphFromAdjacencyList(AdjacencyList adjList)
         {
+            PointF[] verticesPoints = GetGraphVerticesPoints(adjList.CountVertices, 200, new PointF(250, 250));
+
             for (int i = 0; i < adjList.CountVertices; i++)
             {
-                string vertexName = GetName(i);
-                GraphVertices.Add(new GraphVertex(vertexName));
+                string vertexName = GetName(i); 
+                GraphVertex vertex = new GraphVertex(vertexName);
+                vertex.Size = new SizeF(50, 50);
+                vertex.Location = verticesPoints[i];
+                GraphVertices.Add(vertex);
             }
 
             int edgeIndex = -1;

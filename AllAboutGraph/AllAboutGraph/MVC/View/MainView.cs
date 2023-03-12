@@ -24,11 +24,13 @@ namespace AllAboutGraph
         string[] creationMethods = new string[] 
         {
             matrixMethod,
-            listMethod
+            listMethod,
+            "Default"
         };
 
         private Controller _controller;
         private Pen _selectedPen;
+        private Pen _highlightPen;
         private Brush _selectedVertexBackGroundBrush;
         private Brush _selectedFontBrush;
         private Font _selectedFont;
@@ -89,6 +91,12 @@ namespace AllAboutGraph
             set { _selectedPen = value; }
         }
 
+        public Pen HighlightPen
+        {
+            get { return _highlightPen; }
+            set { _highlightPen = value; }
+        }
+
         public int NumOfVertices
         {
             get { return _numOfVertices; }
@@ -140,7 +148,8 @@ namespace AllAboutGraph
             };
 
 
-            SetDefailtPen();
+            SetDefaultPen();
+            SetHighlightPen();
             SetDefaultFont();
             SetDefaultFontBrush();
             SetDefaultVertexBackgroundBrush();
@@ -149,11 +158,18 @@ namespace AllAboutGraph
             InitializeCanvas();
         }
 
-        private void SetDefailtPen()
+        private void SetDefaultPen()
         {
             SelectedPen = new Pen(Color.Black, 3);
             SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
         }
+
+        private void SetHighlightPen()
+        {
+            HighlightPen = new Pen(Color.Yellow, 7);
+            SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
+        }
+
         private void SetDefaultVertexBackgroundBrush()
         {
             SelectedBackgroundBrush= new SolidBrush(Color.DarkViolet);
@@ -439,6 +455,51 @@ namespace AllAboutGraph
 
         #endregion
 
+        #region GraphAlgorithms
+
+        public void BFS(int startIndex)
+        {
+            List<int> visitedVertices = new List<int>
+            {
+                startIndex
+            };
+
+            string consoleMessage = "";
+
+            Queue<int> verticesQueue = new Queue<int>();
+            verticesQueue.Enqueue(startIndex);
+
+            while (verticesQueue.Count != 0)
+            {
+                int curVertex = verticesQueue.Dequeue();
+                foreach (int neighbour in graph.AdjacencyList[curVertex])
+                {
+                    if (!visitedVertices.Contains(neighbour))
+                    {
+                        consoleMessage += Convert.ToString(curVertex) + "->" + Convert.ToString(neighbour) + "; ";
+
+                        GraphEdge curEdge = new GraphEdge();
+                        curEdge.VertexOut = graph.GraphVertices[curVertex];
+                        curEdge.VertexIn = graph.GraphVertices[neighbour];
+
+                        Graphics g = GetSmoothGraphicsFromCanvas();
+
+                        curEdge.DrawEdge(g,HighlightPen);
+
+                        Canvas.Invalidate();
+
+                        visitedVertices.Add(neighbour);
+                        verticesQueue.Enqueue(neighbour);
+                    }
+                }
+            }
+
+            MessageBox.Show(consoleMessage);
+
+        }
+
+        #endregion
+
         #region AdditionalMethods
 
         private int[,] ConvertListMatrixToArrayMatrix(List<int[]> listMatrix)
@@ -457,5 +518,10 @@ namespace AllAboutGraph
         }
 
         #endregion
+
+        private void buttonStartAlgorithm_Click(object sender, EventArgs e)
+        {
+            BFS(0);
+        }
     }
 }

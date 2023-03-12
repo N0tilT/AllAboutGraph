@@ -44,6 +44,7 @@
             this.RemoveObjButton = new System.Windows.Forms.Button();
             this.CreateGraphButton = new System.Windows.Forms.Button();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.buttonStartAlgorithm = new System.Windows.Forms.Button();
             this.panelMain.SuspendLayout();
             this.panelCanvas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
@@ -88,6 +89,7 @@
             // panelTools
             // 
             this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.panelTools.Controls.Add(this.buttonStartAlgorithm);
             this.panelTools.Controls.Add(this.CreationMethodLabel);
             this.panelTools.Controls.Add(this.textBoxGraphRepresentation);
             this.panelTools.Controls.Add(this.label1);
@@ -238,6 +240,18 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // buttonStartAlgorithm
+            // 
+            this.buttonStartAlgorithm.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.buttonStartAlgorithm.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonStartAlgorithm.Location = new System.Drawing.Point(17, 566);
+            this.buttonStartAlgorithm.Name = "buttonStartAlgorithm";
+            this.buttonStartAlgorithm.Size = new System.Drawing.Size(224, 35);
+            this.buttonStartAlgorithm.TabIndex = 15;
+            this.buttonStartAlgorithm.Text = "Start";
+            this.buttonStartAlgorithm.UseVisualStyleBackColor = false;
+            this.buttonStartAlgorithm.Click += new System.EventHandler(this.buttonStartAlgorithm_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -273,6 +287,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label CreationMethodLabel;
         private System.Windows.Forms.TextBox textBoxGraphRepresentation;
+        private System.Windows.Forms.Button buttonStartAlgorithm;
     }
 }
 
