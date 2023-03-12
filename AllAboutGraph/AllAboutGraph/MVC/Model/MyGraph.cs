@@ -53,7 +53,7 @@ namespace AllAboutGraph.MVC.Model
 
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
-            PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank,200,new PointF(500,500));
+            PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank,200,new PointF(250,250));
 
             for (int i = 0; i < adjMatrix.Rank; i++)
             {

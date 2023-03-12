@@ -33,7 +33,7 @@
             this.panelCanvas = new System.Windows.Forms.Panel();
             this.Canvas = new System.Windows.Forms.PictureBox();
             this.panelTools = new System.Windows.Forms.Panel();
-            this.AdjacencyMatrixLabel = new System.Windows.Forms.Label();
+            this.CreationMethodLabel = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxNumberOfVertices = new System.Windows.Forms.TextBox();
@@ -58,7 +58,7 @@
             this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMain.Location = new System.Drawing.Point(0, 0);
             this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(1292, 610);
+            this.panelMain.Size = new System.Drawing.Size(999, 611);
             this.panelMain.TabIndex = 0;
             // 
             // panelCanvas
@@ -68,7 +68,7 @@
             this.panelCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCanvas.Location = new System.Drawing.Point(0, 0);
             this.panelCanvas.Name = "panelCanvas";
-            this.panelCanvas.Size = new System.Drawing.Size(1029, 610);
+            this.panelCanvas.Size = new System.Drawing.Size(736, 611);
             this.panelCanvas.TabIndex = 0;
             // 
             // Canvas
@@ -77,7 +77,7 @@
             this.Canvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Canvas.Location = new System.Drawing.Point(0, 0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(1029, 610);
+            this.Canvas.Size = new System.Drawing.Size(736, 611);
             this.Canvas.TabIndex = 0;
             this.Canvas.TabStop = false;
             this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
@@ -88,7 +88,7 @@
             // panelTools
             // 
             this.panelTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.panelTools.Controls.Add(this.AdjacencyMatrixLabel);
+            this.panelTools.Controls.Add(this.CreationMethodLabel);
             this.panelTools.Controls.Add(this.textBox1);
             this.panelTools.Controls.Add(this.label1);
             this.panelTools.Controls.Add(this.textBoxNumberOfVertices);
@@ -99,20 +99,20 @@
             this.panelTools.Controls.Add(this.RemoveObjButton);
             this.panelTools.Controls.Add(this.CreateGraphButton);
             this.panelTools.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelTools.Location = new System.Drawing.Point(1029, 0);
+            this.panelTools.Location = new System.Drawing.Point(736, 0);
             this.panelTools.Name = "panelTools";
-            this.panelTools.Size = new System.Drawing.Size(263, 610);
+            this.panelTools.Size = new System.Drawing.Size(263, 611);
             this.panelTools.TabIndex = 1;
             // 
-            // AdjacencyMatrixLabel
+            // CreationMethodLabel
             // 
-            this.AdjacencyMatrixLabel.AutoSize = true;
-            this.AdjacencyMatrixLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AdjacencyMatrixLabel.Location = new System.Drawing.Point(14, 146);
-            this.AdjacencyMatrixLabel.Name = "AdjacencyMatrixLabel";
-            this.AdjacencyMatrixLabel.Size = new System.Drawing.Size(124, 21);
-            this.AdjacencyMatrixLabel.TabIndex = 14;
-            this.AdjacencyMatrixLabel.Text = "AdjacencyMatrix";
+            this.CreationMethodLabel.AutoSize = true;
+            this.CreationMethodLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CreationMethodLabel.Location = new System.Drawing.Point(14, 137);
+            this.CreationMethodLabel.Name = "CreationMethodLabel";
+            this.CreationMethodLabel.Size = new System.Drawing.Size(124, 21);
+            this.CreationMethodLabel.TabIndex = 14;
+            this.CreationMethodLabel.Text = "AdjacencyMatrix";
             // 
             // textBox1
             // 
@@ -241,8 +241,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1292, 610);
+            this.ClientSize = new System.Drawing.Size(999, 611);
             this.Controls.Add(this.panelMain);
+            this.MinimumSize = new System.Drawing.Size(1015, 650);
             this.Name = "MainView";
             this.Text = "All about graph";
             this.panelMain.ResumeLayout(false);
@@ -269,7 +270,7 @@
         private System.Windows.Forms.Label label1;
         public System.Windows.Forms.TextBox textBoxNumberOfVertices;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.Label AdjacencyMatrixLabel;
+        private System.Windows.Forms.Label CreationMethodLabel;
         private System.Windows.Forms.TextBox textBox1;
     }
 }

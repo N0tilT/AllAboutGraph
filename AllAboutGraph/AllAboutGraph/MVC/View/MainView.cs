@@ -15,10 +15,18 @@ namespace AllAboutGraph
 {
     public partial class MainView : Form
     {
+        private const string matrixMethod = "Adjacency matrix";
+        private const string listMethod = "Adjacency list";
         #region Fields
+        string[] creationMethods = new string[] 
+        {
+            matrixMethod,
+            listMethod
+        };
+
         private Controller _controller;
         private Pen _selectedPen;
-
+        
         private MyGraph graph;
         
         /// <summary>
@@ -37,9 +45,16 @@ namespace AllAboutGraph
         private Bitmap _whitePlaneBitmap;
 
         private int _numOfVertices;
-
+        private int[,] _adjMatrix = new int[,] {
+                { 0, 1, 1, 1, 1, 0},
+                { 1, 0, 0, 1, 0, 0},
+                { 1, 0, 0, 0, 1, 0},
+                { 1, 1, 0, 0, 1, 0},
+                { 1, 0, 1, 1, 0, 1},
+                { 0, 0, 0, 0, 0, 0}
+            };
         #endregion
-        
+
         #region Properties
 
         /// <summary>
@@ -71,7 +86,19 @@ namespace AllAboutGraph
             set { _numOfVertices = value; }
         }
 
+        public int[,] TestAdjMatrix
+        {
+            get { return _adjMatrix; }
+        }
+
         #endregion
+
+        #region Initialization
+        public void SetController(Controller controller)
+        {
+            _controller = controller;
+        }
+
         public MainView()
         {
             InitializeComponent();
@@ -82,7 +109,17 @@ namespace AllAboutGraph
 
 
             SetDefailtPen();
+            InitializeCreationMethodsComboBox(creationMethods);
             InitializeCanvas();
+        }
+
+        private void InitializeCreationMethodsComboBox(string[] creationMethods)
+        {
+            comboBoxCreationMethodSelector.Items.Clear();
+            foreach (string method in creationMethods)
+            {
+                comboBoxCreationMethodSelector.Items.Add(method);
+            }
         }
 
         private void InitializeCanvas()
@@ -92,15 +129,11 @@ namespace AllAboutGraph
 
         private void SetDefailtPen()
         {
-            SelectedPen = new Pen(Color.Black);
+            SelectedPen = new Pen(Color.Black,3);
             SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
         }
 
-        public void SetController(Controller controller)
-        {
-            _controller = controller;
-        }
-
+        #endregion
 
         #region CanvasEvents
 
@@ -163,27 +196,48 @@ namespace AllAboutGraph
         }
         #endregion
 
+        #region CreateGraph
         private void CreateGraphButton_Click(object sender, EventArgs e)
         {
-            int[,] adjMatrix = new int[,] { 
-                { 0, 1, 1, 1, 1, 0},
-                { 1, 0, 0, 1, 0, 0},
-                { 1, 0, 0, 0, 1, 0},
-                { 1, 1, 0, 0, 1, 0},
-                { 1, 0, 1, 1, 0, 1},
-                { 0, 0, 0, 0, 0, 0}
-            }; 
-            graph = new MyGraph(new AdjacencyMatrix(adjMatrix));
+            if(comboBoxCreationMethodSelector.Text == matrixMethod)
+                GetAdjacencyMatrixFromUser();
+
+            graph = new MyGraph(new AdjacencyMatrix(TestAdjMatrix));
             Canvas.Invalidate();
+        }
+
+        private static void GetAdjacencyMatrixFromUser()
+        {
+            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix();
+        }
+        private static void GetAdjacencyListFromUser()
+        {
+            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix();
         }
 
         private void comboBoxCreationMethodSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CreationMethodLabel.Text = comboBoxCreationMethodSelector.Text;
         }
 
         private void textBoxNumberOfVertices_TextChanged(object sender, EventArgs e)
         {
-            NumOfVertices = int.Parse(textBoxNumberOfVertices.Text);
+            try
+            {
+                int tmp = int.Parse(textBoxNumberOfVertices.Text);
+                if (tmp < 0)
+                {
+                    throw new Exception();
+                }
+                NumOfVertices = tmp;
+               
+            }
+            catch
+            {
+                MessageBox.Show("Неверное число вершин","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
         }
+
+        #endregion
     }
 }
