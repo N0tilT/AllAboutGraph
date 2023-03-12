@@ -57,7 +57,8 @@ namespace AllAboutGraph.MVC.Model
 
             for (int i = 0; i < adjMatrix.Rank; i++)
             {
-                GraphVertex vertex = new GraphVertex(i.ToString());
+                string vertexname = GetName(i);
+                GraphVertex vertex = new GraphVertex(vertexname);
                 vertex.Size = new SizeF(50, 50);
                 vertex.Location = verticesPoints[i];
                 GraphVertices.Add(vertex);
@@ -108,7 +109,8 @@ namespace AllAboutGraph.MVC.Model
         {
             for (int i = 0; i < adjList.CountVertices; i++)
             {
-                GraphVertices.Add(new GraphVertex(i.ToString()));
+                string vertexName = GetName(i);
+                GraphVertices.Add(new GraphVertex(vertexName));
             }
 
             int edgeIndex = -1;
@@ -122,6 +124,25 @@ namespace AllAboutGraph.MVC.Model
                     LinkVertices(i, j, edgeIndex);
                 }
             }
+        }
+
+        private string GetName(int i)
+        {
+            char index = Convert.ToChar(i+64);
+            StringBuilder name = new StringBuilder();
+
+            name.Append(index);
+            if (name[name.Length-1] == 'Z')
+            {
+                name[name.Length - 1] = 'A';
+                name.Append('A');
+            }
+            else
+            {
+                name[name.Length - 1]++;
+            }
+
+            return name.ToString();
         }
 
         public void AddVertex(GraphVertex vertex)

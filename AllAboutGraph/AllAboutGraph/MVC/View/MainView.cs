@@ -156,12 +156,12 @@ namespace AllAboutGraph
         }
         private void SetDefaultVertexBackgroundBrush()
         {
-            SelectedBackgroundBrush= new SolidBrush(Color.Indigo);
+            SelectedBackgroundBrush= new SolidBrush(Color.DarkViolet);
         }
 
         private void SetDefaultFont()
         {
-            SelectedFont = new Font("Segoe UI", 14);
+            SelectedFont = new Font("Segoe UI", 16);
         }
 
         private void SetDefaultFontBrush()
@@ -277,10 +277,9 @@ namespace AllAboutGraph
             }
             else
             {
-                MessageBox.Show("Не выбран метод создания графа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                graph = new MyGraph(TestAdjMatrix);
+                //MessageBox.Show("Не выбран метод создания графа", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            graph = new MyGraph(TestAdjMatrix);
 
             Canvas.Invalidate();
         }
