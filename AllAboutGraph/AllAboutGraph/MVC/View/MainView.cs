@@ -264,6 +264,7 @@ namespace AllAboutGraph
         #region CreateGraph
         private void CreateGraphButton_Click(object sender, EventArgs e)
         {
+            Canvas.Image = WhitePlaneBitmap;
             Controller.CreateGraph(textBoxGraphRepresentation.Text,comboBoxCreationMethodSelector.Text);
 
             Canvas.Invalidate();
