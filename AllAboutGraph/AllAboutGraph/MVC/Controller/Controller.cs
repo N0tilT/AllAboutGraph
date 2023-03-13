@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AllAboutGraph.MVC.Controller
@@ -55,6 +57,23 @@ namespace AllAboutGraph.MVC.Controller
         {
             get { return _numberOfVertices; }
             set { _numberOfVertices = value; }
+        }
+
+        public void SetNumberOfVertices(string userInput)
+        {
+            try
+            {
+                int tmp = int.Parse(userInput);
+                if (tmp < 0)
+                {
+                    throw new Exception();
+                }
+                NumberOfVertices = tmp;
+            }
+            catch
+            {
+                MessageBox.Show("Неверное число вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public AdjacencyMatrix TestAdjMatrix
@@ -232,11 +251,10 @@ namespace AllAboutGraph.MVC.Controller
         #endregion
 
         #endregion
-        #endregion
 
         #region GraphAlgorithms
 
-        public void BFS(int startIndex, Graphics g, Pen pen)
+        public async void BFS(int startIndex, Graphics g, Pen pen)
         {
             List<int> visitedVertices = new List<int>
             {
@@ -257,6 +275,8 @@ namespace AllAboutGraph.MVC.Controller
 
                         visitedVertices.Add(neighbour);
                         verticesQueue.Enqueue(neighbour);
+
+                        await MakePause();
                     }
                 }
             }
@@ -264,6 +284,15 @@ namespace AllAboutGraph.MVC.Controller
 
         }
 
+        private static async Task MakePause()
+        {
+            await Task.Delay(1000);
+        }
+
+
+        #endregion
+
+        #region ViewInteractions
         private void HighlightEdge(Graphics g, Pen pen, int vertexOut, int VertexIn)
         {
             GraphEdge curEdge = new GraphEdge();
@@ -273,24 +302,7 @@ namespace AllAboutGraph.MVC.Controller
 
             View.ViewUpdate();
         }
-
-        public void SetNumberOfVertices(string userInput)
-        {
-            try
-            {
-                int tmp = int.Parse(userInput);
-                if (tmp < 0)
-                {
-                    throw new Exception();
-                }
-                NumberOfVertices = tmp;
-            }
-            catch
-            {
-                MessageBox.Show("Неверное число вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+        #endregion
 
         #region AdditionalMethods
         private int[,] ConvertListMatrixToArrayMatrix(List<int[]> listMatrix)
@@ -310,5 +322,8 @@ namespace AllAboutGraph.MVC.Controller
         #endregion
 
         #endregion
+
+
+
     }
 }
