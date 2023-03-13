@@ -307,11 +307,139 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
-        private static async Task MakePause()
+        public void PrintAllPaths(int start, int destination,Graphics g,Pen highlightPen)
         {
-            await Task.Delay(1000);
+            bool[] isVisited = new bool[Graph.GraphVertices.Count];
+            List<int> pathList = new List<int>();
+
+            pathList.Add(start);
+
+            PrintAllPathsUtil(start, destination, isVisited, pathList,g,highlightPen);
         }
 
+        private void PrintAllPathsUtil(int start, int destination, bool[] isVisited, List<int> localPathList, Graphics g, Pen highlightPen)
+        {
+
+            if (start == destination)
+            {
+                DrawPath(localPathList,g, highlightPen);
+                MessageBox.Show(string.Join(" ", localPathList) + " Длина: " + GetPathLength(localPathList));
+                g.Clear(Color.White);
+                return;
+            }
+
+            isVisited[start] = true;
+
+            foreach (int nextVertex in Graph.AdjacencyList[start])
+            {
+                if (!isVisited[nextVertex])
+                {
+                    localPathList.Add(nextVertex);
+                    PrintAllPathsUtil(nextVertex, destination, isVisited, localPathList,g,highlightPen);
+                    localPathList.Remove(nextVertex);
+                }
+            }
+
+            isVisited[start] = false;
+        }
+
+        private void DrawPath(List<int> localPathList,Graphics g, Pen pen)
+        {
+            for (int i = 0; i < localPathList.Count - 1; i++)
+            {
+                HighlightEdge(g, pen, localPathList[i], localPathList[i + 1]);
+            }
+        }
+
+        private int GetPathLength(List<int> path)
+        {
+            int length = 0;
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                length += Graph.AdjacencyMatrix[path[i], path[i + 1]];
+            }
+            return length;
+        }
+
+        public void PrintAllPathsWithWeights(Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PrintPrecedenceSubgraph(Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PrintBracketStructure()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BFSWithTime(int v, Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PrintStronglyConnectedComponents(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FindEulerCycle(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FleuryAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FindHamiltonianCycle(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RobertsFloresAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MultichainMethod(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PrintFundamentalSetOfCycles(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void KruskalAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrimAlgoriyhm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DijkstraAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FloydAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BellmanFordAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
@@ -324,6 +452,10 @@ namespace AllAboutGraph.MVC.Controller
             curEdge.DrawEdge(g, pen);
 
             View.ViewUpdate();
+        }
+        private static async Task MakePause()
+        {
+            await Task.Delay(1000);
         }
         #endregion
 
@@ -341,91 +473,6 @@ namespace AllAboutGraph.MVC.Controller
             }
 
             return convertedMatrix;
-        }
-
-        internal void PrintAllPaths(Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrintAllPathsWithWeights(Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrintPrecedenceSubgraph(Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrintBracketStructure()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void BFSWithTime(int v, Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrintStronglyConnectedComponents(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FindEulerCycle(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FleuryAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FindHamiltonianCycle(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void RobertsFloresAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void MultichainMethod(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrintFundamentalSetOfCycles(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void KruskalAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void PrimAlgoriyhm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void DijkstraAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void FloydAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void BellmanFordAlgorithm(Graphics g, Pen highlightPen)
-        {
-            throw new NotImplementedException();
         }
         #endregion
 

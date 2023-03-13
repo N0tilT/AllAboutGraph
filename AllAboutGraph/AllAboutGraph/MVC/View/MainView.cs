@@ -334,6 +334,7 @@ namespace AllAboutGraph
             Canvas.Invalidate();
         }
 
+
         private void comboBoxAlgorithms_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selectedAlgorithm = comboBoxAlgorithms.Text;
@@ -349,7 +350,7 @@ namespace AllAboutGraph
                     Controller.DepthFirstSearch(0,g,HighlightPen);
                     break;
                 case "10.3 Print all paths":
-                    Controller.PrintAllPaths(HighlightPen);
+                    Controller.PrintAllPaths(0,1,g,HighlightPen);
                     break;
                 case "10.4 All paths weights":
                     Controller.PrintAllPathsWithWeights(HighlightPen);
