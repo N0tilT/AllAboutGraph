@@ -274,7 +274,7 @@
 
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.Panel panelCanvas;
-        private System.Windows.Forms.PictureBox Canvas;
+        public System.Windows.Forms.PictureBox Canvas;
         private System.Windows.Forms.Panel panelTools;
         private System.Windows.Forms.Button AddVertexButton;
         private System.Windows.Forms.Button ConnectVerticesButton;
