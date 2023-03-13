@@ -80,6 +80,8 @@ namespace AllAboutGraph.MVC.Controller
         {
             get { return new AdjacencyMatrix(_testAdjMatrix); }
         }
+
+        public object Fleury { get; internal set; }
         #endregion
 
         #region Initialization
@@ -254,7 +256,7 @@ namespace AllAboutGraph.MVC.Controller
 
         #region GraphAlgorithms
 
-        public async void BFS(int startIndex, Graphics g, Pen pen)
+        public async void BreadthFirstSearch(int startIndex, Graphics g, Pen highlightingPen)
         {
             List<int> visitedVertices = new List<int>
             {
@@ -271,7 +273,7 @@ namespace AllAboutGraph.MVC.Controller
                 {
                     if (!visitedVertices.Contains(neighbour))
                     {
-                        HighlightEdge(g, pen, curVertex, neighbour);
+                        HighlightEdge(g, highlightingPen, curVertex, neighbour);
 
                         visitedVertices.Add(neighbour);
                         verticesQueue.Enqueue(neighbour);
@@ -280,8 +282,29 @@ namespace AllAboutGraph.MVC.Controller
                     }
                 }
             }
+        }
+
+        public void DepthFirstSearch(int startIndex, Graphics g, Pen pen)
+        {
+            List<int> visitedVertices = new List<int>();
+            visitedVertices.Add(startIndex);
+            DFS(startIndex, visitedVertices, g, pen);
+        }
+        private async void DFS(int startIndex, List<int> visitedVertices, Graphics g, Pen pen)
+        {
+            foreach (int neighbour in Graph.AdjacencyList[startIndex])
+            {
+                if (!visitedVertices.Contains(neighbour))
+                {
+                    HighlightEdge(g, pen, startIndex, neighbour);
 
 
+                    visitedVertices.Add(neighbour);
+                    DFS(neighbour, visitedVertices,g ,pen);
+
+                    await MakePause();
+                }
+            }
         }
 
         private static async Task MakePause()
@@ -318,6 +341,91 @@ namespace AllAboutGraph.MVC.Controller
             }
 
             return convertedMatrix;
+        }
+
+        internal void PrintAllPaths(Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrintAllPathsWithWeights(Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrintPrecedenceSubgraph(Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrintBracketStructure()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void BFSWithTime(int v, Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrintStronglyConnectedComponents(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void FindEulerCycle(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void FleuryAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void FindHamiltonianCycle(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void RobertsFloresAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void MultichainMethod(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrintFundamentalSetOfCycles(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void KruskalAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void PrimAlgoriyhm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void DijkstraAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void FloydAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void BellmanFordAlgorithm(Graphics g, Pen highlightPen)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

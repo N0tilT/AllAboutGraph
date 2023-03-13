@@ -6,10 +6,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace AllAboutGraph
 {
@@ -27,6 +30,31 @@ namespace AllAboutGraph
             matrixMethod,
             listMethod,
             "Default"
+        };
+
+        string[] graphAlgorithms = new string[]
+        {
+            "10.1 Breadth-first search",
+            "10.2 Depth-first search",
+            "10.3 Print all paths",
+            "10.4 All paths weights",
+            "10.5 Precedence subgraph",
+            "10.6 Bracket structure",
+            "10.7 Vertex visit time",
+            "11. Strongly connected components",
+            "12.1. Find Euler cycle",
+            "12.2. Fleury`s algorithm",
+            "12.3. Find Hamiltonian cycle",
+            "12.4. Algebraic method for Hamiltonian cycle",
+            "12.5. Roberts and Flores algorithm",
+            "12.6. Improved Roberts and Flores algorithm",
+            "12.7. Multichain method",
+            "12.8. Fundamental set of cycles",
+            "1.1. Kruskal`s algorithm",
+            "1.2. Prim`s algorithm",
+            "2. Dijkstra`s algorithm",
+            "3. Floyd`s algorithm",
+            "4. Bellman-Ford`s algorithm"
         };
 
         private Controller _controller;
@@ -132,8 +160,10 @@ namespace AllAboutGraph
 
             SetDefaultPaintingProperties();
             InitializeCreationMethodsComboBox(creationMethods);
+            InitializeGraphAlgorithmsComboBox(graphAlgorithms);
             InitializeCanvas();
         }
+
 
         private void SetDefaultPaintingProperties()
         {
@@ -188,6 +218,15 @@ namespace AllAboutGraph
             foreach (string method in creationMethods)
             {
                 comboBoxCreationMethodSelector.Items.Add(method);
+            }
+        }
+
+        private void InitializeGraphAlgorithmsComboBox(string[] graphAlgorithms)
+        {
+            comboBoxAlgorithms.Items.Clear();
+            foreach(string algorithm in graphAlgorithms)
+            {
+                comboBoxAlgorithms.Items.Add(algorithm);
             }
         }
 
@@ -287,12 +326,84 @@ namespace AllAboutGraph
         {
             Canvas.Image = WhitePlaneBitmap;
             Canvas.Invalidate();
-            Controller.BFS(0,GetSmoothGraphicsFromCanvas(),HighlightPen);
+            Controller.BreadthFirstSearch(0,GetSmoothGraphicsFromCanvas(),HighlightPen);
         }
 
         public void ViewUpdate()
         {
             Canvas.Invalidate();
+        }
+
+        private void comboBoxAlgorithms_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedAlgorithm = comboBoxAlgorithms.Text;
+
+            Graphics g = GetSmoothGraphicsFromCanvas();
+
+            switch (selectedAlgorithm)
+            {
+                case "10.1 Breadth-first search":
+                    Controller.BreadthFirstSearch(0,g,HighlightPen);
+                    break;
+                case "10.2 Depth-first search":
+                    Controller.DepthFirstSearch(0,g,HighlightPen);
+                    break;
+                case "10.3 Print all paths":
+                    Controller.PrintAllPaths(HighlightPen);
+                    break;
+                case "10.4 All paths weights":
+                    Controller.PrintAllPathsWithWeights(HighlightPen);
+                    break;
+                case "10.5 Precedence subgraph":
+                    Controller.PrintPrecedenceSubgraph(HighlightPen);
+                    break;
+                case "10.6 Bracket structure":
+                    Controller.PrintBracketStructure();
+                    break;
+                case "10.7 Vertex visit time":
+                    Controller.BFSWithTime(0, g, HighlightPen);
+                    break;
+                case "11. Strongly connected components":
+                    Controller.PrintStronglyConnectedComponents(g, HighlightPen);
+                    break;
+                case "12.1. Find Euler cycle":
+                    Controller.FindEulerCycle(g,HighlightPen);
+                    break;
+                case "12.2. Fleury`s algorithm":
+                    Controller.FleuryAlgorithm(g, HighlightPen);
+                    break;
+                case "12.3. Find Hamiltonian cycle":
+                    Controller.FindHamiltonianCycle(g, HighlightPen);
+                    break;
+                case "12.4. Algebraic method for Hamiltonian cycle":
+                    break;
+                case "12.5. Roberts and Flores algorithm":
+                    Controller.RobertsFloresAlgorithm(g, HighlightPen);
+                    break;
+                case "12.6. Improved Roberts and Flores algorithm":
+                    break;
+                case "12.7. Multichain method":
+                    Controller.MultichainMethod(g, HighlightPen);
+                    break;
+                case "12.8. Fundamental set of cycles":
+                    Controller.PrintFundamentalSetOfCycles(g, HighlightPen);
+                    break;
+                case "1.1. Kruskal`s algorithm":
+                    Controller.KruskalAlgorithm(g,HighlightPen);
+                    break;
+                case "1.2. Prim`s algorithm":
+                    Controller.PrimAlgoriyhm(g, HighlightPen);
+                    break;
+                case "2. Dijkstra`s algorithm":
+                    Controller.DijkstraAlgorithm(g,HighlightPen);
+                    break;
+                case "3. Floyd`s algorithm":
+                    Controller.FloydAlgorithm(g, HighlightPen);
+                    break;
+                case "4. Bellman-Ford`s algorithm":
+                    Controller.BellmanFordAlgorithm(g, HighlightPen);
+                    break;
+            }
         }
     }
 }
