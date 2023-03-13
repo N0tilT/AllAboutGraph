@@ -285,6 +285,8 @@ namespace AllAboutGraph
 
         private void buttonStartAlgorithm_Click(object sender, EventArgs e)
         {
+            Canvas.Image = WhitePlaneBitmap;
+            Canvas.Invalidate();
             Controller.BFS(0,GetSmoothGraphicsFromCanvas(),HighlightPen);
         }
 
