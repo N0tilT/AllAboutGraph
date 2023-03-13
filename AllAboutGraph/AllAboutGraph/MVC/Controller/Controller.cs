@@ -290,7 +290,7 @@ namespace AllAboutGraph.MVC.Controller
             visitedVertices.Add(startIndex);
             DFS(startIndex, visitedVertices, g, pen);
         }
-        private async void DFS(int startIndex, List<int> visitedVertices, Graphics g, Pen pen)
+        private async Task DFS(int startIndex, List<int> visitedVertices, Graphics g, Pen pen)
         {
             foreach (int neighbour in Graph.AdjacencyList[startIndex])
             {
@@ -298,11 +298,11 @@ namespace AllAboutGraph.MVC.Controller
                 {
                     HighlightEdge(g, pen, startIndex, neighbour);
 
-
                     visitedVertices.Add(neighbour);
-                    DFS(neighbour, visitedVertices,g ,pen);
 
                     await MakePause();
+                    await DFS(neighbour, visitedVertices,g ,pen);
+
                 }
             }
         }
@@ -361,24 +361,44 @@ namespace AllAboutGraph.MVC.Controller
             return length;
         }
 
-        public void PrintAllPathsWithWeights(Pen highlightPen)
-        {
-            throw new NotImplementedException();
-        }
-
+        //later
         public void PrintPrecedenceSubgraph(Pen highlightPen)
         {
             throw new NotImplementedException();
         }
 
+        //later
         public void PrintBracketStructure()
         {
             throw new NotImplementedException();
         }
 
-        public void BFSWithTime(int v, Graphics g, Pen highlightPen)
+        public async void BFSWithTimeAsync(int startIndex, Graphics g, Pen highlightPen)
         {
-            throw new NotImplementedException();
+            List<int> visitedVertices = new List<int>
+            {
+                startIndex
+            };
+
+            Queue<int> verticesQueue = new Queue<int>();
+            verticesQueue.Enqueue(startIndex);
+
+            while (verticesQueue.Count != 0)
+            {
+                int curVertex = verticesQueue.Dequeue();
+                foreach (int neighbour in Graph.AdjacencyList[curVertex])
+                {
+                    if (!visitedVertices.Contains(neighbour))
+                    {
+                        HighlightEdge(g, highlightPen, curVertex, neighbour);
+
+                        visitedVertices.Add(neighbour);
+                        verticesQueue.Enqueue(neighbour);
+
+                        await MakePause();
+                    }
+                }
+            }
         }
 
         public void PrintStronglyConnectedComponents(Graphics g, Pen highlightPen)

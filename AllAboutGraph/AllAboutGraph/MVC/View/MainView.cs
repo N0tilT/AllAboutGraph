@@ -158,6 +158,7 @@ namespace AllAboutGraph
         {
             InitializeComponent();
 
+
             SetDefaultPaintingProperties();
             InitializeCreationMethodsComboBox(creationMethods);
             InitializeGraphAlgorithmsComboBox(graphAlgorithms);
@@ -353,7 +354,6 @@ namespace AllAboutGraph
                     Controller.PrintAllPaths(0,1,g,HighlightPen);
                     break;
                 case "10.4 All paths weights":
-                    Controller.PrintAllPathsWithWeights(HighlightPen);
                     break;
                 case "10.5 Precedence subgraph":
                     Controller.PrintPrecedenceSubgraph(HighlightPen);
@@ -362,7 +362,7 @@ namespace AllAboutGraph
                     Controller.PrintBracketStructure();
                     break;
                 case "10.7 Vertex visit time":
-                    Controller.BFSWithTime(0, g, HighlightPen);
+                    Controller.BFSWithTimeAsync(0, g, HighlightPen);
                     break;
                 case "11. Strongly connected components":
                     Controller.PrintStronglyConnectedComponents(g, HighlightPen);
