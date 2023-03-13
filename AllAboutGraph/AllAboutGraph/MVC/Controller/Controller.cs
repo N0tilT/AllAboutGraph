@@ -31,6 +31,7 @@ namespace AllAboutGraph.MVC.Controller
 
         #region ModelFields
         private MyGraph _graph;
+        private int _numberOfVertices;
         private bool dataGotSuccessfully; 
         string[] creationMethods = new string[]
         {
@@ -57,7 +58,8 @@ namespace AllAboutGraph.MVC.Controller
 
         public int NumberOfVertices
         {
-            get { return Graph.GraphVertices.Count; }
+            get { return _numberOfVertices; }
+            set { _numberOfVertices = value; }
         }
 
         public AdjacencyMatrix TestAdjMatrix
@@ -267,13 +269,7 @@ namespace AllAboutGraph.MVC.Controller
                 {
                     if (!visitedVertices.Contains(neighbour))
                     {
-                        GraphEdge curEdge = new GraphEdge();
-                        curEdge.VertexOut = Graph.GraphVertices[curVertex];
-                        curEdge.VertexIn = Graph.GraphVertices[neighbour];
-
-                        curEdge.DrawEdge(g, pen);
-
-                        View.ViewUpdate();
+                        HighlightEdge(g, pen, curVertex, neighbour);
 
                         visitedVertices.Add(neighbour);
                         verticesQueue.Enqueue(neighbour);
@@ -282,6 +278,32 @@ namespace AllAboutGraph.MVC.Controller
             }
 
 
+        }
+
+        private void HighlightEdge(Graphics g, Pen pen, int vertexOut, int VertexIn)
+        {
+            GraphEdge curEdge = new GraphEdge();
+            curEdge.VertexOut = Graph.GraphVertices[vertexOut];
+            curEdge.VertexIn = Graph.GraphVertices[VertexIn];
+            curEdge.DrawEdge(g, pen);
+
+            View.ViewUpdate();
+        }
+
+        public void SetNumberOfVertices(string userInput)
+        {
+            try
+            {
+                int tmp = int.Parse(userInput);
+                if (tmp < 0)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Неверное число вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion

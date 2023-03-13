@@ -57,12 +57,15 @@ namespace AllAboutGraph
         #endregion
 
         #region Properties
+        #region Controller
         public Controller Controller
         {
             get { return _controller; }
             set { _controller = value; }
         }
+        #endregion
 
+        #region Painting
         /// <summary>
         /// Белый холст
         /// </summary>
@@ -114,7 +117,7 @@ namespace AllAboutGraph
             get { return _selectedStringFormat; }
             set { _selectedStringFormat = value; } 
         }
-
+        #endregion
         #endregion
 
         #region Initialization
@@ -126,7 +129,6 @@ namespace AllAboutGraph
         public MainView()
         {
             InitializeComponent();
-
 
             SetDefaultPaintingProperties();
             InitializeCreationMethodsComboBox(creationMethods);
@@ -202,7 +204,7 @@ namespace AllAboutGraph
         private void Canvas_Resize(object sender, EventArgs e)
         {
         }
-
+        #region MouseEvents
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
             Point cursorPosition = GetCurrentCursorPosition();
@@ -230,7 +232,6 @@ namespace AllAboutGraph
             Canvas.Invalidate();
             PreviousPoint = cursorPosition;
         }
-
         private Point GetCurrentCursorPosition()
         {
             //Позиция курсора корректируется для корректного отображения изображения.
@@ -241,6 +242,9 @@ namespace AllAboutGraph
 
             return new Point(x, y);
         }
+
+        #endregion
+
         public Graphics GetSmoothGraphicsFromCanvas()
         {
             Graphics g = Graphics.FromImage(Canvas.Image);
@@ -274,19 +278,7 @@ namespace AllAboutGraph
 
         private void textBoxNumberOfVertices_TextChanged(object sender, EventArgs e)
         {
-            try
-            {
-                int tmp = int.Parse(textBoxNumberOfVertices.Text);
-                if (tmp < 0)
-                {
-                    throw new Exception();
-                }
-               
-            }
-            catch
-            {
-                MessageBox.Show("Неверное число вершин","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
-            }
+            Controller.SetNumberOfVertices(textBoxNumberOfVertices.Text);
         }
 
 
