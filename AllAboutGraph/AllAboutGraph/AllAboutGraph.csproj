@@ -52,7 +52,6 @@
     <Compile Include="MVC\Model\AdjacencyMatrix.cs" />
     <Compile Include="MVC\Model\GraphEdge.cs" />
     <Compile Include="MVC\Model\GraphVertex.cs" />
-    <Compile Include="MVC\Model\Model.cs" />
     <Compile Include="MVC\Model\MyGraph.cs" />
     <Compile Include="MVC\View\MainView.cs">
       <SubType>Form</SubType>

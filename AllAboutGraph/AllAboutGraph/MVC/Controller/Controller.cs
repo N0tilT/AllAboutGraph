@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace AllAboutGraph.MVC.Controller
 {
@@ -18,9 +14,18 @@ namespace AllAboutGraph.MVC.Controller
         #endregion
 
         #region Fields
+
         private MainView _view;
 
-        private int[,] _adjMatrix = new int[,] {
+
+        #region ModelFields
+
+        private MyGraph _graph;
+        private int _numberOfVertices;
+
+        private bool dataGotSuccessfully;
+
+        private int[,] _testAdjMatrix = new int[,] {
                 { 0, 1, 1, 1, 1, 0},
                 { 1, 0, 0, 1, 0, 0},
                 { 1, 0, 0, 0, 1, 0},
@@ -29,22 +34,12 @@ namespace AllAboutGraph.MVC.Controller
                 { 0, 0, 0, 0, 0, 0}
             };
 
-        #region ModelFields
-        private MyGraph _graph;
-        private int _numberOfVertices;
-        private bool dataGotSuccessfully; 
-        string[] creationMethods = new string[]
-        {
-            matrixMethod,
-            listMethod,
-            "Default"
-        };
         #endregion
 
         #endregion
-
 
         #region Properties
+
         public MainView View
         {
             get { return _view; }
@@ -64,7 +59,7 @@ namespace AllAboutGraph.MVC.Controller
 
         public AdjacencyMatrix TestAdjMatrix
         {
-            get { return new AdjacencyMatrix(_adjMatrix); }
+            get { return new AdjacencyMatrix(_testAdjMatrix); }
         }
         #endregion
 
@@ -84,7 +79,7 @@ namespace AllAboutGraph.MVC.Controller
 
         #region CreateGraph
 
-        public void CreateGraph(string representation,string creationMethod)
+        public void CreateGraph(string representation, string creationMethod)
         {
             dataGotSuccessfully = true;
 
@@ -110,7 +105,6 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
-
         private AdjacencyMatrix GetAdjacencyMatrixFromUser(string representation)
         {
             int[,] matrix = new int[0, 0];
@@ -135,25 +129,9 @@ namespace AllAboutGraph.MVC.Controller
             return adjacencyMatrix;
         }
 
-        private int[,] GetMatrixRepresentation(string userInput)
-        {
-            List<int[]> listMatrix = new List<int[]>();
-
-            string[] matrixRows = GetRepresentationRows(userInput);
-
-            foreach (string row in matrixRows)
-            {
-                listMatrix.Add(GetIntRowRepresentation(row).ToArray());
-            }
-
-            int[,] arrayMatrix = ConvertListMatrixToArrayMatrix(listMatrix);
-
-            return arrayMatrix;
-        }
-
         private AdjacencyList GetAdjacencyListFromUser(string representation)
         {
-            List<List<int>> list = new List<List<int>>();
+            List<List<int>> list;
 
             try
             {
@@ -170,6 +148,23 @@ namespace AllAboutGraph.MVC.Controller
 
             return adjacencyList;
         }
+
+        private int[,] GetMatrixRepresentation(string userInput)
+        {
+            List<int[]> listMatrix = new List<int[]>();
+
+            string[] matrixRows = GetRepresentationRows(userInput);
+
+            foreach (string row in matrixRows)
+            {
+                listMatrix.Add(GetIntRowRepresentation(row).ToArray());
+            }
+
+            int[,] arrayMatrix = ConvertListMatrixToArrayMatrix(listMatrix);
+
+            return arrayMatrix;
+        }
+
 
         private List<List<int>> GetListRepresentation(string userInput)
         {
@@ -190,6 +185,7 @@ namespace AllAboutGraph.MVC.Controller
 
             return list;
         }
+        #region RepresentationConvert
         private string[] GetRepresentationRows(string userInput)
         {
             string[] tmp = new string[0];
@@ -233,26 +229,14 @@ namespace AllAboutGraph.MVC.Controller
             }
             return intRow;
         }
-        private int[,] ConvertListMatrixToArrayMatrix(List<int[]> listMatrix)
-        {
-            int[,] convertedMatrix = new int[listMatrix.Count, listMatrix[0].Length];
+        #endregion
 
-            for (int i = 0; i < convertedMatrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < convertedMatrix.GetLength(1); j++)
-                {
-                    convertedMatrix[i, j] = listMatrix[i][j];
-                }
-            }
-
-            return convertedMatrix;
-        }
         #endregion
         #endregion
 
         #region GraphAlgorithms
 
-        public void BFS(int startIndex,Graphics g,Pen pen)
+        public void BFS(int startIndex, Graphics g, Pen pen)
         {
             List<int> visitedVertices = new List<int>
             {
@@ -299,12 +283,31 @@ namespace AllAboutGraph.MVC.Controller
                 {
                     throw new Exception();
                 }
+                NumberOfVertices = tmp;
             }
             catch
             {
                 MessageBox.Show("Неверное число вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+        #region AdditionalMethods
+        private int[,] ConvertListMatrixToArrayMatrix(List<int[]> listMatrix)
+        {
+            int[,] convertedMatrix = new int[listMatrix.Count, listMatrix[0].Length];
+
+            for (int i = 0; i < convertedMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < convertedMatrix.GetLength(1); j++)
+                {
+                    convertedMatrix[i, j] = listMatrix[i][j];
+                }
+            }
+
+            return convertedMatrix;
+        }
+        #endregion
 
         #endregion
     }
