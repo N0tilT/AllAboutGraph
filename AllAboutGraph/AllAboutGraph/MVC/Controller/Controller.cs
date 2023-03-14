@@ -373,15 +373,18 @@ namespace AllAboutGraph.MVC.Controller
             throw new NotImplementedException();
         }
 
-        public async void BFSWithTimeAsync(int startIndex, Graphics g, Pen highlightPen)
+        public async void BFSWithTime(int startIndex, Graphics g, Pen highlightPen,Font font, Brush brush, StringFormat format)
         {
             List<int> visitedVertices = new List<int>
             {
                 startIndex
             };
 
+            int time = 0;
+
             Queue<int> verticesQueue = new Queue<int>();
             verticesQueue.Enqueue(startIndex);
+            PrintVisitTime(startIndex,time,g, font, brush,format);
 
             while (verticesQueue.Count != 0)
             {
@@ -395,10 +398,21 @@ namespace AllAboutGraph.MVC.Controller
                         visitedVertices.Add(neighbour);
                         verticesQueue.Enqueue(neighbour);
 
+                        PrintVisitTime(neighbour, ++time, g, font, brush, format);
+
                         await MakePause();
                     }
                 }
             }
+        }
+
+        private void PrintVisitTime(int startIndex, int time, Graphics g,Font font,Brush brush, StringFormat format)
+        {
+            GraphVertex curVertex = Graph.GraphVertices[startIndex];
+            PointF vertexCenter = curVertex.Center;
+            PointF timePosition = new PointF(vertexCenter.X,vertexCenter.Y-curVertex.Size.Height-5);
+
+            g.DrawString(Convert.ToString(time), font, new SolidBrush(Color.Black),timePosition ,format);
         }
 
         public void PrintStronglyConnectedComponents(Graphics g, Pen highlightPen)

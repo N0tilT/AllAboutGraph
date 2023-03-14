@@ -362,7 +362,7 @@ namespace AllAboutGraph
                     Controller.PrintBracketStructure();
                     break;
                 case "10.7 Vertex visit time":
-                    Controller.BFSWithTimeAsync(0, g, HighlightPen);
+                    Controller.BFSWithTime(0, g, HighlightPen,SelectedFont,SelectedFontBrush,SelectedStringFormat);
                     break;
                 case "11. Strongly connected components":
                     Controller.PrintStronglyConnectedComponents(g, HighlightPen);
