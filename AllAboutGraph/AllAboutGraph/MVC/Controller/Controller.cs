@@ -422,7 +422,91 @@ namespace AllAboutGraph.MVC.Controller
 
         public void FindEulerCycle(Graphics g, Pen highlightPen)
         {
-            throw new NotImplementedException();
+            int result = IsEulerian(Graph);
+            if (result == 0)
+                MessageBox.Show("Graph is not Eulerian");
+            else if (result == 1)
+                MessageBox.Show("Graph has a Euler path");
+            else
+                MessageBox.Show("Graph has a Euler cycle");
+
+        }
+
+        private int IsEulerian(MyGraph graph)
+        {
+            if (!CheckZeroVerticesConnection(graph))
+            {
+                return 0;
+            }
+
+            int oddVertices = CountOddVertices(graph);
+
+            if (oddVertices > 2)
+            {
+                return 0;
+            }
+
+            return (oddVertices == 2) ? 1 : 2;
+
+        }
+
+
+        private bool CheckZeroVerticesConnection(MyGraph graph)
+        {
+            int numberOfVertices = Graph.GraphVertices.Count;
+
+            bool[] visited = new bool[numberOfVertices];
+
+            for (int i = 0; i < numberOfVertices; i++)
+                visited[i] = false;
+
+            int nonZeroIndex = 0;
+            //Find non-zero degree vertex
+            for (int i = 0; i < numberOfVertices; i++)
+                if (Graph.AdjacencyList[i].Count != 0)
+                {
+                    nonZeroIndex = i;
+                    break;
+                }
+
+            //No other edges
+            if (nonZeroIndex == numberOfVertices)
+                return true;
+
+            // Start DFS traversal from a vertex with non-zero degree
+            DFSUtil(nonZeroIndex, visited);
+
+            //Check if all non-zero is visited
+            for (int i = 0; i < numberOfVertices; i++)
+                if (visited[i] == false && Graph.AdjacencyList[i].Count > 0)
+                    return false;
+
+            return true;
+        }
+
+        private void DFSUtil(int startVertex, bool[] visited)
+        {
+            visited[startVertex] = true;
+
+            foreach (int i in Graph.AdjacencyList[startVertex])
+            {
+                int n = i;
+                if (!visited[n])
+                    DFSUtil(n, visited);
+            }
+        }
+
+        private int CountOddVertices(MyGraph graph)
+        {
+            int count = 0;
+            for (int i = 0; i < Graph.GraphVertices.Count; i++)
+            {
+                if (Graph.AdjacencyList[i].Count % 2 != 0)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         public void FleuryAlgorithm(Graphics g, Pen highlightPen)
