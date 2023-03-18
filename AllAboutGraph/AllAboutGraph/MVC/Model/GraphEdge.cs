@@ -11,7 +11,7 @@ namespace AllAboutGraph.MVC.Model
 {
     public class GraphEdge
     {
-        const float arrowSize = 20;
+        const float arrowSize = 15;
 
         #region Fields
         private GraphVertex _vertexOut;
@@ -86,24 +86,25 @@ namespace AllAboutGraph.MVC.Model
             PointF vertexBorderPoint = new PointF(vertexBorderPointX, vertexBorderPointY);
 
             float leftX = (float)(
-                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 2 * Math.Cos(angle + 1.57));
+                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle + Math.PI/2));
 
             float leftY = (float)(
-                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 2 * Math.Sin(angle + 1.57));
+                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle + Math.PI / 2));
 
 
             PointF leftSidePoint = new PointF(leftX,leftY);
 
             float rightX = (float)(
-                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 2 * Math.Cos(angle - 1.57));
+                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle - Math.PI / 2));
             float rightY = (float)(
-                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 2 * Math.Sin(angle - 1.57));
+                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle - Math.PI / 2));
 
             PointF rightSidePoint = new PointF(rightX, rightY);
 
             PointF[] trianglePoints = new PointF[] { vertexBorderPoint, leftSidePoint, rightSidePoint };
 
             graphics.DrawPolygon(pen,trianglePoints);
+            graphics.FillPolygon(pen.Brush, trianglePoints);
         }
 
         private double GetAngle(PointF vertexInPos, PointF vertexOutPos)
@@ -113,7 +114,14 @@ namespace AllAboutGraph.MVC.Model
 
             if(x == 0)
             {
-                return GetAngleDegree((float)1.57,vertexOutPos);
+                if(vertexOutPos.Y > vertexInPos.Y)
+                {
+                    return GetAngleDegree((-1) * (float)Math.PI / 2, vertexOutPos);
+                }
+                else
+                {
+                    return GetAngleDegree((float)Math.PI / 2, vertexOutPos);
+                }
             }
 
             double angle = GetAngleDegree((float)Math.Atan((double)y / x), VertexOut.Center);
