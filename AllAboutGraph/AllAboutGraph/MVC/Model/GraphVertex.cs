@@ -16,7 +16,8 @@ namespace AllAboutGraph.MVC.Model
         private List<GraphEdge> _outEdges;
 
         private PointF _location;
-        private SizeF _size = new SizeF(50,50);
+        private float _radius;
+        private SizeF _size;
         #endregion
 
         #region Properties
@@ -67,6 +68,13 @@ namespace AllAboutGraph.MVC.Model
                 return new PointF(x,y); 
             } 
         }
+
+        public float Radius
+        {
+            get { return _radius; }
+            set { _radius = value; }
+        }
+
         #endregion
 
         #region Constructor
@@ -74,6 +82,8 @@ namespace AllAboutGraph.MVC.Model
         {
             _inEdges= new List<GraphEdge>();
             _outEdges = new List<GraphEdge>();
+            Radius = 25;
+            Size = new SizeF(Radius*2, Radius * 2);
         }
 
         public GraphVertex(string name)
@@ -81,13 +91,18 @@ namespace AllAboutGraph.MVC.Model
             Name = name;
             _inEdges = new List<GraphEdge>();
             _outEdges = new List<GraphEdge>();
+            Radius = 25;
+            Size = new SizeF(Radius * 2, Radius * 2);
         }
 
-        public GraphVertex(string name, List<GraphEdge> inEdges, List<GraphEdge> outEdges)
+        public GraphVertex(string name, List<GraphEdge> inEdges, List<GraphEdge> outEdges, float radius)
         {
             Name = name;
             _inEdges = inEdges;
             _outEdges = outEdges;
+            Radius = radius;
+            Size = new SizeF(Radius * 2, Radius * 2);
+
         }
         #endregion
 
