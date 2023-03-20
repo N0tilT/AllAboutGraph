@@ -78,43 +78,22 @@ namespace AllAboutGraph.MVC.Model
         {
             graphics.DrawLine(pen, VertexIn.Center, VertexOut.Center);
 
-            double angle = GetAngle(VertexIn.Center, VertexOut.Center);
+            if (Directed)
+            {
+                double angle = GetAngle(VertexIn.Center, VertexOut.Center);
 
-            float vertexBorderPointX = VertexIn.Radius * (float)Math.Cos(angle) + VertexIn.Center.X;
-            float vertexBorderPointY = VertexIn.Radius * (float)Math.Sin(angle) + VertexIn.Center.Y;
+                DrawArrowTop(graphics, pen, angle);
+            }
 
-            PointF vertexBorderPoint = new PointF(vertexBorderPointX, vertexBorderPointY);
-
-            float leftX = (float)(
-                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle + Math.PI/2));
-
-            float leftY = (float)(
-                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle + Math.PI / 2));
-
-
-            PointF leftSidePoint = new PointF(leftX,leftY);
-
-            float rightX = (float)(
-                vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle - Math.PI / 2));
-            float rightY = (float)(
-                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle - Math.PI / 2));
-
-            PointF rightSidePoint = new PointF(rightX, rightY);
-
-            PointF[] trianglePoints = new PointF[] { vertexBorderPoint, leftSidePoint, rightSidePoint };
-
-            graphics.DrawPolygon(pen,trianglePoints);
-            graphics.FillPolygon(pen.Brush, trianglePoints);
         }
-
         private double GetAngle(PointF vertexInPos, PointF vertexOutPos)
         {
             float y = vertexOutPos.Y - vertexInPos.Y;
             float x = vertexOutPos.X - vertexInPos.X;
 
-            if(x == 0)
+            if (x == 0)
             {
-                if(vertexOutPos.Y > vertexInPos.Y)
+                if (vertexOutPos.Y > vertexInPos.Y)
                 {
                     return GetAngleDegree((-1) * (float)Math.PI / 2, vertexOutPos);
                 }
@@ -144,6 +123,53 @@ namespace AllAboutGraph.MVC.Model
 
             return angle;
         }
+
+        private void DrawArrowTop(Graphics graphics, Pen pen, double angle)
+        {
+            PointF vertexBorderPoint = GetVertexBorderArrowPoint(angle);
+            PointF leftSidePoint = GetLeftSideArrowPoint(angle, ref vertexBorderPoint);
+            PointF rightSidePoint = GetRightSideArrowPoint(angle, ref vertexBorderPoint);
+
+            PointF[] trianglePoints = new PointF[] { vertexBorderPoint, leftSidePoint, rightSidePoint };
+
+            graphics.DrawPolygon(pen, trianglePoints);
+            graphics.FillPolygon(pen.Brush, trianglePoints);
+        }
+
+        private PointF GetRightSideArrowPoint(double angle, ref PointF vertexBorderPoint)
+        {
+            float rightX = (float)(
+                            vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle - Math.PI / 2));
+            float rightY = (float)(
+                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle - Math.PI / 2));
+
+            PointF rightSidePoint = new PointF(rightX, rightY);
+            return rightSidePoint;
+        }
+
+        private PointF GetLeftSideArrowPoint(double angle, ref PointF vertexBorderPoint)
+        {
+            float leftX = (float)(
+                            vertexBorderPoint.X + arrowSize * Math.Cos(angle) + arrowSize / 3 * Math.Cos(angle + Math.PI / 2));
+
+            float leftY = (float)(
+                vertexBorderPoint.Y + arrowSize * Math.Sin(angle) + arrowSize / 3 * Math.Sin(angle + Math.PI / 2));
+
+
+            PointF leftSidePoint = new PointF(leftX, leftY);
+            return leftSidePoint;
+        }
+
+        private PointF GetVertexBorderArrowPoint(double angle)
+        {
+            float vertexBorderPointX = VertexIn.Radius * (float)Math.Cos(angle) + VertexIn.Center.X;
+            float vertexBorderPointY = VertexIn.Radius * (float)Math.Sin(angle) + VertexIn.Center.Y;
+
+            PointF vertexBorderPoint = new PointF(vertexBorderPointX, vertexBorderPointY);
+            return vertexBorderPoint;
+        }
+
+        
 
 
         #endregion
