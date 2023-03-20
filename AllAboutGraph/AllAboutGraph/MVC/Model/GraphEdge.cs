@@ -78,12 +78,14 @@ namespace AllAboutGraph.MVC.Model
         {
             graphics.DrawLine(pen, VertexIn.Center, VertexOut.Center);
 
+            double angle = GetAngle(VertexIn.Center, VertexOut.Center);
+
             if (Directed)
             {
-                double angle = GetAngle(VertexIn.Center, VertexOut.Center);
-
                 DrawArrowTop(graphics, pen, angle);
             }
+
+            DrawWeight(graphics, pen, (float)angle);
 
         }
         private double GetAngle(PointF vertexInPos, PointF vertexOutPos)
@@ -169,8 +171,40 @@ namespace AllAboutGraph.MVC.Model
             return vertexBorderPoint;
         }
 
-        
 
+        private void DrawWeight(Graphics graphics, Pen pen, float angle)
+        {
+            Font font = new Font("Segoe UI", 14);
+            StringFormat stringFormat= new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+            PointF edgeMiddlePoint = GetEdgeMiddle();
+            PointF textDrawPoint = GetTextDrawPoint(edgeMiddlePoint,angle);
+
+
+            graphics.DrawString(Convert.ToString(Weight),font,pen.Brush, textDrawPoint.X, textDrawPoint.Y,stringFormat);
+        }
+
+
+        private PointF GetEdgeMiddle()
+        {
+            float x = (VertexIn.Center.X + VertexOut.Center.X) /2;
+            float y = (VertexIn.Center.Y + VertexOut.Center.Y) / 2;
+
+            PointF mid = new PointF(x,y);
+
+            return mid;
+        }
+
+        private PointF GetTextDrawPoint(PointF edgeMiddlePoint,float angle)
+        {
+            float x = edgeMiddlePoint.X + 15* (float)Math.Cos(angle+Math.PI/2);
+            float y = edgeMiddlePoint.Y + 15 * (float)Math.Sin(angle + Math.PI / 2);
+
+            PointF drawPoint = new PointF(x,y);
+            return drawPoint;
+        }
 
         #endregion
     }

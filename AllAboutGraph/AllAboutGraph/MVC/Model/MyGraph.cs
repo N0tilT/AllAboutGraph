@@ -83,21 +83,30 @@ namespace AllAboutGraph.MVC.Model
             {
                 for (int j = 0; j < adjMatrix.Rank; j++)
                 {
-                    if (adjMatrix.Matrix[i, j] != 0 && adjMatrix.Matrix[j,i] !=0)
+                    if (i < j)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], false));
-                        edgeIndex++;
+                        if (adjMatrix.Matrix[i, j] != 0 && adjMatrix.Matrix[j, i] != 0)
+                        {
+                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], false));
+                            edgeIndex++;
 
-                        LinkVertices(i, j, edgeIndex);
+                            LinkVertices(i, j, edgeIndex);
+                        }
+                        else if (adjMatrix.Matrix[i, j] != 0)
+                        {
+                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], true));
+                            edgeIndex++;
+
+                            LinkVertices(i, j, edgeIndex);
+                        }
+                        else if(adjMatrix.Matrix[j, i] != 0)
+                        {
+                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[j, i], true));
+                            edgeIndex++;
+
+                            LinkVertices(i, j, edgeIndex);
+                        }
                     }
-                    else if (adjMatrix.Matrix[i, j] != 0) 
-                    {
-                        AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], true));
-                        edgeIndex++;
-
-                        LinkVertices(i, j, edgeIndex);
-                    }
-
                 }
             }
         }
