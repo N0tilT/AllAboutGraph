@@ -8,11 +8,20 @@ namespace AllAboutGraph.MVC.Model
 {
     public class AdjacencyList
     {
+        #region Fields
+
         List<List<int>> _list;
+
+        #endregion
+
+        #region Properties
         public List<List<int>> List { get { return _list; } }
 
         public int CountVertices { get { return _list.Count; } }
 
+        #endregion
+
+        #region Constructors
         public AdjacencyList()
         {
             _list = new List<List<int>>();
@@ -27,25 +36,41 @@ namespace AllAboutGraph.MVC.Model
         {
             _list  = new List<List<int>>();
             ResetList();
-            FillAdjacencyListFromAdjacencyMatrix(adjacencyMatrix);
+            FromAdjacencyMatrix(adjacencyMatrix);
         }
 
-        private void FillAdjacencyListFromAdjacencyMatrix(AdjacencyMatrix matrix)
+        public AdjacencyList(IncidenceMatrix incidenceMatrix)
+        {
+            _list = new List<List<int>>();
+            ResetList();
+            FromIncidenceMatrix(incidenceMatrix);
+        }
+
+
+        #endregion
+
+        #region Methods
+        private void ResetList()
+        {
+            _list.Clear();
+        }
+
+        private void FromAdjacencyMatrix(AdjacencyMatrix matrix)
         {
             for (int i = 0; i < matrix.Rank; i++)
             {
                 _list.Add(new List<int>());
                 for (int j = 0; j < matrix.Rank; j++)
                 {
-                    if (matrix.Matrix[i,j] != 0)    
+                    if (matrix.Matrix[i, j] != 0)
                         _list[i].Add(j);
                 }
             }
         }
 
-        private void ResetList()
+        private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
         {
-            _list.Clear();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -57,5 +82,6 @@ namespace AllAboutGraph.MVC.Model
         {
             return _list[vertexIndex];
         }
+        #endregion
     }
 }

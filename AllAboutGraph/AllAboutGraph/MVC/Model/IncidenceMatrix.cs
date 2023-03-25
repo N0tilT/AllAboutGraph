@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
-    internal class IncidenceMatrix
+    public class IncidenceMatrix
     {
         #region Fields
         private int[,] _matrix;
-        private int _numOfVertices;
-        private int _numOfEdges;
         #endregion
 
         #region Properties
@@ -33,15 +31,13 @@ namespace AllAboutGraph.MVC.Model
             get { return _matrix.GetLength(1); }
         }
         #endregion
-
+        #region Constructors
         public IncidenceMatrix()
         {
             _matrix = new int[0, 0];
-            _numOfVertices = 0;
-            _numOfEdges= 0;
         }
 
-        public IncidenceMatrix(int[,] inidenceMatrix, bool isIncident)
+        public IncidenceMatrix(int[,] inidenceMatrix)
         {
             _matrix = inidenceMatrix;
         }
@@ -55,6 +51,8 @@ namespace AllAboutGraph.MVC.Model
         {
             _matrix = FromAdjacencyList(adjList);
         }
+        #endregion
+        #region Methods
 
         private int[,] FromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
@@ -71,7 +69,7 @@ namespace AllAboutGraph.MVC.Model
                         {
                             numOfEdges++;
                         }
-                        if (adjMatrix.Matrix[j,i]>0 && adjMatrix.Matrix[j, i]!= adjMatrix.Matrix[i, j])
+                        if (adjMatrix.Matrix[j, i] > 0 && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
                         {
                             numOfEdges++;
                         }
@@ -87,21 +85,21 @@ namespace AllAboutGraph.MVC.Model
                     if (i < j)
                     {
                         int edgeNumber = adjMatrix.Matrix[i, j];
-                        int altEdgeNumber = adjMatrix.Matrix[j,i];
+                        int altEdgeNumber = adjMatrix.Matrix[j, i];
 
-                        if (edgeNumber > 0 && edgeNumber!=altEdgeNumber)
+                        if (edgeNumber > 0 && edgeNumber != altEdgeNumber)
                         {
                             incedenceMatrix[i, edgeNumber - 1] = -1;
-                            incedenceMatrix[j, edgeNumber -1] = 1;
+                            incedenceMatrix[j, edgeNumber - 1] = 1;
                         }
 
-                        if(altEdgeNumber > 0 && edgeNumber!=altEdgeNumber)
+                        if (altEdgeNumber > 0 && edgeNumber != altEdgeNumber)
                         {
                             incedenceMatrix[i, edgeNumber - 1] = 1;
                             incedenceMatrix[j, edgeNumber - 1] = -1;
                         }
 
-                        if(altEdgeNumber>0 && edgeNumber == altEdgeNumber)
+                        if (altEdgeNumber > 0 && edgeNumber == altEdgeNumber)
                         {
                             incedenceMatrix[i, edgeNumber - 1] = 1;
                             incedenceMatrix[j, edgeNumber - 1] = 1;
@@ -118,7 +116,7 @@ namespace AllAboutGraph.MVC.Model
         {
             throw new NotImplementedException();
         }
-        #region Methods
+
         #endregion
     }
 }

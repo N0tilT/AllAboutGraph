@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
     public class GraphEdge
     {
+        #region Constants
         const float arrowSize = 15;
+        #endregion
 
         #region Fields
         private GraphVertex _vertexOut;
@@ -74,6 +70,7 @@ namespace AllAboutGraph.MVC.Model
 
         #region Methods
 
+        #region DrawMethods
         public void DrawEdge(Graphics graphics, Pen pen)
         {
             graphics.DrawLine(pen, VertexIn.Center, VertexOut.Center);
@@ -82,51 +79,14 @@ namespace AllAboutGraph.MVC.Model
 
             if (Directed)
             {
-                DrawArrowTop(graphics, pen, angle);
+                DrawArrowPointer(graphics, pen, angle);
             }
 
             DrawWeight(graphics, pen, (float)angle);
 
         }
-        private double GetAngle(PointF vertexInPos, PointF vertexOutPos)
-        {
-            float y = vertexOutPos.Y - vertexInPos.Y;
-            float x = vertexOutPos.X - vertexInPos.X;
 
-            if (x == 0)
-            {
-                if (vertexOutPos.Y > vertexInPos.Y)
-                {
-                    return GetAngleDegree((-1) * (float)Math.PI / 2, vertexOutPos);
-                }
-                else
-                {
-                    return GetAngleDegree((float)Math.PI / 2, vertexOutPos);
-                }
-            }
-
-            double angle = GetAngleDegree((float)Math.Atan((double)y / x), VertexOut.Center);
-            return angle;
-        }
-
-        private float GetAngleDegree(float angle, PointF vertexOutPos)
-        {
-            //Центр фигуры ниже и правее
-            if (VertexIn.Center.Y <= vertexOutPos.Y && VertexIn.Center.X >= vertexOutPos.X)
-            {
-                return angle + 1.57f * 2f;
-            }
-
-            //Центр фигуры выше и правее
-            if (VertexIn.Center.Y >= vertexOutPos.Y && VertexIn.Center.X >= vertexOutPos.X)
-            {
-                return angle + 1.57f * 2f;
-            }
-
-            return angle;
-        }
-
-        private void DrawArrowTop(Graphics graphics, Pen pen, double angle)
+        private void DrawArrowPointer(Graphics graphics, Pen pen, double angle)
         {
             PointF vertexBorderPoint = GetVertexBorderArrowPoint(angle);
             PointF leftSidePoint = GetLeftSideArrowPoint(angle, ref vertexBorderPoint);
@@ -138,6 +98,92 @@ namespace AllAboutGraph.MVC.Model
             graphics.FillPolygon(pen.Brush, trianglePoints);
         }
 
+        private void DrawWeight(Graphics graphics, Pen pen, float angle)
+        {
+            Font font = new Font("Segoe UI", 14);
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+            PointF edgeMiddlePoint = GetEdgeMiddle();
+            PointF textDrawPoint = GetTextDrawPoint(edgeMiddlePoint, angle);
+
+
+            graphics.DrawString(Convert.ToString(Weight), font, pen.Brush, textDrawPoint.X, textDrawPoint.Y, stringFormat);
+        }
+
+        #endregion
+        #region AngleCalc
+        /// <summary>
+        /// The angle between the vertex where the edge enters and the vertex from which the edge originates
+        /// </summary>
+        /// <param name="vertexInPos">start vertex point</param>
+        /// <param name="vertexOutPos">end vertex point</param>
+        /// <returns></returns>
+        private double GetAngle(PointF vertexInPos, PointF vertexOutPos)
+        {
+            float oppositeSideLength = vertexOutPos.Y - vertexInPos.Y;
+            float adjacentSideLength = vertexOutPos.X - vertexInPos.X;
+
+            //end vertex is strictly above or below the start vertex
+            if (adjacentSideLength == 0)
+            {
+                if (vertexOutPos.Y > vertexInPos.Y)
+                {
+                    //strictly below => -Pi/2
+                    return GetAngleDegree((-1) * (float)Math.PI / 2, vertexOutPos);
+                }
+                else
+                {
+                    //strictly above => Pi/2
+                    return GetAngleDegree((float)Math.PI / 2, vertexOutPos);
+                }
+            }
+
+            //get degree representation of arctangent of angle between start and end vertices
+            double angle = GetAngleDegree((float)Math.Atan((double)oppositeSideLength / adjacentSideLength), VertexOut.Center);
+            return angle;
+        }
+
+        private float GetAngleDegree(float angle, PointF vertexOutPos)
+        {
+            //end vertex is below and to the right of the start
+            if (VertexIn.Center.Y <= vertexOutPos.Y && VertexIn.Center.X >= vertexOutPos.X)
+            {
+                return angle + 1.57f * 2f;
+            }
+
+            //end vertex is above and to the right of the start
+            if (VertexIn.Center.Y >= vertexOutPos.Y && VertexIn.Center.X >= vertexOutPos.X)
+            {
+                return angle + 1.57f * 2f;
+            }
+
+            return angle;
+        }
+        #endregion
+
+        #region ArrowDrawing
+        /// <summary>
+        /// get the point of arrow, which lays on the border of end vertex
+        /// </summary>
+        /// <param name="angle">angle between start and end vertices</param>
+        /// <returns>Point of the top of the arrow</returns>
+        private PointF GetVertexBorderArrowPoint(double angle)
+        {
+            float vertexBorderPointX = VertexIn.Radius * (float)Math.Cos(angle) + VertexIn.Center.X;
+            float vertexBorderPointY = VertexIn.Radius * (float)Math.Sin(angle) + VertexIn.Center.Y;
+
+            PointF vertexBorderPoint = new PointF(vertexBorderPointX, vertexBorderPointY);
+            return vertexBorderPoint;
+        }
+
+        /// <summary>
+        /// get the right side arrow vertex
+        /// </summary>
+        /// <param name="angle">angle between start and end vertices</param>
+        /// <param name="vertexBorderPoint">point of the top of the arrow</param>
+        /// <returns>Point of the right vertex of arrow</returns>
         private PointF GetRightSideArrowPoint(double angle, ref PointF vertexBorderPoint)
         {
             float rightX = (float)(
@@ -149,6 +195,12 @@ namespace AllAboutGraph.MVC.Model
             return rightSidePoint;
         }
 
+        /// <summary>
+        /// get the left side arrow vertex
+        /// </summary>
+        /// <param name="angle">angle between start and end vertices</param>
+        /// <param name="vertexBorderPoint">point of the top of the arrow</param>
+        /// <returns>Point of the left vertex of arrow</returns>
         private PointF GetLeftSideArrowPoint(double angle, ref PointF vertexBorderPoint)
         {
             float leftX = (float)(
@@ -162,31 +214,13 @@ namespace AllAboutGraph.MVC.Model
             return leftSidePoint;
         }
 
-        private PointF GetVertexBorderArrowPoint(double angle)
-        {
-            float vertexBorderPointX = VertexIn.Radius * (float)Math.Cos(angle) + VertexIn.Center.X;
-            float vertexBorderPointY = VertexIn.Radius * (float)Math.Sin(angle) + VertexIn.Center.Y;
+        #endregion
 
-            PointF vertexBorderPoint = new PointF(vertexBorderPointX, vertexBorderPointY);
-            return vertexBorderPoint;
-        }
-
-
-        private void DrawWeight(Graphics graphics, Pen pen, float angle)
-        {
-            Font font = new Font("Segoe UI", 14);
-            StringFormat stringFormat= new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
-
-            PointF edgeMiddlePoint = GetEdgeMiddle();
-            PointF textDrawPoint = GetTextDrawPoint(edgeMiddlePoint,angle);
-
-
-            graphics.DrawString(Convert.ToString(Weight),font,pen.Brush, textDrawPoint.X, textDrawPoint.Y,stringFormat);
-        }
-
-
+        #region WeightPoints
+        /// <summary>
+        /// get mid point of the edge
+        /// </summary>
+        /// <returns>Point of the middle of the edge</returns>
         private PointF GetEdgeMiddle()
         {
             float x = (VertexIn.Center.X + VertexOut.Center.X) /2;
@@ -197,6 +231,12 @@ namespace AllAboutGraph.MVC.Model
             return mid;
         }
 
+        /// <summary>
+        /// get the point where to draw text on the edge
+        /// </summary>
+        /// <param name="edgeMiddlePoint">mid point of the edge</param>
+        /// <param name="angle">angle between start and end vertices</param>
+        /// <returns>Point of text on the edge</returns>
         private PointF GetTextDrawPoint(PointF edgeMiddlePoint,float angle)
         {
             float x = edgeMiddlePoint.X + 15* (float)Math.Cos(angle+Math.PI/2);
@@ -205,6 +245,7 @@ namespace AllAboutGraph.MVC.Model
             PointF drawPoint = new PointF(x,y);
             return drawPoint;
         }
+        #endregion
 
         #endregion
     }

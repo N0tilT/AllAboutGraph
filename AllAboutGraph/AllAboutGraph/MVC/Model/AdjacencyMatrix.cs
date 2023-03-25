@@ -9,9 +9,19 @@ namespace AllAboutGraph.MVC.Model
 {
     public class AdjacencyMatrix
     {
+        #region Constants
+
         const int INFINITY = 1000000;
+
+        #endregion
+
+        #region Fields
+
         int[,] _matrix;
 
+        #endregion
+
+        #region Properties
         public int[,] Matrix 
         {
             get 
@@ -23,6 +33,9 @@ namespace AllAboutGraph.MVC.Model
             get {return Matrix.GetLength(0); }
         }
 
+        #endregion
+
+        #region Constructors
         public AdjacencyMatrix() 
         {
             _matrix = new int[0, 0]; 
@@ -39,37 +52,26 @@ namespace AllAboutGraph.MVC.Model
             _matrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
             FillMatrixCopying(matrix);
         }
-
-        private void FillMatrixCopying(int[,] matrix)
-        {
-            for (int i = 0; i < this.Rank; i++)
-            {
-                for (int j = 0; j < this.Rank; j++)
-                {
-                    _matrix[i, j] = matrix[i, j];
-                }
-            }
-        }
-
         public AdjacencyMatrix(AdjacencyList adjList)
         {
             _matrix = new int[adjList.CountVertices, adjList.CountVertices];
 
             ResetMatrix();
-            FillAdjacencyMatrixFromAdjacencyList(adjList.List);
+            FromAdjacencyList(adjList.List);
 
         }
 
-        private void FillAdjacencyMatrixFromAdjacencyList(List<List<int>> adjList)
+        public AdjacencyMatrix(IncidenceMatrix incidenceMatrix) 
         {
-            for (int currentVertex = 0; currentVertex < Rank; currentVertex++)
-            {
-                foreach (int linkedVertex in adjList[currentVertex])
-                {
-                    _matrix[currentVertex, linkedVertex] = 1;
-                }
-            }
+            _matrix = new int[incidenceMatrix.CountVertices, incidenceMatrix.CountVertices];
+
+            ResetMatrix();
+            FromIncidenceMatrix(incidenceMatrix);
         }
+        #endregion
+
+        #region Methods
+        
 
         private void ResetMatrix()
         {
@@ -82,6 +84,33 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        private void FillMatrixCopying(int[,] matrix)
+        {
+            for (int i = 0; i < this.Rank; i++)
+            {
+                for (int j = 0; j < this.Rank; j++)
+                {
+                    _matrix[i, j] = matrix[i, j];
+                }
+            }
+        }
+        private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void FromAdjacencyList(List<List<int>> adjList)
+        {
+            for (int currentVertex = 0; currentVertex < Rank; currentVertex++)
+            {
+                foreach (int linkedVertex in adjList[currentVertex])
+                {
+                    _matrix[currentVertex, linkedVertex] = 1;
+                }
+            }
+        }
+
+
         public List<int> GetAdjacentVertices(int vertexIndex)
         {
             List<int> adjacnetRow = new List<int>();
@@ -92,5 +121,6 @@ namespace AllAboutGraph.MVC.Model
             }
             return adjacnetRow;
         }
+        #endregion
     }
 }
