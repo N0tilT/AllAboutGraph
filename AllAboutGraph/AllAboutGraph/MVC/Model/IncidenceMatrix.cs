@@ -52,30 +52,14 @@ namespace AllAboutGraph.MVC.Model
             _matrix = FromAdjacencyList(adjList);
         }
         #endregion
+
         #region Methods
 
         private int[,] FromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
             int numOfVertices = adjMatrix.Matrix.GetLength(0);
             int numOfEdges = 0;
-
-            for (int i = 0; i < numOfVertices; i++)
-            {
-                for (int j = 0; j < numOfVertices; j++)
-                {
-                    if (i < j)
-                    {
-                        if (adjMatrix.Matrix[i, j] > 0)
-                        {
-                            numOfEdges++;
-                        }
-                        if (adjMatrix.Matrix[j, i] > 0 && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
-                        {
-                            numOfEdges++;
-                        }
-                    }
-                }
-            }
+            numOfEdges = CountVerticesFromAdjacentMatrix(adjMatrix, numOfVertices, numOfEdges);
 
             int[,] incedenceMatrix = new int[numOfVertices, numOfEdges];
             for (int i = 0; i < numOfVertices; i++)
@@ -110,6 +94,29 @@ namespace AllAboutGraph.MVC.Model
             }
 
             return incedenceMatrix;
+        }
+
+        private static int CountVerticesFromAdjacentMatrix(AdjacencyMatrix adjMatrix, int numOfVertices, int numOfEdges)
+        {
+            for (int i = 0; i < numOfVertices; i++)
+            {
+                for (int j = 0; j < numOfVertices; j++)
+                {
+                    if (i < j)
+                    {
+                        if (adjMatrix.Matrix[i, j] != adjMatrix.INFINITY)
+                        {
+                            numOfEdges++;
+                        }
+                        if (adjMatrix.Matrix[j, i] != adjMatrix.INFINITY && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
+                        {
+                            numOfEdges++;
+                        }
+                    }
+                }
+            }
+
+            return numOfEdges;
         }
 
         private int[,] FromAdjacencyList(AdjacencyList adjList)
