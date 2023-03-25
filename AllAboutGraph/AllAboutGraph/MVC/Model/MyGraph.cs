@@ -17,6 +17,7 @@ namespace AllAboutGraph.MVC.Model
 
         private int[,] _adjacencyMatrix;
         private List<List<int>> _adjacencyList;
+        private int[,] _incidenceMatrix;
         #endregion
 
         #region Properties
@@ -26,9 +27,11 @@ namespace AllAboutGraph.MVC.Model
 
         public int[,] AdjacencyMatrix { get { return _adjacencyMatrix; } }
         public List<List<int>> AdjacencyList { get { return _adjacencyList; } }
+        public int[,] IncidenceMatrix { get { return _incidenceMatrix; } }
 
         #endregion
 
+        #region Constructors
         public MyGraph() { }
 
         public MyGraph(List<GraphEdge> graphEdges) { _graphEdges = graphEdges; }
@@ -60,23 +63,23 @@ namespace AllAboutGraph.MVC.Model
             CreateGraphFromAdjacencyList(adjList);
         }
 
+        public MyGraph(IncidenceMatrix incidenceMatrix)
+        {
+            _incidenceMatrix = incidenceMatrix.Matrix;
+            CreateGraphFromIncidenceMatrix(incidenceMatrix);
+        }
+
+        #endregion
 
         #region Methods
 
-        
+
         #region GraphCreation
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank, 200, new PointF(250, 250));
 
-            for (int i = 0; i < adjMatrix.Rank; i++)
-            {
-                string vertexname = GetVertexName(i);
-                GraphVertex vertex = new GraphVertex(vertexname);
-                vertex.Size = new SizeF(50, 50);
-                vertex.Location = verticesPoints[i];
-                AddVertex(vertex);
-            }
+            CreateVerticesFromAdjacencyMatrix(adjMatrix, verticesPoints);
 
             int edgeIndex = -1;
             for (int i = 0; i < adjMatrix.Rank; i++)
@@ -99,7 +102,7 @@ namespace AllAboutGraph.MVC.Model
 
                             LinkVertices(i, j, edgeIndex);
                         }
-                        else if(adjMatrix.Matrix[j, i] != 0)
+                        else if (adjMatrix.Matrix[j, i] != 0)
                         {
                             AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[j, i], true));
                             edgeIndex++;
@@ -110,18 +113,23 @@ namespace AllAboutGraph.MVC.Model
                 }
             }
         }
-        private void CreateGraphFromAdjacencyList(AdjacencyList adjList)
-        {
-            PointF[] verticesPoints = GetGraphVerticesPoints(adjList.CountVertices, 200, new PointF(250, 250));
 
-            for (int i = 0; i < adjList.CountVertices; i++)
+        private void CreateVerticesFromAdjacencyMatrix(AdjacencyMatrix adjMatrix, PointF[] verticesPoints)
+        {
+            for (int i = 0; i < adjMatrix.Rank; i++)
             {
-                string vertexName = GetVertexName(i); 
-                GraphVertex vertex = new GraphVertex(vertexName);
+                string vertexname = GetVertexName(i);
+                GraphVertex vertex = new GraphVertex(vertexname);
                 vertex.Size = new SizeF(50, 50);
                 vertex.Location = verticesPoints[i];
                 AddVertex(vertex);
             }
+        }
+
+        private void CreateGraphFromAdjacencyList(AdjacencyList adjList)
+        {
+            PointF[] verticesPoints = GetGraphVerticesPoints(adjList.CountVertices, 200, new PointF(250, 250));
+            CreateVerticesFromAdjacencyList(adjList, verticesPoints);
 
             int edgeIndex = -1;
             for (int i = 0; i < adjList.CountVertices; i++)
@@ -136,6 +144,18 @@ namespace AllAboutGraph.MVC.Model
 
                     LinkVertices(i, j, edgeIndex);
                 }
+            }
+        }
+
+        private void CreateVerticesFromAdjacencyList(AdjacencyList adjList, PointF[] verticesPoints)
+        {
+            for (int i = 0; i < adjList.CountVertices; i++)
+            {
+                string vertexName = GetVertexName(i);
+                GraphVertex vertex = new GraphVertex(vertexName);
+                vertex.Size = new SizeF(50, 50);
+                vertex.Location = verticesPoints[i];
+                AddVertex(vertex);
             }
         }
 
@@ -161,13 +181,15 @@ namespace AllAboutGraph.MVC.Model
 
         #endregion
 
+        #region VerticesName
+
         private string GetVertexName(int i)
         {
-            char index = Convert.ToChar(i+64);
+            char index = Convert.ToChar(i + 64);
             StringBuilder name = new StringBuilder();
 
             name.Append(index);
-            if (name[name.Length-1] == 'Z')
+            if (name[name.Length - 1] == 'Z')
             {
                 name[name.Length - 1] = 'A';
                 name.Append('A');
@@ -179,6 +201,10 @@ namespace AllAboutGraph.MVC.Model
 
             return name.ToString();
         }
+
+        #endregion
+
+        #region VerticesAndEdges
 
         public void AddVertex(GraphVertex vertex)
         {
@@ -206,6 +232,10 @@ namespace AllAboutGraph.MVC.Model
             GraphVertices[secondVertexIndex].InEdges.Add(GraphEdges[edgeIndex]);
         }
 
+        #endregion
+
+        #region Draw
+
         public void DrawGraph(Graphics Graphics,Pen pen,Brush backgroundBrush,Brush fontBrush, Font font, StringFormat format)
         {
             foreach (GraphEdge edge in GraphEdges)
@@ -218,6 +248,8 @@ namespace AllAboutGraph.MVC.Model
                 vertex.DrawVertex(Graphics,pen,backgroundBrush,fontBrush,font,format);
             }
         }
+
+        #endregion
 
         #endregion
 
