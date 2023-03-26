@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,33 +63,28 @@ namespace AllAboutGraph.MVC.Model
             numOfEdges = CountVerticesFromAdjacentMatrix(adjMatrix, numOfVertices, numOfEdges);
 
             int[,] incedenceMatrix = new int[numOfVertices, numOfEdges];
+            int edgeIndex = 0;
             for (int i = 0; i < numOfVertices; i++)
             {
-                for (int j = 0; j < numOfVertices; j++)
+                for (int j = i; j < numOfVertices; j++)
                 {
-                    if (i < j)
+                    //not-oriented edge
+                    if(adjMatrix.Matrix[i,j] != AdjacencyMatrix.INFINITY && adjMatrix.Matrix[j, i] != AdjacencyMatrix.INFINITY)
                     {
-                        int edgeNumber = adjMatrix.Matrix[i, j];
-                        int altEdgeNumber = adjMatrix.Matrix[j, i];
-
-                        if (edgeNumber > 0 && edgeNumber != altEdgeNumber)
-                        {
-                            incedenceMatrix[i, edgeNumber - 1] = -1;
-                            incedenceMatrix[j, edgeNumber - 1] = 1;
-                        }
-
-                        if (altEdgeNumber > 0 && edgeNumber != altEdgeNumber)
-                        {
-                            incedenceMatrix[i, edgeNumber - 1] = 1;
-                            incedenceMatrix[j, edgeNumber - 1] = -1;
-                        }
-
-                        if (altEdgeNumber > 0 && edgeNumber == altEdgeNumber)
-                        {
-                            incedenceMatrix[i, edgeNumber - 1] = 1;
-                            incedenceMatrix[j, edgeNumber - 1] = 1;
-                        }
-
+                        incedenceMatrix[edgeIndex, i]++;
+                        incedenceMatrix[edgeIndex, j]++;
+                    }
+                    //start - i, end - j
+                    else if(adjMatrix.Matrix[i, j] != AdjacencyMatrix.INFINITY)
+                    {
+                        incedenceMatrix[edgeIndex, i]++;
+                        incedenceMatrix[edgeIndex, j]--;
+                    }
+                    //start - j, end - i
+                    else
+                    {
+                        incedenceMatrix[edgeIndex, i]--;
+                        incedenceMatrix[edgeIndex, j]++;
                     }
                 }
             }
@@ -100,18 +96,15 @@ namespace AllAboutGraph.MVC.Model
         {
             for (int i = 0; i < numOfVertices; i++)
             {
-                for (int j = 0; j < numOfVertices; j++)
+                for (int j = i; j < numOfVertices; j++)
                 {
-                    if (i < j)
+                    if (adjMatrix.Matrix[i, j] != AdjacencyMatrix.INFINITY)
                     {
-                        if (adjMatrix.Matrix[i, j] != adjMatrix.INFINITY)
-                        {
-                            numOfEdges++;
-                        }
-                        if (adjMatrix.Matrix[j, i] != adjMatrix.INFINITY && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
-                        {
-                            numOfEdges++;
-                        }
+                        numOfEdges++;
+                    }
+                    else if (adjMatrix.Matrix[j, i] != AdjacencyMatrix.INFINITY && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
+                    {
+                        numOfEdges++;
                     }
                 }
             }
@@ -121,7 +114,68 @@ namespace AllAboutGraph.MVC.Model
 
         private int[,] FromAdjacencyList(AdjacencyList adjList)
         {
-            throw new NotImplementedException();
+            int numOfVertices = adjList.CountVertices;
+            int numOfEdges = 0;
+            numOfEdges = CountEdgesFromAdjacencyList(CopyList(adjList));
+
+            int[,] incidenceMatrix = new int[numOfVertices,numOfEdges];
+
+
+            AdjacencyList copyAdjList = CopyList(adjList);
+
+            int edgeIndex = 0;
+
+            for (int i = 0; i < copyAdjList.List.Count; i++)
+            {
+                for (int j = 0; j < copyAdjList.List[i].Count; j++)
+                {
+                    incidenceMatrix[edgeIndex, i]++;
+                    if (copyAdjList.List[j].Contains(i))
+                    {
+                        incidenceMatrix[edgeIndex, j]++;
+                        copyAdjList.List[j].Remove(i);
+                    }
+                    else
+                    {
+                        incidenceMatrix[edgeIndex, j]--;
+                    }
+                }
+            }
+
+
+            return incidenceMatrix;
+        }
+
+        private AdjacencyList CopyList(AdjacencyList adjList)
+        {
+            List<List<int>> copyList = new List<List<int>>();
+
+            for (int i = 0; i < adjList.List.Count; i++)
+            {
+                copyList.Add(adjList.List[i]);
+                for (int j = 0; j < adjList.List[i].Count; j++)
+                {
+                    copyList[i].Add(adjList.List[i][j]);
+                }
+            }
+            
+            return new AdjacencyList(copyList);
+            
+
+        }
+
+        private int CountEdgesFromAdjacencyList(AdjacencyList adjList)
+        {
+            int count = 0;
+            for (int i = 0; i < adjList.List.Count; i++)
+            {
+                foreach(int neighbour in adjList.List[i])
+                {
+                    count++;
+                    adjList.List[neighbour].Remove(i);
+                }
+            }
+            return count;
         }
 
         #endregion

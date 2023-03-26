@@ -52,8 +52,12 @@ namespace AllAboutGraph.MVC.Model
         {
             _adjacencyMatrix = adjMatrix.Matrix;
             CreateGraphFromAdjacencyMatrix(adjMatrix);
+
             AdjacencyList list = new AdjacencyList(adjMatrix);
             _adjacencyList = list.List;
+
+            IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjMatrix);
+            _incidenceMatrix = incidenceMatrix.Matrix;
         }
 
 
@@ -61,12 +65,24 @@ namespace AllAboutGraph.MVC.Model
         {
             _adjacencyList = adjList.List;
             CreateGraphFromAdjacencyList(adjList);
+
+            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(adjList);
+            _adjacencyMatrix = adjacencyMatrix.Matrix;
+
+            IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjList);
+            _incidenceMatrix = incidenceMatrix.Matrix;
         }
 
         public MyGraph(IncidenceMatrix incidenceMatrix)
         {
             _incidenceMatrix = incidenceMatrix.Matrix;
             CreateGraphFromIncidenceMatrix(incidenceMatrix);
+
+            AdjacencyMatrix adjMatrix = new AdjacencyMatrix(incidenceMatrix);
+            _adjacencyMatrix = adjMatrix.Matrix;
+
+            AdjacencyList adjList = new AdjacencyList(incidenceMatrix);
+            _adjacencyList = adjList.List;
         }
 
         #endregion

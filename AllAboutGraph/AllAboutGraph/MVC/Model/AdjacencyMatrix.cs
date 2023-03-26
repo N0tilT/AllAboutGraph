@@ -11,7 +11,7 @@ namespace AllAboutGraph.MVC.Model
     {
         #region Constants
 
-        const int INFINITY = 1000000;
+        public const int INFINITY = 1000000;
 
         #endregion
 
