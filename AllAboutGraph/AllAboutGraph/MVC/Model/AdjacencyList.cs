@@ -70,7 +70,17 @@ namespace AllAboutGraph.MVC.Model
 
         private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < incidenceMatrix.CountVertices; i++)
+            {
+                _list.Add(new List<int>());
+                for (int j = 0; j < incidenceMatrix.CountEdges; j++)
+                {
+                    if (incidenceMatrix.Matrix[j,i] > 0)
+                    {
+                        _list[i].Add();
+                    }
+                }
+            }
         }
 
         /// <summary>
