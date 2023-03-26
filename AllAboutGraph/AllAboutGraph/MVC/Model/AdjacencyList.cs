@@ -77,7 +77,14 @@ namespace AllAboutGraph.MVC.Model
                 {
                     if (incidenceMatrix.Matrix[j,i] > 0)
                     {
-                        _list[i].Add();
+                        for (int k = 0; k < incidenceMatrix.CountVertices; k++)
+                        {
+                            if (incidenceMatrix.Matrix[j, k] == -1)
+                            {
+                                _list[i].Add(k);
+                                break;
+                            }
+                        }
                     }
                 }
             }
