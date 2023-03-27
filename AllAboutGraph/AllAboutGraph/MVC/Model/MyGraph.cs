@@ -95,44 +95,51 @@ namespace AllAboutGraph.MVC.Model
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank, 200, new PointF(250, 250));
 
-            CreateVerticesFromAdjacencyMatrix(adjMatrix, verticesPoints);
+            CreateVerticesFromMatrix(adjMatrix.Matrix, verticesPoints);
 
             int edgeIndex = -1;
-            for (int i = 0; i < adjMatrix.Rank; i++)
+            for (int currentVertex = 0; currentVertex < adjMatrix.Rank; currentVertex++)
             {
-                for (int j = 0; j < adjMatrix.Rank; j++)
+                for (int neighbour = currentVertex+1; neighbour < adjMatrix.Rank; neighbour++)
                 {
-                    if (i < j)
+                    int weight = adjMatrix.Matrix[currentVertex, neighbour];
+
+                    if (adjMatrix.Matrix[currentVertex, neighbour] != 0 && adjMatrix.Matrix[neighbour, currentVertex] != 0)
                     {
-                        if (adjMatrix.Matrix[i, j] != 0 && adjMatrix.Matrix[j, i] != 0)
+                        if(adjMatrix.Matrix[currentVertex, neighbour] == adjMatrix.Matrix[neighbour, currentVertex])
                         {
-                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], false));
+                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, false));
                             edgeIndex++;
-
-                            LinkVertices(i, j, edgeIndex);
                         }
-                        else if (adjMatrix.Matrix[i, j] != 0)
+                        else
                         {
-                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[i, j], true));
+                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, false));
+                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], adjMatrix.Matrix[neighbour, currentVertex], false));
                             edgeIndex++;
-
-                            LinkVertices(i, j, edgeIndex);
                         }
-                        else if (adjMatrix.Matrix[j, i] != 0)
-                        {
-                            AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], adjMatrix.Matrix[j, i], true));
-                            edgeIndex++;
+                        LinkVertices(currentVertex, neighbour, edgeIndex);
+                    }
+                    else if (adjMatrix.Matrix[currentVertex, neighbour] != 0)
+                    {
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                        edgeIndex++;
 
-                            LinkVertices(i, j, edgeIndex);
-                        }
+                        LinkVertices(currentVertex, neighbour, edgeIndex);
+                    }
+                    else if (adjMatrix.Matrix[neighbour, currentVertex] != 0)
+                    {
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                        edgeIndex++;
+
+                        LinkVertices(currentVertex, neighbour, edgeIndex);
                     }
                 }
             }
         }
 
-        private void CreateVerticesFromAdjacencyMatrix(AdjacencyMatrix adjMatrix, PointF[] verticesPoints)
+        private void CreateVerticesFromMatrix(int[,] adjMatrix, PointF[] verticesPoints)
         {
-            for (int i = 0; i < adjMatrix.Rank; i++)
+            for (int i = 0; i < adjMatrix.GetLength(0); i++)
             {
                 string vertexname = GetVertexName(i);
                 GraphVertex vertex = new GraphVertex(vertexname);
@@ -206,7 +213,45 @@ namespace AllAboutGraph.MVC.Model
 
         private void CreateGraphFromIncidenceMatrix(IncidenceMatrix incMatrix)
         {
-            return;
+            PointF[] verticesPoints = GetGraphVerticesPoints(incMatrix.CountVertices, 200, new PointF(250, 250));
+            CreateVerticesFromMatrix(incMatrix.Matrix,verticesPoints);
+
+            for (int currentEdge = 0; currentEdge < incMatrix.CountEdges; currentEdge++)
+            {
+                for (int firstVertex = 0; firstVertex < incMatrix.CountVertices-1; firstVertex++)
+                {
+                    if(firstVertex == 1)
+                    {
+                        for (int adjVertex = firstVertex+1; adjVertex < incMatrix.CountVertices; adjVertex++)
+                        {
+                            switch (adjVertex)
+                            {
+                                case -1: //oriented
+                                    AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, true));
+                                    LinkVertices(firstVertex, adjVertex, currentEdge);
+                                    break;
+                                case 1: //not-oriented
+                                    AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, false));
+                                    LinkVertices(firstVertex, adjVertex, currentEdge);
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            
+                            
+                        }
+                        break;
+                    }
+                    else if(firstVertex == 2) //loop
+                    {
+                        AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[firstVertex], 1, true));
+                        LinkVertices(firstVertex, firstVertex, currentEdge);
+                        break;
+                    }
+                }
+            }
+
         }
         private PointF[] GetGraphVerticesPoints(int numberOfVertices, float radius, PointF center)
         {
