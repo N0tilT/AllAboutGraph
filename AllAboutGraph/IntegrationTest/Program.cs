@@ -30,17 +30,29 @@ namespace IntegrationTest
             //IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjList);
             //PrintMatrix(incidenceMatrix.Matrix);
 
-            int[,] matrix = new int[,]
-            {
-                {0,1,1,0,1 },
-                {1,0,1,0,0 },
-                {1,0,0,0,0 },
-                {0,0,1,0,1 },
-                {1,0,1,1,0 },
-            };
-            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(matrix);
+            //int[,] matrix = new int[,]
+            //{
+            //    {0,1,1,0,1 },
+            //    {1,0,1,0,0 },
+            //    {1,0,0,0,0 },
+            //    {0,0,1,0,1 },
+            //    {1,0,1,1,0 },
+            //};
+            //AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(matrix);
 
-            int[,] expectedMatrix = new int[,] {
+            //int[,] expectedMatrix = new int[,] {
+            //        {1, 1, 0, 0, 0 },
+            //        {1, 0, 1, 0 , 0 },
+            //        {1, 0, 0, 0, 1 },
+            //        {0, 1, -1, 0, 0 },
+            //        {0, 0, -1, 1, 0 },
+            //        {0, 0, 0, 1, 1 },
+            //        {0, 0, -1, 0, 1 } };
+
+            //IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjacencyMatrix);
+            //PrintMatrix(incidenceMatrix.Matrix);
+
+            int[,] incMatrix = new int[,] {
                     {1, 1, 0, 0, 0 },
                     {1, 0, 1, 0 , 0 },
                     {1, 0, 0, 0, 1 },
@@ -48,11 +60,34 @@ namespace IntegrationTest
                     {0, 0, -1, 1, 0 },
                     {0, 0, 0, 1, 1 },
                     {0, 0, -1, 0, 1 } };
+            IncidenceMatrix incidenceMatrix = new IncidenceMatrix(incMatrix);
 
-            IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjacencyMatrix);
-            PrintMatrix(incidenceMatrix.Matrix);
+            List<List<int>> expectedList = new List<List<int>>()
+            {
+                new List<int>(){2,3,5 },
+                new List<int>(){1,3 },
+                new List<int>(){1 },
+                new List<int>(){3,5 },
+                new List<int>(){1,3,4 },
+            };
+
+            AdjacencyList adjacencyList = new AdjacencyList(incidenceMatrix);
+
+            PrintList(adjacencyList.List);
 
             Console.ReadKey();
+        }
+
+        private static void PrintList(List<List<int>> list)
+        {
+            foreach (List<int> row in list)
+            {
+                Console.WriteLine();
+                foreach (int item in row)
+                {
+                    Console.Write(item + " ");
+                }
+            }
         }
 
         private static void PrintAdjList(List<List<int>> list)

@@ -24,12 +24,12 @@ namespace AllAboutGraph.MVC.Model
 
         public int CountVertices
         {
-            get { return _matrix.GetLength(0); }
+            get { return _matrix.GetLength(1); }
         }
 
         public int CountEdges
         {
-            get { return _matrix.GetLength(1); }
+            get { return _matrix.GetLength(0); }
         }
         #endregion
         #region Constructors

@@ -79,7 +79,7 @@ namespace AllAboutGraph.MVC.Model
             {
                 for (int j = 0; j < Rank; j++)
                 {
-                    _matrix[i, j] = INFINITY;
+                    _matrix[i, j] = 0;
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace AllAboutGraph.MVC.Model
             {
                 for (int currentEdge = 0; currentEdge < incidenceMatrix.CountEdges; currentEdge++)
                 {
-                    if (incidenceMatrix.Matrix[currentVertex,currentEdge] > 0)
+                    if (incidenceMatrix.Matrix[currentEdge,currentVertex] > 0)
                     {
                         int inVertexIndex = FindInVertex(incidenceMatrix, currentVertex, currentEdge);
 
@@ -157,7 +157,7 @@ namespace AllAboutGraph.MVC.Model
             {
                 foreach (int neighbour in adjList[currentVertex])
                 {
-                    _matrix[currentVertex, neighbour] = 1;
+                    _matrix[currentVertex, neighbour-1] = 1;
                 }
             }
         }
