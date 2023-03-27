@@ -71,7 +71,7 @@ namespace AllAboutGraph.MVC.Model
                 {
                     if (matrix.Matrix[currentVertex, neighbour] != 0)
                     {
-                        _list[currentVertex].Add(neighbour+1);
+                        _list[currentVertex].Add(neighbour);
                     }
                 }
             }
@@ -99,11 +99,11 @@ namespace AllAboutGraph.MVC.Model
                         //loop
                         if(inVertexIndex == -1)
                         {
-                            _list[currentVertex].Add(currentVertex+1);
+                            _list[currentVertex].Add(currentVertex);
                         }
                         else //found in vertex
                         {
-                            _list[currentVertex].Add(inVertexIndex+1);
+                            _list[currentVertex].Add(inVertexIndex);
                         }
                         
                     }
