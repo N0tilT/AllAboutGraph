@@ -94,7 +94,7 @@ namespace AllAboutGraph.MVC.Model
                     //find edge, for which the current vertex will be outgoing
                     if (incidenceMatrix.Matrix[currentEdge,currentVertex] > 0)
                     {
-                        int inVertexIndex = FindInVertex(incidenceMatrix, currentEdge);
+                        int inVertexIndex = FindInVertex(incidenceMatrix, currentEdge, currentVertex);
 
                         //loop
                         if(inVertexIndex == -1)
@@ -117,17 +117,20 @@ namespace AllAboutGraph.MVC.Model
         /// <param name="incidenceMatrix"></param>
         /// <param name="currentEdge"></param>
         /// <returns>found vertex index in incidence matrix</returns>
-        private int FindInVertex(IncidenceMatrix incidenceMatrix, int currentEdge)
+        private int FindInVertex(IncidenceMatrix incidenceMatrix, int currentEdge, int currentVertex)
         {
             int inVertexIndex = -1;
 
             for (int subVertex = 0; subVertex < incidenceMatrix.CountVertices; subVertex++)
             {
-                //it doesn`t matter if edge is oriented or not
-                if (incidenceMatrix.Matrix[currentEdge, subVertex] == -1 || incidenceMatrix.Matrix[currentEdge, subVertex] == 1)
+                if (subVertex != currentVertex)
                 {
-                    inVertexIndex = subVertex;
-                    break;
+                    //it doesn`t matter if edge is oriented or not
+                    if (incidenceMatrix.Matrix[currentEdge, subVertex] == -1 || incidenceMatrix.Matrix[currentEdge, subVertex] == 1)
+                    {
+                        inVertexIndex = subVertex;
+                        break;
+                    }
                 }
             }
 

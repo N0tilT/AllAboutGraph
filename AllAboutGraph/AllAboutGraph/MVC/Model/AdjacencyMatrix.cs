@@ -94,18 +94,70 @@ namespace AllAboutGraph.MVC.Model
                 }
             }
         }
+
+        /// <summary>
+        /// Create adjacency matrix from incidence matrix
+        /// </summary>
+        /// <param name="incidenceMatrix"></param>
         private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
         {
-            throw new NotImplementedException();
+            for (int currentVertex = 0; currentVertex < incidenceMatrix.CountVertices; currentVertex++)
+            {
+                for (int currentEdge = 0; currentEdge < incidenceMatrix.CountEdges; currentEdge++)
+                {
+                    if (incidenceMatrix.Matrix[currentVertex,currentEdge] > 0)
+                    {
+                        int inVertexIndex = FindInVertex(incidenceMatrix, currentVertex, currentEdge);
+
+                        //loop
+                        if (inVertexIndex == -1)
+                        {
+                            _matrix[currentVertex, currentVertex]++;
+                        }
+                        else
+                        {
+                            _matrix[currentVertex, inVertexIndex]++;
+                        }
+                    }
+                }
+            }
         }
 
+        /// <summary>
+        /// find vertex, for which current edge wull be ingoing
+        /// </summary>
+        /// <param name="incidenceMatrix"></param>
+        /// <param name="currentEdge"></param>
+        /// <returns>found vertex index in incidence matrix</returns>
+        private static int FindInVertex(IncidenceMatrix incidenceMatrix, int currentVertex, int currentEdge)
+        {
+            int inVertexIndex = -1;
+            for (int subVertex = 0; subVertex < incidenceMatrix.CountVertices; subVertex++)
+            {
+                if (subVertex != currentVertex)
+                {
+                    if (incidenceMatrix.Matrix[currentEdge, subVertex] == -1 || incidenceMatrix.Matrix[currentEdge, subVertex] == 1)
+                    {
+                        inVertexIndex = subVertex;
+                        break;
+                    }
+                }
+            }
+
+            return inVertexIndex;
+        }
+
+        /// <summary>
+        /// create adjacency matrix from adjacency list
+        /// </summary>
+        /// <param name="adjList"></param>
         private void FromAdjacencyList(List<List<int>> adjList)
         {
             for (int currentVertex = 0; currentVertex < Rank; currentVertex++)
             {
-                foreach (int linkedVertex in adjList[currentVertex])
+                foreach (int neighbour in adjList[currentVertex])
                 {
-                    _matrix[currentVertex, linkedVertex] = 1;
+                    _matrix[currentVertex, neighbour] = 1;
                 }
             }
         }
