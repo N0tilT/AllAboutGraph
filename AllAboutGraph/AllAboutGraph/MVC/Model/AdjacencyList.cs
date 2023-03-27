@@ -55,46 +55,85 @@ namespace AllAboutGraph.MVC.Model
             _list.Clear();
         }
 
+        /// <summary>
+        /// Create adjacency list from adjacency matrix
+        /// </summary>
+        /// <param name="matrix"></param>
         private void FromAdjacencyMatrix(AdjacencyMatrix matrix)
         {
-            for (int i = 0; i < matrix.Rank; i++)
+            for (int currentVertex = 0; currentVertex < matrix.Rank; currentVertex++)
             {
+                //new row in adjacency list
                 _list.Add(new List<int>());
-                for (int j = 0; j < matrix.Rank; j++)
-                {
-                    if (matrix.Matrix[i, j] != 0)
-                        _list[i].Add(j);
-                }
-            }
-        }
 
-        private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
-        {
-            for (int i = 0; i < incidenceMatrix.CountVertices; i++)
-            {
-                _list.Add(new List<int>());
-                for (int j = 0; j < incidenceMatrix.CountEdges; j++)
+                //fill row
+                for (int neighbour = 0; neighbour < matrix.Rank; neighbour++)
                 {
-                    if (incidenceMatrix.Matrix[j,i] > 0)
+                    if (matrix.Matrix[currentVertex, neighbour] != 0)
                     {
-                        for (int k = 0; k < incidenceMatrix.CountVertices; k++)
-                        {
-                            if (incidenceMatrix.Matrix[j, k] == -1)
-                            {
-                                _list[i].Add(k);
-                                break;
-                            }
-                        }
+                        _list[currentVertex].Add(neighbour);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Получить вершины, смежные указанной
+        /// Create adjacency list from incidence matrix
         /// </summary>
-        /// <param name="vertexIndex">индекс выбранной вершины</param>
-        /// <returns>индексы вершин, смежных с выбранной</returns>
+        /// <param name="incidenceMatrix"></param>
+        private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
+        {
+            for (int currentVertex = 0; currentVertex < incidenceMatrix.CountVertices; currentVertex++)
+            {
+                //new row in adjacency list
+                _list.Add(new List<int>()); 
+
+                //fill row
+                for (int currentEdge = 0; currentEdge < incidenceMatrix.CountEdges; currentEdge++)
+                {
+                    //find edge, for which the current vertex will be outgoing
+                    if (incidenceMatrix.Matrix[currentEdge,currentVertex] > 0)
+                    {
+                        int inVertexIndex = FindInVertex(incidenceMatrix, currentEdge);
+
+                        //loop
+                        if(inVertexIndex == -1)
+                        {
+                            _list[currentVertex].Add(currentVertex);
+                        }
+                        else //found in vertex
+                        {
+                            _list[currentVertex].Add(inVertexIndex);
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// find vertex, for which current edge wull be ingoing
+        /// </summary>
+        /// <param name="incidenceMatrix"></param>
+        /// <param name="currentEdge"></param>
+        /// <returns>found vertex index in incidence matrix</returns>
+        private int FindInVertex(IncidenceMatrix incidenceMatrix, int currentEdge)
+        {
+            int inVertexIndex = -1;
+
+            for (int subVertex = 0; subVertex < incidenceMatrix.CountVertices; subVertex++)
+            {
+                //it doesn`t matter if edge is oriented or not
+                if (incidenceMatrix.Matrix[currentEdge, subVertex] == -1 || incidenceMatrix.Matrix[currentEdge, subVertex] == 1)
+                {
+                    inVertexIndex = subVertex;
+                    break;
+                }
+            }
+
+            return inVertexIndex;
+        }
+
         public List<int> GetAdjacentVertices(int vertexIndex)
         {
             return _list[vertexIndex];
