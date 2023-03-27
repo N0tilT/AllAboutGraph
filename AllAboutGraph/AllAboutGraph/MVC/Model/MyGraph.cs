@@ -18,6 +18,7 @@ namespace AllAboutGraph.MVC.Model
         private int[,] _adjacencyMatrix;
         private List<List<int>> _adjacencyList;
         private int[,] _incidenceMatrix;
+        private int[,] _degreeTable;
         #endregion
 
         #region Properties
@@ -29,6 +30,8 @@ namespace AllAboutGraph.MVC.Model
         public List<List<int>> AdjacencyList { get { return _adjacencyList; } }
         public int[,] IncidenceMatrix { get { return _incidenceMatrix; } }
 
+        public int[,] DegreeTable { get { return GetDegreeTableFromIncidenceMatrix(IncidenceMatrix); } }
+
         #endregion
 
         #region Constructors
@@ -36,15 +39,18 @@ namespace AllAboutGraph.MVC.Model
 
         public MyGraph(List<GraphEdge> graphEdges) { _graphEdges = graphEdges; }
 
-        public MyGraph(List<GraphEdge> graphEdges, List<GraphVertex> graphVertices)
+        public MyGraph(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
         {
             _graphEdges = graphEdges;
             _graphVertices = graphVertices;
+
+            _adjacencyMatrix = new AdjacencyMatrix(graphVertices, graphEdges).Matrix;
+            _adjacencyList = new AdjacencyList(graphVertices, graphEdges).List;
+            _incidenceMatrix = new IncidenceMatrix(graphVertices, graphEdges).Matrix;
         }
 
-        public MyGraph(List<GraphEdge> graphEdges, List<GraphVertex> graphVertices, bool isDirected) : this(graphEdges)
+        public MyGraph(List<GraphVertex> graphVertices,List<GraphEdge> graphEdges, bool isDirected) : this(graphVertices,graphEdges)
         {
-            _graphVertices = graphVertices;
             _isDirected = isDirected;
         }
 
@@ -267,6 +273,54 @@ namespace AllAboutGraph.MVC.Model
         }
 
 
+        private int[,] GetDegreeTableFromIncidenceMatrix(int[,] incidenceMatrix)
+        {
+            List<int> outDegrees, inDegrees;
+            CountDegrees(incidenceMatrix, out outDegrees, out inDegrees);
+
+            int[,] degreeTable = FillDegreeTable(incidenceMatrix, outDegrees, inDegrees);
+
+            return degreeTable;
+        }
+
+        private static void CountDegrees(int[,] incidenceMatrix, out List<int> outDegrees, out List<int> inDegrees)
+        {
+            outDegrees = new List<int>();
+            inDegrees = new List<int>();
+            for (int i = 0; i < incidenceMatrix.GetLength(1); i++)
+            {
+                int currentVertexInDegree = 0;
+                int currentVertexOutDegree = 0;
+
+                for (int j = 0; j < incidenceMatrix.GetLength(0); j++)
+                {
+                    if (incidenceMatrix[j, i] == 1)
+                    {
+                        currentVertexOutDegree++;
+                    }
+                    if (incidenceMatrix[j, i] == -1)
+                    {
+                        currentVertexInDegree++;
+                    }
+                }
+
+                outDegrees.Add(currentVertexOutDegree);
+                inDegrees.Add(currentVertexInDegree);
+            }
+        }
+
+        private static int[,] FillDegreeTable(int[,] incidenceMatrix, List<int> outDegrees, List<int> inDegrees)
+        {
+            int[,] degreeTable = new int[incidenceMatrix.GetLength(1), 3];
+            for (int i = 0; i < degreeTable.GetLength(0); i++)
+            {
+                degreeTable[i, 0] = outDegrees[i];
+                degreeTable[i, 1] = inDegrees[i];
+                degreeTable[i, 2] = outDegrees[i] + inDegrees[i];
+            }
+
+            return degreeTable;
+        }
         #endregion
 
         #region VerticesName

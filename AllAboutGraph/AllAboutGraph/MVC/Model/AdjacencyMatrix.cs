@@ -52,6 +52,25 @@ namespace AllAboutGraph.MVC.Model
             _matrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
             FillMatrixCopying(matrix);
         }
+
+        public AdjacencyMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        {
+            _matrix = new int[graphVertices.Count, graphVertices.Count];
+
+            ResetMatrix();
+
+            for (int i = 0; i < graphVertices.Count; i++)
+            {
+                for (int j = 0; j < graphEdges.Count; j++)
+                {
+                    if (graphEdges[j].VertexOut == graphVertices[i])
+                    {
+                        _matrix[i, int.Parse(graphEdges[j].VertexIn.Name) - 1]++;
+                    }
+                }
+            }
+        }
+
         public AdjacencyMatrix(AdjacencyList adjList)
         {
             _matrix = new int[adjList.CountVertices, adjList.CountVertices];

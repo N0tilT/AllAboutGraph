@@ -52,6 +52,23 @@ namespace AllAboutGraph.MVC.Model
         {
             _matrix = FromAdjacencyList(adjList);
         }
+
+        public IncidenceMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        {
+            _matrix = new int[graphEdges.Count, graphVertices.Count];
+
+            for (int i = 0; i < graphEdges.Count; i++)
+            {
+                int curVertexIndex = int.Parse(graphEdges[i].VertexOut.Name) - 1;
+                int adjVertexINdex = int.Parse(graphEdges[i].VertexIn.Name) - 1;
+
+                _matrix[i,curVertexIndex] = 1;
+                
+                _matrix[i, adjVertexINdex] = -1;
+            }
+
+
+        }
         #endregion
 
         #region Methods

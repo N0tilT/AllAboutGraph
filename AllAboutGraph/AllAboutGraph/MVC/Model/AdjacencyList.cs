@@ -32,6 +32,12 @@ namespace AllAboutGraph.MVC.Model
             _list = list;
         }
 
+        public AdjacencyList(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        {
+            AdjacencyMatrix adjMatrix = new AdjacencyMatrix(graphVertices,graphEdges);
+            _list = new AdjacencyList(adjMatrix).List;
+        }
+
         public AdjacencyList(AdjacencyMatrix adjacencyMatrix)
         {
             _list  = new List<List<int>>();
@@ -45,6 +51,7 @@ namespace AllAboutGraph.MVC.Model
             ResetList();
             FromIncidenceMatrix(incidenceMatrix);
         }
+
 
 
         #endregion

@@ -338,6 +338,9 @@ namespace AllAboutGraph
 
         private void comboBoxAlgorithms_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Canvas.Image = WhitePlaneBitmap;
+            Canvas.Invalidate();
+
             string selectedAlgorithm = comboBoxAlgorithms.Text;
 
             Graphics g = GetSmoothGraphicsFromCanvas();
