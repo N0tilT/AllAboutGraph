@@ -147,20 +147,49 @@ namespace AllAboutGraph.MVC.Model
             PointF[] verticesPoints = GetGraphVerticesPoints(adjList.CountVertices, 200, new PointF(250, 250));
             CreateVerticesFromAdjacencyList(adjList, verticesPoints);
 
+            AdjacencyList copy = CopyList(adjList);
+
             int edgeIndex = -1;
-            for (int i = 0; i < adjList.CountVertices; i++)
+            for (int currentVertex = 0; currentVertex < copy.CountVertices; currentVertex++)
             {
-                for (int j = 0; j < adjList.List[i].Count; j++)
+                for (int neighbourIndex = 0; neighbourIndex < copy.List[currentVertex].Count; neighbourIndex++)
                 {
-                    bool directed = adjList.List[j].Contains(adjList.List[i][j]);
+                    int adjVertex = copy.List[currentVertex][neighbourIndex];
+                    bool oriented = !copy.List[adjVertex].Contains(currentVertex);
+
+                    if (oriented)
+                    {
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex], 1, oriented));
+                        edgeIndex++;
+                    }
+                    else
+                    {
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex], 1, !oriented));
+                        copy.List[adjVertex].Remove(currentVertex);
+                        edgeIndex++;
+                    }
 
 
-                    AddEdge(new GraphEdge(GraphVertices[i], GraphVertices[j], 1, !directed));
-                    edgeIndex++;
-
-                    LinkVertices(i, j, edgeIndex);
+                    LinkVertices(currentVertex, neighbourIndex, edgeIndex);
                 }
             }
+        }
+        private AdjacencyList CopyList(AdjacencyList adjList)
+        {
+            List<List<int>> copyList = new List<List<int>>();
+
+            for (int i = 0; i < adjList.List.Count; i++)
+            {
+                copyList.Add(adjList.List[i]);
+                for (int j = 0; j < adjList.List[i].Count; j++)
+                {
+                    copyList[i].Add(adjList.List[i][j]);
+                }
+            }
+
+            return new AdjacencyList(copyList);
+
+
         }
 
         private void CreateVerticesFromAdjacencyList(AdjacencyList adjList, PointF[] verticesPoints)
