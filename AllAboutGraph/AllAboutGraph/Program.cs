@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace AllAboutGraph
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         /// Главная точка входа для приложения.
@@ -16,10 +16,14 @@ namespace AllAboutGraph
         [STAThread]
         static void Main()
         {
-            MainView view = new MainView();
-            view.Visible = false;
+            MainView view = new MainView
+            {
+                Visible = false
+            };
             Controller controller = new Controller(view);
             view.ShowDialog();
+
         }
+
     }
 }

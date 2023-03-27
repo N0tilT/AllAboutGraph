@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllAboutGraph", "AllAboutGraph\AllAboutGraph.csproj", "{9B556435-C7D4-4C4A-8B63-E1400B715E4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphUnitTest", "GraphUnitTest\GraphUnitTest.csproj", "{7F7F80A7-702D-430E-8645-D2FEEFFFAC9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{1BD8B40C-11F6-4929-AE59-A1B18DDD5900}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{9B556435-C7D4-4C4A-8B63-E1400B715E4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B556435-C7D4-4C4A-8B63-E1400B715E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B556435-C7D4-4C4A-8B63-E1400B715E4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7F80A7-702D-430E-8645-D2FEEFFFAC9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7F80A7-702D-430E-8645-D2FEEFFFAC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7F80A7-702D-430E-8645-D2FEEFFFAC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7F80A7-702D-430E-8645-D2FEEFFFAC9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BD8B40C-11F6-4929-AE59-A1B18DDD5900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BD8B40C-11F6-4929-AE59-A1B18DDD5900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BD8B40C-11F6-4929-AE59-A1B18DDD5900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BD8B40C-11F6-4929-AE59-A1B18DDD5900}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

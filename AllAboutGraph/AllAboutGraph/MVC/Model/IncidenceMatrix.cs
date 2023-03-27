@@ -62,29 +62,32 @@ namespace AllAboutGraph.MVC.Model
             int numOfEdges = 0;
             numOfEdges = CountVerticesFromAdjacentMatrix(adjMatrix, numOfVertices, numOfEdges);
 
-            int[,] incedenceMatrix = new int[numOfVertices, numOfEdges];
+            int[,] incedenceMatrix = new int[numOfEdges,numOfVertices];
             int edgeIndex = 0;
-            for (int i = 0; i < numOfVertices; i++)
+            for (int i = 0; i < numOfVertices-1; i++)
             {
-                for (int j = i; j < numOfVertices; j++)
+                for (int j = i+1; j < numOfVertices; j++)
                 {
                     //not-oriented edge
-                    if(adjMatrix.Matrix[i,j] != AdjacencyMatrix.INFINITY && adjMatrix.Matrix[j, i] != AdjacencyMatrix.INFINITY)
+                    if(adjMatrix.Matrix[i,j] != 0 && adjMatrix.Matrix[j, i] != 0)
                     {
                         incedenceMatrix[edgeIndex, i]++;
                         incedenceMatrix[edgeIndex, j]++;
+                        edgeIndex++;
                     }
                     //start - i, end - j
-                    else if(adjMatrix.Matrix[i, j] != AdjacencyMatrix.INFINITY)
+                    else if(adjMatrix.Matrix[i, j] != 0)
                     {
                         incedenceMatrix[edgeIndex, i]++;
-                        incedenceMatrix[edgeIndex, j]--;
+                        incedenceMatrix[edgeIndex, j]--; 
+                        edgeIndex++;
                     }
                     //start - j, end - i
-                    else
+                    else if(adjMatrix.Matrix[j,i] != 0)
                     {
                         incedenceMatrix[edgeIndex, i]--;
-                        incedenceMatrix[edgeIndex, j]++;
+                        incedenceMatrix[edgeIndex, j]++; 
+                        edgeIndex++;
                     }
                 }
             }
@@ -98,11 +101,11 @@ namespace AllAboutGraph.MVC.Model
             {
                 for (int j = i; j < numOfVertices; j++)
                 {
-                    if (adjMatrix.Matrix[i, j] != AdjacencyMatrix.INFINITY)
+                    if (adjMatrix.Matrix[i, j] != 0)
                     {
                         numOfEdges++;
                     }
-                    else if (adjMatrix.Matrix[j, i] != AdjacencyMatrix.INFINITY && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
+                    else if (adjMatrix.Matrix[j, i] != 0 && adjMatrix.Matrix[j, i] != adjMatrix.Matrix[i, j])
                     {
                         numOfEdges++;
                     }
@@ -118,7 +121,7 @@ namespace AllAboutGraph.MVC.Model
             int numOfEdges = 0;
             numOfEdges = CountEdgesFromAdjacencyList(CopyList(adjList));
 
-            int[,] incidenceMatrix = new int[numOfVertices,numOfEdges];
+            int[,] incidenceMatrix = new int[numOfEdges,numOfVertices];
 
 
             AdjacencyList copyAdjList = CopyList(adjList);
@@ -130,14 +133,17 @@ namespace AllAboutGraph.MVC.Model
                 for (int j = 0; j < copyAdjList.List[i].Count; j++)
                 {
                     incidenceMatrix[edgeIndex, i]++;
-                    if (copyAdjList.List[j].Contains(i))
+                    int neighbourIndex = copyAdjList.List[i][j] - 1;
+                    if (copyAdjList.List[neighbourIndex].Contains(i+1))
                     {
-                        incidenceMatrix[edgeIndex, j]++;
-                        copyAdjList.List[j].Remove(i);
+                        incidenceMatrix[edgeIndex, neighbourIndex]++;
+                        copyAdjList.List[neighbourIndex].Remove(i+1);
+                        edgeIndex++;
                     }
                     else
                     {
-                        incidenceMatrix[edgeIndex, j]--;
+                        incidenceMatrix[edgeIndex, neighbourIndex]--;
+                        edgeIndex++;
                     }
                 }
             }
@@ -152,7 +158,7 @@ namespace AllAboutGraph.MVC.Model
 
             for (int i = 0; i < adjList.List.Count; i++)
             {
-                copyList.Add(adjList.List[i]);
+                copyList.Add(new List<int>());
                 for (int j = 0; j < adjList.List[i].Count; j++)
                 {
                     copyList[i].Add(adjList.List[i][j]);
@@ -166,18 +172,40 @@ namespace AllAboutGraph.MVC.Model
 
         private int CountEdgesFromAdjacencyList(AdjacencyList adjList)
         {
+            List<int> counted = new List<int>();
             int count = 0;
             for (int i = 0; i < adjList.List.Count; i++)
             {
-                foreach(int neighbour in adjList.List[i])
+                foreach (int neighbour in adjList.List[i])
                 {
                     count++;
-                    adjList.List[neighbour].Remove(i);
+                    adjList.List[neighbour-1].Remove(i+1);
                 }
             }
             return count;
         }
-
+        private static void PrintAdjList(List<List<int>> list)
+        {
+            foreach (List<int> adj in list)
+            {
+                Console.WriteLine();
+                foreach (int item in adj)
+                {
+                    Console.Write(item + " ");
+                }
+            }
+        }
+        private static void PrintMatrix(int[,] matrix)
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                Console.WriteLine();
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+            }
+        }
         #endregion
     }
 }
