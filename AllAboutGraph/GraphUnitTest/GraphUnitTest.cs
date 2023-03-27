@@ -10,18 +10,108 @@ namespace GraphUnitTest
     public class GraphUnitTest
     {
         [TestMethod]
-        public void TestCreateWithAdjacencyMatrix()
+        public void TestCreateGraphWithAdjacencyMatrix()
         {
+            int[,] adjMatrix = new int[,]
+            {
+                {0,1,1,0,1 },
+                {1,0,1,0,0 },
+                {1,0,0,0,0 },
+                {0,0,1,0,1 },
+                {1,0,1,1,0 },
+            };
+            AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(adjMatrix);
+
+            MyGraph graph = new MyGraph(adjacencyMatrix);
+
+            List<GraphVertex> expectedVertices = new List<GraphVertex>() {
+                new GraphVertex("A"),
+                new GraphVertex("B"),
+                new GraphVertex("C"),
+                new GraphVertex("D"),
+                new GraphVertex("E"),
+            };
+            List<GraphEdge> expectedEdges = new List<GraphEdge>() {
+                new GraphEdge(expectedVertices[0],expectedVertices[1],1,false), //1-2
+                new GraphEdge(expectedVertices[0],expectedVertices[2],1,false), //1-3
+                new GraphEdge(expectedVertices[0],expectedVertices[4],1,false), //1-5
+                new GraphEdge(expectedVertices[1],expectedVertices[2],1,true),  //2->3
+                new GraphEdge(expectedVertices[3], expectedVertices[2], 1, true), //4->3
+                new GraphEdge(expectedVertices[4], expectedVertices[2], 1, true), //5->3
+                new GraphEdge(expectedVertices[3], expectedVertices[4], 1, false), //4-5
+            };
+
+            Assert.AreEqual(GetStringEdgeList(expectedEdges), GetStringEdgeList(graph.GraphEdges));
+
         }
 
         [TestMethod]
-        public void TestCreateWithAdjacencyList()
+        public void TestCreateGraphWithAdjacencyList()
         {
+            List<List<int>> adjList = new List<List<int>>{
+                new List<int> { 2, 3, 5 },
+                new List<int> { 1, 3 },
+                new List<int> { 1 },
+                new List<int> { 3, 5 },
+                new List<int> { 1, 3, 4 } };
+            AdjacencyList adjacencyList = new AdjacencyList(adjList);
+
+            MyGraph graph = new MyGraph(adjacencyList);
+            
+            List<GraphVertex> expectedVertices = new List<GraphVertex>() {
+                new GraphVertex("A"),
+                new GraphVertex("B"),
+                new GraphVertex("C"),
+                new GraphVertex("D"),
+                new GraphVertex("E"),
+            };
+            List<GraphEdge> expectedEdges = new List<GraphEdge>() { 
+                new GraphEdge(expectedVertices[0],expectedVertices[1],1,false), //1-2
+                new GraphEdge(expectedVertices[0],expectedVertices[2],1,false), //1-3
+                new GraphEdge(expectedVertices[0],expectedVertices[4],1,false), //1-5
+                new GraphEdge(expectedVertices[1],expectedVertices[2],1,true),  //2->3
+                new GraphEdge(expectedVertices[3], expectedVertices[2], 1, true), //4->3
+                new GraphEdge(expectedVertices[3], expectedVertices[4], 1, false), //4-5
+                new GraphEdge(expectedVertices[4], expectedVertices[2], 1, true), //5->3
+            };
+
+            Assert.AreEqual(GetStringEdgeList(expectedEdges), GetStringEdgeList(graph.GraphEdges));
         }
 
+
         [TestMethod]
-        public void TestCreateWithIncidenceMatrix()
+        public void TestCreateGraphWithIncidenceMatrix()
         {
+            int[,] incMatrix = new int[,] {
+                    {1, 1, 0, 0, 0 },
+                    {1, 0, 1, 0 , 0 },
+                    {1, 0, 0, 0, 1 },
+                    {0, 1, -1, 0, 0 },
+                    {0, 0, -1, 1, 0 },
+                    {0, 0, -1, 0, 1 },
+                    {0, 0, 0, 1, 1 }};
+            IncidenceMatrix incidenceMatrix = new IncidenceMatrix(incMatrix);
+
+            MyGraph graph = new MyGraph(incidenceMatrix);
+
+            List<GraphVertex> expectedVertices = new List<GraphVertex>() {
+                new GraphVertex("A"),
+                new GraphVertex("B"),
+                new GraphVertex("C"),
+                new GraphVertex("D"),
+                new GraphVertex("E"),
+            };
+            List<GraphEdge> expectedEdges = new List<GraphEdge>() {
+                new GraphEdge(expectedVertices[0],expectedVertices[1],1,false), //1-2
+                new GraphEdge(expectedVertices[0],expectedVertices[2],1,false), //1-3
+                new GraphEdge(expectedVertices[0],expectedVertices[4],1,false), //1-5
+                new GraphEdge(expectedVertices[1],expectedVertices[2],1,true),  //2->3
+                new GraphEdge(expectedVertices[3], expectedVertices[2], 1, true), //4->3
+                new GraphEdge(expectedVertices[4], expectedVertices[2], 1, true), //5->3
+                new GraphEdge(expectedVertices[3], expectedVertices[4], 1, false), //4-5
+            };
+
+            Assert.AreEqual(GetStringEdgeList(expectedEdges), GetStringEdgeList(graph.GraphEdges));
         }
 
         [TestMethod]
@@ -97,7 +187,7 @@ namespace GraphUnitTest
             AdjacencyList adjacencyList = new AdjacencyList(adjacencyMatrix);
 
             PrintList(adjacencyList.List);
-            Assert.AreEqual(GetStringList(expectedList), GetStringList(adjacencyList.List));
+            Assert.AreEqual(GetStringAdjList(expectedList), GetStringAdjList(adjacencyList.List));
         }
 
         [TestMethod]
@@ -125,7 +215,7 @@ namespace GraphUnitTest
             AdjacencyList adjacencyList = new AdjacencyList(incidenceMatrix);
 
             PrintList(adjacencyList.List);
-            Assert.AreEqual(GetStringList(expectedList), GetStringList(adjacencyList.List));
+            Assert.AreEqual(GetStringAdjList(expectedList), GetStringAdjList(adjacencyList.List));
 
         }
 
@@ -196,7 +286,7 @@ namespace GraphUnitTest
             return result;
         }
 
-        private object GetStringList(List<List<int>> list)
+        private object GetStringAdjList(List<List<int>> list)
         {
             string result = "";
 
@@ -208,6 +298,26 @@ namespace GraphUnitTest
                 }
             }
 
+            return result;
+        }
+
+        private string GetStringEdgeList(List<GraphEdge> expectedEdges)
+        {
+            string result = "";
+            foreach (GraphEdge edge in expectedEdges)
+            {
+                result += edge.VertexOut.Name + " " + edge.VertexIn.Name + " " + edge.Weight + " " + edge.Directed.ToString() + " ";
+            }
+            return result;
+        }
+
+        private string GetStringVertexList(List<GraphVertex> expectedVertices)
+        {
+            string result = "";
+            foreach (GraphVertex vertex in expectedVertices)
+            {
+                result += vertex.Name + " ";
+            }
             return result;
         }
 

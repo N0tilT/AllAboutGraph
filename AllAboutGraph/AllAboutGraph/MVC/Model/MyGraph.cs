@@ -113,8 +113,8 @@ namespace AllAboutGraph.MVC.Model
                         }
                         else
                         {
-                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, false));
-                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], adjMatrix.Matrix[neighbour, currentVertex], false));
+                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                            AddEdge(new GraphEdge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
                             edgeIndex++;
                         }
                         LinkVertices(currentVertex, neighbour, edgeIndex);
@@ -128,7 +128,7 @@ namespace AllAboutGraph.MVC.Model
                     }
                     else if (adjMatrix.Matrix[neighbour, currentVertex] != 0)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                        AddEdge(new GraphEdge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
                         edgeIndex++;
 
                         LinkVertices(currentVertex, neighbour, edgeIndex);
@@ -139,7 +139,7 @@ namespace AllAboutGraph.MVC.Model
 
         private void CreateVerticesFromMatrix(int[,] adjMatrix, PointF[] verticesPoints)
         {
-            for (int i = 0; i < adjMatrix.GetLength(0); i++)
+            for (int i = 0; i < adjMatrix.GetLength(1); i++)
             {
                 string vertexname = GetVertexName(i);
                 GraphVertex vertex = new GraphVertex(vertexname);
@@ -157,22 +157,22 @@ namespace AllAboutGraph.MVC.Model
             AdjacencyList copy = CopyList(adjList);
 
             int edgeIndex = -1;
-            for (int currentVertex = 0; currentVertex < copy.CountVertices; currentVertex++)
+            for (int currentVertex = 0; currentVertex < copy.List.Count; currentVertex++)
             {
                 for (int neighbourIndex = 0; neighbourIndex < copy.List[currentVertex].Count; neighbourIndex++)
                 {
                     int adjVertex = copy.List[currentVertex][neighbourIndex];
-                    bool oriented = !copy.List[adjVertex].Contains(currentVertex);
+                    bool oriented = !copy.List[adjVertex-1].Contains(currentVertex+1);
 
                     if (oriented)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex], 1, oriented));
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex-1], 1, true));
                         edgeIndex++;
                     }
                     else
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex], 1, !oriented));
-                        copy.List[adjVertex].Remove(currentVertex);
+                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex - 1], 1, false));
+                        copy.List[adjVertex - 1].Remove(currentVertex+1);
                         edgeIndex++;
                     }
 
@@ -187,13 +187,12 @@ namespace AllAboutGraph.MVC.Model
 
             for (int i = 0; i < adjList.List.Count; i++)
             {
-                copyList.Add(adjList.List[i]);
+                copyList.Add(new List<int>());
                 for (int j = 0; j < adjList.List[i].Count; j++)
                 {
                     copyList[i].Add(adjList.List[i][j]);
                 }
             }
-
             return new AdjacencyList(copyList);
 
 
@@ -218,32 +217,31 @@ namespace AllAboutGraph.MVC.Model
 
             for (int currentEdge = 0; currentEdge < incMatrix.CountEdges; currentEdge++)
             {
-                for (int firstVertex = 0; firstVertex < incMatrix.CountVertices-1; firstVertex++)
+                for (int firstVertex = 0; firstVertex < incMatrix.CountVertices; firstVertex++)
                 {
-                    if(firstVertex == 1)
+                    if(incMatrix.Matrix[currentEdge,firstVertex] == 1)
                     {
-                        for (int adjVertex = firstVertex+1; adjVertex < incMatrix.CountVertices; adjVertex++)
+                        for (int adjVertex = 0; adjVertex < incMatrix.CountVertices; adjVertex++)
                         {
-                            switch (adjVertex)
+                            if (firstVertex != adjVertex)
                             {
-                                case -1: //oriented
+                                if (incMatrix.Matrix[currentEdge, adjVertex] == -1)
+                                {
                                     AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, true));
                                     LinkVertices(firstVertex, adjVertex, currentEdge);
                                     break;
-                                case 1: //not-oriented
+                                }
+                                else if (incMatrix.Matrix[currentEdge, adjVertex] == 1)
+                                {
                                     AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, false));
                                     LinkVertices(firstVertex, adjVertex, currentEdge);
                                     break;
-                                default:
-                                    break;
+                                }
                             }
-
-                            
-                            
                         }
                         break;
                     }
-                    else if(firstVertex == 2) //loop
+                    else if(incMatrix.Matrix[currentEdge, firstVertex] == 2) //loop
                     {
                         AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[firstVertex], 1, true));
                         LinkVertices(firstVertex, firstVertex, currentEdge);
