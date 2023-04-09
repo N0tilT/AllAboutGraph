@@ -19,30 +19,30 @@ namespace IntegrationTest
 
         private static void Task2()
         {
-            List<GraphVertex> inputVertices = new List<GraphVertex>()
+            List<Vertex> inputVertices = new List<Vertex>()
             {
-                new GraphVertex("1"),
-                new GraphVertex("2"),
-                new GraphVertex("3"),
-                new GraphVertex("4"),
-                new GraphVertex("5"),
-                new GraphVertex("6"),
-                new GraphVertex("7"),
-                new GraphVertex("8"),
+                new Vertex("1"),
+                new Vertex("2"),
+                new Vertex("3"),
+                new Vertex("4"),
+                new Vertex("5"),
+                new Vertex("6"),
+                new Vertex("7"),
+                new Vertex("8"),
             };
 
-            List<GraphEdge> inputEdges = new List<GraphEdge>()
+            List<Edge> inputEdges = new List<Edge>()
             {
-                new GraphEdge(inputVertices[0], inputVertices[1], 1, true), //1->2
-                new GraphEdge(inputVertices[0], inputVertices[3], 1, true), //1->4
-                new GraphEdge(inputVertices[1], inputVertices[4], 1, true), //2->5
-                new GraphEdge(inputVertices[2], inputVertices[3], 1, true), //3->4
-                new GraphEdge(inputVertices[2], inputVertices[4], 1, true), //3->5
-                new GraphEdge(inputVertices[3], inputVertices[0], 1, true), //4->1
-                new GraphEdge(inputVertices[3], inputVertices[6], 1, true), //4->7
-                new GraphEdge(inputVertices[4], inputVertices[5], 1, true), //5->6
-                new GraphEdge(inputVertices[4], inputVertices[7], 1, true), //5->8
-                new GraphEdge(inputVertices[6], inputVertices[7], 1, true), //7->8
+                new Edge(inputVertices[0], inputVertices[1], 1, true), //1->2
+                new Edge(inputVertices[0], inputVertices[3], 1, true), //1->4
+                new Edge(inputVertices[1], inputVertices[4], 1, true), //2->5
+                new Edge(inputVertices[2], inputVertices[3], 1, true), //3->4
+                new Edge(inputVertices[2], inputVertices[4], 1, true), //3->5
+                new Edge(inputVertices[3], inputVertices[0], 1, true), //4->1
+                new Edge(inputVertices[3], inputVertices[6], 1, true), //4->7
+                new Edge(inputVertices[4], inputVertices[5], 1, true), //5->6
+                new Edge(inputVertices[4], inputVertices[7], 1, true), //5->8
+                new Edge(inputVertices[6], inputVertices[7], 1, true), //7->8
             };
 
             MyGraph graph = new MyGraph(inputVertices, inputEdges);

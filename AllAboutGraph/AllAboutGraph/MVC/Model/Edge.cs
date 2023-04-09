@@ -3,15 +3,15 @@ using System.Drawing;
 
 namespace AllAboutGraph.MVC.Model
 {
-    public class GraphEdge
+    public class Edge
     {
         #region Constants
         const float arrowSize = 15;
         #endregion
 
         #region Fields
-        private GraphVertex _vertexOut;
-        private GraphVertex _vertexIn;
+        private Vertex _vertexOut;
+        private Vertex _vertexIn;
 
         private bool _directed;
 
@@ -20,13 +20,13 @@ namespace AllAboutGraph.MVC.Model
 
         #region Properties
 
-        public GraphVertex VertexOut
+        public Vertex VertexOut
         {
             get { return _vertexOut; }
             set { _vertexOut = value; }
         }
 
-        public GraphVertex VertexIn
+        public Vertex VertexIn
         {
             get { return _vertexIn; }
             set { _vertexIn = value; }
@@ -53,12 +53,12 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Contrusctors
-        public GraphEdge()
+        public Edge()
         {
 
         }
 
-        public GraphEdge(GraphVertex vertexOut, GraphVertex vertexIn, float weight, bool isDirected)
+        public Edge(Vertex vertexOut, Vertex vertexIn, float weight, bool isDirected)
         {
             VertexOut = vertexOut;
             VertexIn = vertexIn;

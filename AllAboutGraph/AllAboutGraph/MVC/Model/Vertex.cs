@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
-    public class GraphVertex
+    public class Vertex
     {
         #region Fields
         private string _name;
 
-        private List<GraphEdge> _inEdges;
-        private List<GraphEdge> _outEdges;
+        private List<Edge> _inEdges;
+        private List<Edge> _outEdges;
 
         private PointF _location;
         private float _radius;
@@ -28,11 +28,11 @@ namespace AllAboutGraph.MVC.Model
             set { _name = value; }
         }
 
-        public List<GraphEdge> OutEdges
+        public List<Edge> OutEdges
         {
             get { return _outEdges; }
         }
-        public List<GraphEdge> InEdges
+        public List<Edge> InEdges
         {
             get { return _inEdges; }
         }
@@ -78,24 +78,24 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Constructor
-        public GraphVertex()
+        public Vertex()
         {
-            _inEdges= new List<GraphEdge>();
-            _outEdges = new List<GraphEdge>();
+            _inEdges= new List<Edge>();
+            _outEdges = new List<Edge>();
             Radius = 25;
             Size = new SizeF(Radius*2, Radius * 2);
         }
 
-        public GraphVertex(string name)
+        public Vertex(string name)
         {
             Name = name;
-            _inEdges = new List<GraphEdge>();
-            _outEdges = new List<GraphEdge>();
+            _inEdges = new List<Edge>();
+            _outEdges = new List<Edge>();
             Radius = 25;
             Size = new SizeF(Radius * 2, Radius * 2);
         }
 
-        public GraphVertex(string name, List<GraphEdge> inEdges, List<GraphEdge> outEdges, float radius)
+        public Vertex(string name, List<Edge> inEdges, List<Edge> outEdges, float radius)
         {
             Name = name;
             _inEdges = inEdges;
@@ -107,16 +107,16 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Methods
-        public List<GraphEdge> GetAllEdges()
+        public List<Edge> GetAllEdges()
         {
-            List<GraphEdge> allVertexEdges = new List<GraphEdge>();
+            List<Edge> allVertexEdges = new List<Edge>();
 
-            foreach (GraphEdge edge in OutEdges)
+            foreach (Edge edge in OutEdges)
             {
                 allVertexEdges.Add(edge);
             }
 
-            foreach (GraphEdge edge in InEdges)
+            foreach (Edge edge in InEdges)
             {
                 allVertexEdges.Add(edge);
             }

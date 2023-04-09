@@ -10,8 +10,8 @@ namespace AllAboutGraph.MVC.Model
     public class MyGraph
     {
         #region Fields
-        private List<GraphEdge> _graphEdges= new List<GraphEdge>();
-        private List<GraphVertex> _graphVertices= new List<GraphVertex>();
+        private List<Edge> _graphEdges= new List<Edge>();
+        private List<Vertex> _graphVertices= new List<Vertex>();
 
         private bool _isDirected = false;
 
@@ -22,8 +22,8 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Properties
-        public List<GraphEdge> GraphEdges { get { return _graphEdges; } }
-        public List<GraphVertex> GraphVertices { get { return _graphVertices; } }
+        public List<Edge> GraphEdges { get { return _graphEdges; } }
+        public List<Vertex> GraphVertices { get { return _graphVertices; } }
         public bool IsDirected { get { return _isDirected; } }
 
         public int[,] AdjacencyMatrix { get { return _adjacencyMatrix; } }
@@ -37,9 +37,9 @@ namespace AllAboutGraph.MVC.Model
         #region Constructors
         public MyGraph() { }
 
-        public MyGraph(List<GraphEdge> graphEdges) { _graphEdges = graphEdges; }
+        public MyGraph(List<Edge> graphEdges) { _graphEdges = graphEdges; }
 
-        public MyGraph(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        public MyGraph(List<Vertex> graphVertices, List<Edge> graphEdges)
         {
             _graphEdges = graphEdges;
             _graphVertices = graphVertices;
@@ -49,7 +49,7 @@ namespace AllAboutGraph.MVC.Model
             _incidenceMatrix = new IncidenceMatrix(graphVertices, graphEdges).Matrix;
         }
 
-        public MyGraph(List<GraphVertex> graphVertices,List<GraphEdge> graphEdges, bool isDirected) : this(graphVertices,graphEdges)
+        public MyGraph(List<Vertex> graphVertices,List<Edge> graphEdges, bool isDirected) : this(graphVertices,graphEdges)
         {
             _isDirected = isDirected;
         }
@@ -114,27 +114,27 @@ namespace AllAboutGraph.MVC.Model
                     {
                         if(adjMatrix.Matrix[currentVertex, neighbour] == adjMatrix.Matrix[neighbour, currentVertex])
                         {
-                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, false));
+                            AddEdge(new Edge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, false));
                             edgeIndex++;
                         }
                         else
                         {
-                            AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
-                            AddEdge(new GraphEdge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
+                            AddEdge(new Edge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                            AddEdge(new Edge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
                             edgeIndex++;
                         }
                         LinkVertices(currentVertex, neighbour, edgeIndex);
                     }
                     else if (adjMatrix.Matrix[currentVertex, neighbour] != 0)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
+                        AddEdge(new Edge(GraphVertices[currentVertex], GraphVertices[neighbour], weight, true));
                         edgeIndex++;
 
                         LinkVertices(currentVertex, neighbour, edgeIndex);
                     }
                     else if (adjMatrix.Matrix[neighbour, currentVertex] != 0)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
+                        AddEdge(new Edge(GraphVertices[neighbour], GraphVertices[currentVertex], adjMatrix.Matrix[neighbour, currentVertex], true));
                         edgeIndex++;
 
                         LinkVertices(currentVertex, neighbour, edgeIndex);
@@ -148,7 +148,7 @@ namespace AllAboutGraph.MVC.Model
             for (int i = 0; i < adjMatrix.GetLength(1); i++)
             {
                 string vertexname = GetVertexName(i);
-                GraphVertex vertex = new GraphVertex(vertexname);
+                Vertex vertex = new Vertex(vertexname);
                 vertex.Size = new SizeF(50, 50);
                 vertex.Location = verticesPoints[i];
                 AddVertex(vertex);
@@ -172,12 +172,12 @@ namespace AllAboutGraph.MVC.Model
 
                     if (oriented)
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex-1], 1, true));
+                        AddEdge(new Edge(GraphVertices[currentVertex], GraphVertices[adjVertex-1], 1, true));
                         edgeIndex++;
                     }
                     else
                     {
-                        AddEdge(new GraphEdge(GraphVertices[currentVertex], GraphVertices[adjVertex - 1], 1, false));
+                        AddEdge(new Edge(GraphVertices[currentVertex], GraphVertices[adjVertex - 1], 1, false));
                         copy.List[adjVertex - 1].Remove(currentVertex+1);
                         edgeIndex++;
                     }
@@ -209,7 +209,7 @@ namespace AllAboutGraph.MVC.Model
             for (int i = 0; i < adjList.CountVertices; i++)
             {
                 string vertexName = GetVertexName(i);
-                GraphVertex vertex = new GraphVertex(vertexName);
+                Vertex vertex = new Vertex(vertexName);
                 vertex.Size = new SizeF(50, 50);
                 vertex.Location = verticesPoints[i];
                 AddVertex(vertex);
@@ -233,13 +233,13 @@ namespace AllAboutGraph.MVC.Model
                             {
                                 if (incMatrix.Matrix[currentEdge, adjVertex] == -1)
                                 {
-                                    AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, true));
+                                    AddEdge(new Edge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, true));
                                     LinkVertices(firstVertex, adjVertex, currentEdge);
                                     break;
                                 }
                                 else if (incMatrix.Matrix[currentEdge, adjVertex] == 1)
                                 {
-                                    AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, false));
+                                    AddEdge(new Edge(GraphVertices[firstVertex], GraphVertices[adjVertex], 1, false));
                                     LinkVertices(firstVertex, adjVertex, currentEdge);
                                     break;
                                 }
@@ -249,7 +249,7 @@ namespace AllAboutGraph.MVC.Model
                     }
                     else if(incMatrix.Matrix[currentEdge, firstVertex] == 2) //loop
                     {
-                        AddEdge(new GraphEdge(GraphVertices[firstVertex], GraphVertices[firstVertex], 1, true));
+                        AddEdge(new Edge(GraphVertices[firstVertex], GraphVertices[firstVertex], 1, true));
                         LinkVertices(firstVertex, firstVertex, currentEdge);
                         break;
                     }
@@ -348,22 +348,22 @@ namespace AllAboutGraph.MVC.Model
 
         #region VerticesAndEdges
 
-        public void AddVertex(GraphVertex vertex)
+        public void AddVertex(Vertex vertex)
         {
             _graphVertices.Add(vertex);
         }
 
-        public void RemoveVertex(GraphVertex vertex)
+        public void RemoveVertex(Vertex vertex)
         {
             _graphVertices.Remove(vertex);
         }
 
-        public void AddEdge(GraphEdge edge)
+        public void AddEdge(Edge edge)
         {
             _graphEdges.Add(edge);
         }
 
-        public void RemoveEdge(GraphEdge edge)
+        public void RemoveEdge(Edge edge)
         {
             _graphEdges.Remove(edge);
         }
@@ -380,12 +380,12 @@ namespace AllAboutGraph.MVC.Model
 
         public void DrawGraph(Graphics Graphics,Pen pen,Brush backgroundBrush,Brush fontBrush, Font font, StringFormat format)
         {
-            foreach (GraphEdge edge in GraphEdges)
+            foreach (Edge edge in GraphEdges)
             {
                 edge.DrawEdge(Graphics, pen);
             }
 
-            foreach (GraphVertex vertex in GraphVertices)
+            foreach (Vertex vertex in GraphVertices)
             {
                 vertex.DrawVertex(Graphics,pen,backgroundBrush,fontBrush,font,format);
             }

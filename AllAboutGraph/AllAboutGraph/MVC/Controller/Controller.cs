@@ -408,7 +408,7 @@ namespace AllAboutGraph.MVC.Controller
 
         private void PrintVisitTime(int startIndex, int time, Graphics g,Font font,Brush brush, StringFormat format)
         {
-            GraphVertex curVertex = Graph.GraphVertices[startIndex];
+            Vertex curVertex = Graph.GraphVertices[startIndex];
             PointF vertexCenter = curVertex.Center;
             PointF timePosition = new PointF(vertexCenter.X,vertexCenter.Y-curVertex.Size.Height-5);
 
@@ -564,7 +564,7 @@ namespace AllAboutGraph.MVC.Controller
         #region ViewInteractions
         private void HighlightEdge(Graphics g, Pen pen, int vertexOut, int VertexIn)
         {
-            GraphEdge curEdge = new GraphEdge();
+            Edge curEdge = new Edge();
             curEdge.VertexOut = Graph.GraphVertices[vertexOut];
             curEdge.VertexIn = Graph.GraphVertices[VertexIn];
             curEdge.DrawEdge(g, pen);

@@ -53,7 +53,7 @@ namespace AllAboutGraph.MVC.Model
             FillMatrixCopying(matrix);
         }
 
-        public AdjacencyMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        public AdjacencyMatrix(List<Vertex> graphVertices, List<Edge> graphEdges)
         {
             _matrix = new int[graphVertices.Count, graphVertices.Count];
 

@@ -53,7 +53,7 @@ namespace AllAboutGraph.MVC.Model
             _matrix = FromAdjacencyList(adjList);
         }
 
-        public IncidenceMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        public IncidenceMatrix(List<Vertex> graphVertices, List<Edge> graphEdges)
         {
             _matrix = new int[graphEdges.Count, graphVertices.Count];
 

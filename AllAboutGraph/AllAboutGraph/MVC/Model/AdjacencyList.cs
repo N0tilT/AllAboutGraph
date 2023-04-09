@@ -32,7 +32,7 @@ namespace AllAboutGraph.MVC.Model
             _list = list;
         }
 
-        public AdjacencyList(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
+        public AdjacencyList(List<Vertex> graphVertices, List<Edge> graphEdges)
         {
             AdjacencyMatrix adjMatrix = new AdjacencyMatrix(graphVertices,graphEdges);
             _list = new AdjacencyList(adjMatrix).List;
@@ -149,5 +149,6 @@ namespace AllAboutGraph.MVC.Model
             return _list[vertexIndex];
         }
         #endregion
+
     }
 }
