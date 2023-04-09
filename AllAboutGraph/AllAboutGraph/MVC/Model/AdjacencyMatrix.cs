@@ -63,9 +63,9 @@ namespace AllAboutGraph.MVC.Model
             {
                 for (int j = 0; j < graphEdges.Count; j++)
                 {
-                    if (graphEdges[j].VertexOut == graphVertices[i])
+                    if (graphEdges[j].FirstVertex == graphVertices[i])
                     {
-                        _matrix[i, int.Parse(graphEdges[j].VertexIn.Name) - 1]++;
+                        _matrix[i, int.Parse(graphEdges[j].SecondVertex.Name) - 1]++;
                     }
                 }
             }

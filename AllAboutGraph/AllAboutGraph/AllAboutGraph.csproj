@@ -50,8 +50,10 @@
     <Compile Include="MVC\Controller\IViewModel.cs" />
     <Compile Include="MVC\Model\AdjacencyList.cs" />
     <Compile Include="MVC\Model\AdjacencyMatrix.cs" />
-    <Compile Include="MVC\Model\GraphEdge.cs" />
-    <Compile Include="MVC\Model\GraphVertex.cs" />
+    <Compile Include="MVC\Model\DirectedEdge.cs" />
+    <Compile Include="MVC\Model\Edge.cs" />
+    <Compile Include="MVC\Model\UndirectedEdge.cs" />
+    <Compile Include="MVC\Model\Vertex.cs" />
     <Compile Include="MVC\Model\IncidenceMatrix.cs" />
     <Compile Include="MVC\Model\MyGraph.cs" />
     <Compile Include="MVC\View\MainView.cs">

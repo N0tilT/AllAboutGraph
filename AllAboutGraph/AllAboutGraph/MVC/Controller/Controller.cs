@@ -565,8 +565,8 @@ namespace AllAboutGraph.MVC.Controller
         private void HighlightEdge(Graphics g, Pen pen, int vertexOut, int VertexIn)
         {
             Edge curEdge = new Edge();
-            curEdge.VertexOut = Graph.GraphVertices[vertexOut];
-            curEdge.VertexIn = Graph.GraphVertices[VertexIn];
+            curEdge.FirstVertex = Graph.GraphVertices[vertexOut];
+            curEdge.SecondVertex = Graph.GraphVertices[VertexIn];
             curEdge.DrawEdge(g, pen);
 
             View.ViewUpdate();

@@ -59,8 +59,8 @@ namespace AllAboutGraph.MVC.Model
 
             for (int i = 0; i < graphEdges.Count; i++)
             {
-                int curVertexIndex = int.Parse(graphEdges[i].VertexOut.Name) - 1;
-                int adjVertexINdex = int.Parse(graphEdges[i].VertexIn.Name) - 1;
+                int curVertexIndex = int.Parse(graphEdges[i].FirstVertex.Name) - 1;
+                int adjVertexINdex = int.Parse(graphEdges[i].SecondVertex.Name) - 1;
 
                 _matrix[i,curVertexIndex] = 1;
                 
