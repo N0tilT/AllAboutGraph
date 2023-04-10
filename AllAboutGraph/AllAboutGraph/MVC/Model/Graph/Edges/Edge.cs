@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс, описывающий ребро в общем виде
+    /// </summary>
     public abstract class Edge
     {
         #region Fields
@@ -13,7 +16,7 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Properties
-
+        
         /// <summary>
         /// Доступ к первой вершине
         /// </summary>
@@ -35,7 +38,7 @@ namespace AllAboutGraph.MVC.Model
         /// <summary>
         /// Наличие петли
         /// </summary>
-        public bool Loop
+        public bool IsLoop
         {
             get { return _secondVertex == _firstVertex; }
         }
@@ -78,9 +81,19 @@ namespace AllAboutGraph.MVC.Model
 
         #region DrawMethods
 
+        /// <summary>
+        /// Метод, для рисования ребра 
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="pen"></param>
         public abstract void Draw(Graphics graphics, Pen pen);
 
-
+        /// <summary>
+        /// Метод, для подписи веса ребра
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="pen"></param>
+        /// <param name="angle">угол - наклон ребра относительно оси координат </param>
         protected void DrawWeight(Graphics graphics, Pen pen, float angle)
         {
             Font font = new Font("Segoe UI", 14);
@@ -98,10 +111,10 @@ namespace AllAboutGraph.MVC.Model
         #endregion
         #region AngleCalc
         /// <summary>
-        /// The angle between the vertex where the edge enters and the vertex from which the edge originates
+        /// Функция для получения угла между вершиной, в которую входит ребро, и вершиной, из которой исходит ребро.
         /// </summary>
-        /// <param name="vertexInPos">start vertex point</param>
-        /// <param name="vertexOutPos">end vertex point</param>
+        /// <param name="vertexInPos">начальна вершинаt</param>
+        /// <param name="vertexOutPos">конечная вершина</param>
         /// <returns></returns>
         protected double GetAngle(PointF vertexInPos, PointF vertexOutPos)
         {
@@ -127,7 +140,13 @@ namespace AllAboutGraph.MVC.Model
             double angle = GetAngleDegree((float)Math.Atan((double)oppositeSideLength / adjacentSideLength), vertexOutPos,vertexInPos);
             return angle;
         }
-
+        /// <summary>
+        /// Перевод угла из радиан в градусы
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <param name="vertexOutPos"></param>
+        /// <param name="vertexInPos"></param>
+        /// <returns></returns>
         private float GetAngleDegree(float angle, PointF vertexOutPos, PointF vertexInPos)
         {
             //end vertex is below and to the right of the start
@@ -149,9 +168,9 @@ namespace AllAboutGraph.MVC.Model
 
         #region WeightPoints
         /// <summary>
-        /// get mid point of the edge
+        /// Функция для получения середины ребра
         /// </summary>
-        /// <returns>Point of the middle of the edge</returns>
+        /// <returns>Середина ребра</returns>
         private PointF GetEdgeMiddle()
         {
             float x = (SecondVertex.Center.X + FirstVertex.Center.X) /2;
@@ -163,12 +182,12 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// get the point where to draw text on the edge
+        /// Функция для получения точки для подписи веса ребра
         /// </summary>
-        /// <param name="edgeMiddlePoint">mid point of the edge</param>
-        /// <param name="angle">angle between start and end vertices</param>
-        /// <returns>Point of text on the edge</returns>
-        private PointF GetTextDrawPoint(PointF edgeMiddlePoint,float angle)
+        /// <param name="edgeMiddlePoint">середина ребра</param>
+        /// <param name="angle">угол наклона ребра</param>
+        /// <returns>Точка для подписи веса ребра</returns>
+        private PointF GetTextDrawPoint(PointF edgeMiddlePoint, float angle)
         {
             float x = edgeMiddlePoint.X + 15* (float)Math.Cos(angle+Math.PI/2);
             float y = edgeMiddlePoint.Y + 15 * (float)Math.Sin(angle + Math.PI / 2);
