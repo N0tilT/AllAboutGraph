@@ -67,6 +67,7 @@ namespace AllAboutGraph.MVC.Model
 
                 return new PointF(x,y); 
             } 
+
         }
 
         public float Radius
@@ -92,6 +93,14 @@ namespace AllAboutGraph.MVC.Model
             _inEdges = new List<GraphEdge>();
             _outEdges = new List<GraphEdge>();
             Radius = 25;
+            Size = new SizeF(Radius * 2, Radius * 2);
+        }
+
+        public GraphVertex(string name, PointF location, float radius)
+        {
+            Name = name;
+            Location = location;
+            Radius = radius;
             Size = new SizeF(Radius * 2, Radius * 2);
         }
 

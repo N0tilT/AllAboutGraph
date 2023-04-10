@@ -82,7 +82,7 @@ namespace AllAboutGraph.MVC.Model
                 DrawArrowPointer(graphics, pen, angle);
             }
 
-            DrawWeight(graphics, pen, (float)angle);
+            //DrawWeight(graphics, pen, (float)angle);
 
         }
 

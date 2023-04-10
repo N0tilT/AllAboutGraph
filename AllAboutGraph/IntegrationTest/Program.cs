@@ -203,13 +203,13 @@ namespace IntegrationTest
 
             isVisited[startVertex] = true;
 
-            foreach(int i in adjacencyList[startVertex])
+            foreach(int neighbour in adjacencyList[startVertex])
             {
-                if (!isVisited[i])
+                if (!isVisited[neighbour])
                 {
-                    path.Add(i);
-                    GetAllPathsUtil(adjacencyList,i, destination, isVisited, path);
-                    path.Remove(i);
+                    path.Add(neighbour);
+                    GetAllPathsUtil(adjacencyList,neighbour, destination, isVisited, path);
+                    path.Remove(neighbour);
                 }
             }
 
