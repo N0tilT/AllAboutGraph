@@ -81,7 +81,6 @@ namespace AllAboutGraph.MVC.Controller
             get { return new AdjacencyMatrix(_testAdjMatrix); }
         }
 
-        public object Fleury { get; internal set; }
         #endregion
 
         #region Initialization

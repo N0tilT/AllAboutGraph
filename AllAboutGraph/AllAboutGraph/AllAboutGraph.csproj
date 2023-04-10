@@ -48,14 +48,14 @@
   <ItemGroup>
     <Compile Include="MVC\Controller\Controller.cs" />
     <Compile Include="MVC\Controller\IViewModel.cs" />
-    <Compile Include="MVC\Model\AdjacencyList.cs" />
-    <Compile Include="MVC\Model\AdjacencyMatrix.cs" />
-    <Compile Include="MVC\Model\DirectedEdge.cs" />
-    <Compile Include="MVC\Model\Edge.cs" />
-    <Compile Include="MVC\Model\UndirectedEdge.cs" />
-    <Compile Include="MVC\Model\Vertex.cs" />
-    <Compile Include="MVC\Model\IncidenceMatrix.cs" />
-    <Compile Include="MVC\Model\MyGraph.cs" />
+    <Compile Include="MVC\Model\Matrix\AdjacencyList.cs" />
+    <Compile Include="MVC\Model\Matrix\AdjacencyMatrix.cs" />
+    <Compile Include="MVC\Model\Graph\Edges\DirectedEdge.cs" />
+    <Compile Include="MVC\Model\Graph\Edges\Edge.cs" />
+    <Compile Include="MVC\Model\Graph\Edges\UndirectedEdge.cs" />
+    <Compile Include="MVC\Model\Graph\Vertex.cs" />
+    <Compile Include="MVC\Model\Matrix\IncidenceMatrix.cs" />
+    <Compile Include="MVC\Model\Graph\MyGraph.cs" />
     <Compile Include="MVC\View\MainView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,5 +89,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

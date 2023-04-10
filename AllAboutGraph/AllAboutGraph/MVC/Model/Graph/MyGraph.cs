@@ -95,7 +95,6 @@ namespace AllAboutGraph.MVC.Model
 
         #region Methods
 
-
         #region GraphCreation
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {

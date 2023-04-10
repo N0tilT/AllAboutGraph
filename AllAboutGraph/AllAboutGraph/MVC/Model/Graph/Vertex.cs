@@ -107,23 +107,6 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Methods
-        public List<Edge> GetAllEdges()
-        {
-            List<Edge> allVertexEdges = new List<Edge>();
-
-            foreach (Edge edge in OutEdges)
-            {
-                allVertexEdges.Add(edge);
-            }
-
-            foreach (Edge edge in InEdges)
-            {
-                allVertexEdges.Add(edge);
-            }
-
-            return allVertexEdges;
-        }
-
         public void DrawVertex(Graphics g, Pen pen, Brush backgroundBrush, Brush fontBrush, Font font,StringFormat format)
         {
             g.FillEllipse(backgroundBrush, new RectangleF(Location, Size));
