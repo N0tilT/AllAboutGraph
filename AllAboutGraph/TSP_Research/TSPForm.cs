@@ -108,13 +108,25 @@ namespace TSP_Research
                 TSPchart.Series[4].Points.Add(tspAlgorithm.SimulatedAnnealingTimer());
                 TSPchart.Series[5].Points.Add(tspAlgorithm.BranchesAndBoundariesTimer());
                 TSPchart.Series[6].Points.Add(tspAlgorithm.AntColonyAlgorithmTimer());
+
+                MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath));
             }
             SelectedGraph = Graphs[1];
-
             SetDefaultPaintingProperties();
 
             InitializeCanvas();
         }
+
+        private string PrintPath(List<int> path)
+        {
+            string result = "";
+            foreach(int item in path)
+            {
+                result += Convert.ToString(item);
+            }
+            return result;
+        }
+
         private void SetDefaultPaintingProperties()
         {
             SetDefaultPen();

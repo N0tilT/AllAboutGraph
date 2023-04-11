@@ -351,9 +351,9 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
-        private int GetPathLength(List<int> path)
+        private float GetPathLength(List<int> path)
         {
-            int length = 0;
+            float length = 0;
             for (int i = 0; i < path.Count - 1; i++)
             {
                 length += Graph.AdjacencyMatrix[path[i], path[i + 1]];

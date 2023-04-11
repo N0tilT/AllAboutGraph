@@ -17,12 +17,12 @@ namespace AllAboutGraph.MVC.Model
 
         #region Fields
 
-        int[,] _matrix;
+        float[,] _matrix;
 
         #endregion
 
         #region Properties
-        public int[,] Matrix 
+        public float[,] Matrix 
         {
             get 
             { return _matrix; } 
@@ -38,24 +38,24 @@ namespace AllAboutGraph.MVC.Model
         #region Constructors
         public AdjacencyMatrix() 
         {
-            _matrix = new int[0, 0]; 
+            _matrix = new float[0, 0]; 
         }
 
         public AdjacencyMatrix(int rows, int columns) 
         {
-            _matrix = new int[rows, columns];
+            _matrix = new float[rows, columns];
             ResetMatrix();
         }
 
         public AdjacencyMatrix(int[,] matrix)
         {
-            _matrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
+            _matrix = new float[matrix.GetLength(0), matrix.GetLength(1)];
             FillMatrixCopying(matrix);
         }
 
         public AdjacencyMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
         {
-            _matrix = new int[graphVertices.Count, graphVertices.Count];
+            _matrix = new float[graphVertices.Count, graphVertices.Count];
 
             ResetMatrix();
 
@@ -65,7 +65,7 @@ namespace AllAboutGraph.MVC.Model
                 {
                     if (graphEdges[j].VertexOut == graphVertices[i])
                     {
-                        _matrix[i, int.Parse(graphEdges[j].VertexIn.Name) - 1]++;
+                        _matrix[i, int.Parse(graphEdges[j].VertexIn.Name) - 1] = graphEdges[j].Weight;
                     }
                 }
             }
@@ -73,7 +73,7 @@ namespace AllAboutGraph.MVC.Model
 
         public AdjacencyMatrix(AdjacencyList adjList)
         {
-            _matrix = new int[adjList.CountVertices, adjList.CountVertices];
+            _matrix = new float[adjList.CountVertices, adjList.CountVertices];
 
             ResetMatrix();
             FromAdjacencyList(adjList.List);
@@ -82,7 +82,7 @@ namespace AllAboutGraph.MVC.Model
 
         public AdjacencyMatrix(IncidenceMatrix incidenceMatrix) 
         {
-            _matrix = new int[incidenceMatrix.CountVertices, incidenceMatrix.CountVertices];
+            _matrix = new float[incidenceMatrix.CountVertices, incidenceMatrix.CountVertices];
 
             ResetMatrix();
             FromIncidenceMatrix(incidenceMatrix);

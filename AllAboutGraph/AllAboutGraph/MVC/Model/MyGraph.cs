@@ -16,7 +16,7 @@ namespace AllAboutGraph.MVC.Model
 
         private bool _isDirected = false;
 
-        private int[,] _adjacencyMatrix;
+        private float[,] _adjacencyMatrix;
         private List<List<int>> _adjacencyList;
         private int[,] _incidenceMatrix;
         private int[,] _degreeTable;
@@ -27,7 +27,7 @@ namespace AllAboutGraph.MVC.Model
         public List<GraphVertex> GraphVertices { get { return _graphVertices; } }
         public bool IsDirected { get { return _isDirected; } }
 
-        public int[,] AdjacencyMatrix 
+        public float[,] AdjacencyMatrix 
         { 
             get 
             {
@@ -78,7 +78,7 @@ namespace AllAboutGraph.MVC.Model
             } 
         }
 
-        public int[,] DegreeTable { get { return GetDegreeTableFromIncidenceMatrix(IncidenceMatrix); } }
+        public int[,] DegreeTable { get { return GetDegreeTableFromIncidenceMatrix(); } }
 
         #endregion
 
@@ -149,14 +149,14 @@ namespace AllAboutGraph.MVC.Model
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank, 200, new PointF(250, 250));
 
-            CreateVerticesFromMatrix(adjMatrix.Matrix, verticesPoints);
+            CreateVerticesFromAdjacencyMatrix(adjMatrix.Matrix, verticesPoints);
 
             int edgeIndex = -1;
             for (int currentVertex = 0; currentVertex < adjMatrix.Rank; currentVertex++)
             {
                 for (int neighbour = currentVertex+1; neighbour < adjMatrix.Rank; neighbour++)
                 {
-                    int weight = adjMatrix.Matrix[currentVertex, neighbour];
+                    float weight = adjMatrix.Matrix[currentVertex, neighbour];
 
                     if (adjMatrix.Matrix[currentVertex, neighbour] != 0 && adjMatrix.Matrix[neighbour, currentVertex] != 0)
                     {
@@ -191,9 +191,20 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
-        private void CreateVerticesFromMatrix(int[,] adjMatrix, PointF[] verticesPoints)
+        private void CreateVerticesFromAdjacencyMatrix(float[,] adjMatrix, PointF[] verticesPoints)
         {
             for (int i = 0; i < adjMatrix.GetLength(1); i++)
+            {
+                string vertexname = GetVertexName(i);
+                GraphVertex vertex = new GraphVertex(vertexname);
+                vertex.Size = new SizeF(50, 50);
+                vertex.Location = verticesPoints[i];
+                AddVertex(vertex);
+            }
+        }
+        private void CreateVerticesFromIncidenceMatrix(int[,] incMatrix, PointF[] verticesPoints)
+        {
+            for (int i = 0; i < incMatrix.GetLength(1); i++)
             {
                 string vertexname = GetVertexName(i);
                 GraphVertex vertex = new GraphVertex(vertexname);
@@ -267,7 +278,7 @@ namespace AllAboutGraph.MVC.Model
         private void CreateGraphFromIncidenceMatrix(IncidenceMatrix incMatrix)
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(incMatrix.CountVertices, 200, new PointF(250, 250));
-            CreateVerticesFromMatrix(incMatrix.Matrix,verticesPoints);
+            CreateVerticesFromIncidenceMatrix(incMatrix.Matrix,verticesPoints);
 
             for (int currentEdge = 0; currentEdge < incMatrix.CountEdges; currentEdge++)
             {
@@ -371,12 +382,12 @@ namespace AllAboutGraph.MVC.Model
             return degreeTable;
         }
 
-        public int[,] GetDistanceTable()
+        public float[,] GetDistanceTable()
         {
-            int[,] distanceTable = new int[GraphVertices.Count, GraphVertices.Count];
+            float[,] distanceTable = new float[GraphVertices.Count, GraphVertices.Count];
             for (int startVertex = 0; startVertex < GraphVertices.Count; startVertex++)
             {
-                int[] distances = DijkstraAlgorithm(AdjacencyMatrix, startVertex);
+                float[] distances = DijkstraAlgorithm(AdjacencyMatrix, startVertex);
                 for (int j = 0; j < GraphVertices.Count; j++)
                 {
                     distanceTable[startVertex, j] = distances[j];
@@ -385,10 +396,10 @@ namespace AllAboutGraph.MVC.Model
             return distanceTable;
         }
 
-        private static int[] DijkstraAlgorithm(int[,] adjacencyMatrix, int startVertex)
+        private static float[] DijkstraAlgorithm(float[,] adjacencyMatrix, int startVertex)
         {
             int numberOfVertices = adjacencyMatrix.GetLength(0);
-            int[] distances = new int[numberOfVertices];
+            float[] distances = new float[numberOfVertices];
             bool[] inShortestPath = new bool[numberOfVertices];
 
             const int INFINITY = int.MaxValue;
@@ -429,9 +440,9 @@ namespace AllAboutGraph.MVC.Model
         /// <param name="distances"></param>
         /// <param name="inShortestPath"></param>
         /// <returns></returns>
-        private static int MinDistance(int[] distances, bool[] inShortestPath)
+        private static int MinDistance(float[] distances, bool[] inShortestPath)
         {
-            int min = int.MaxValue;
+            float min = int.MaxValue;
             int minVertexIndex = -1;
 
             for (int v = 0; v < distances.Length; v++)

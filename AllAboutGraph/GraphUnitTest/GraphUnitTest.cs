@@ -125,7 +125,7 @@ namespace GraphUnitTest
                 new List<int> { 1, 3, 4 } };
             AdjacencyList adjacencyList = new AdjacencyList(adjList);
 
-            int[,] expectedMatrix = new int[,] {
+            float[,] expectedMatrix = new float[,] {
                 {0,1,1,0,1 },
                 {1,0,1,0,0 },
                 {1,0,0,0,0 },
@@ -150,7 +150,7 @@ namespace GraphUnitTest
                     {0, 0, 0, 1, 1 }};
             IncidenceMatrix incidenceMatrix = new IncidenceMatrix(incMatrix);
 
-            int[,] expectedMatrix = new int[,] {
+            float[,] expectedMatrix = new float[,] {
                 {0,1,1,0,1 },
                 {1,0,1,0,0 },
                 {1,0,0,0,0 },
@@ -233,7 +233,7 @@ namespace GraphUnitTest
             };
             AdjacencyMatrix adjacencyMatrix= new AdjacencyMatrix(adjMatrix);
 
-            int[,] expectedMatrix = new int[,] {
+            float[,] expectedMatrix = new float[,] {
                     {1, 1, 0, 0, 0 },
                     {1, 0, 1, 0 , 0 },
                     {1, 0, 0, 0, 1 },
@@ -243,8 +243,8 @@ namespace GraphUnitTest
                     {0, 0, 0, 1, 1 } };
 
             IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjacencyMatrix);
-            PrintMatrix(incidenceMatrix.Matrix);
-            Assert.AreEqual(GetStringMatrix(expectedMatrix), GetStringMatrix(incidenceMatrix.Matrix));
+            PrintIntMatrix(incidenceMatrix.Matrix);
+            Assert.AreEqual(GetStringMatrix(expectedMatrix), GetStringIntMatrix(incidenceMatrix.Matrix));
 
         }
 
@@ -259,7 +259,7 @@ namespace GraphUnitTest
                 new List<int> { 1, 3, 4 } };
             AdjacencyList adjacencyList = new AdjacencyList(adjList);
 
-            int[,] expectedMatrix = new int[,] {
+            float[,] expectedMatrix = new float[,] {
                     {1, 1, 0, 0, 0 },
                     {1, 0, 1, 0 , 0 },
                     {1, 0, 0, 0, 1 },
@@ -269,11 +269,22 @@ namespace GraphUnitTest
                     {0, 0, -1, 0, 1 } };
 
             IncidenceMatrix incidenceMatrix = new IncidenceMatrix(adjacencyList);
-            PrintMatrix(incidenceMatrix.Matrix);
-            Assert.AreEqual(GetStringMatrix(expectedMatrix), GetStringMatrix(incidenceMatrix.Matrix));
+            PrintIntMatrix(incidenceMatrix.Matrix);
+            Assert.AreEqual(GetStringMatrix(expectedMatrix), GetStringIntMatrix(incidenceMatrix.Matrix));
         }
-
-        private object GetStringMatrix(int[,] matrix)
+        private object GetStringMatrix(float[,] matrix)
+        {
+            string result = "";
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    result += matrix[i, j];
+                }
+            }
+            return result;
+        }
+        private object GetStringIntMatrix(int[,] matrix)
         {
             string result = "";
             for (int i = 0; i < matrix.GetLength(0); i++)
@@ -320,8 +331,19 @@ namespace GraphUnitTest
             }
             return result;
         }
+        private void PrintMatrix(float[,] matrix)
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                Console.WriteLine();
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+            }
+        }
 
-        private void PrintMatrix(int[,] matrix)
+        private void PrintIntMatrix(int[,] matrix)
         {
             for (int i = 0; i < matrix.GetLength(0); i++)
             {

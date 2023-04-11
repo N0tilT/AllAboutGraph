@@ -48,15 +48,15 @@ namespace IntegrationTest
             MyGraph graph = new MyGraph(inputVertices, inputEdges);
 
             Console.WriteLine("\nТаблица степеней вершин:");
-            PrintMatrix(graph.DegreeTable);
+            PrintIntMatrix(graph.DegreeTable);
 
             Console.WriteLine("\n\nМатрица смежности:");
             PrintMatrix(graph.AdjacencyMatrix);
 
             Console.WriteLine("\n\nМатрица инцидентности:");
-            PrintMatrix(graph.IncidenceMatrix);
+            PrintIntMatrix(graph.IncidenceMatrix);
 
-            int[,] distanceTable = GetDistanceTable(graph);
+            float[,] distanceTable = GetDistanceTable(graph);
             Console.WriteLine("\n\nТаблица расстояний:");
             PrintDistanceTable(distanceTable);
 
@@ -74,12 +74,12 @@ namespace IntegrationTest
 
         
 
-        private static int[,] GetDistanceTable(MyGraph graph)
+        private static float[,] GetDistanceTable(MyGraph graph)
         {
-            int[,] distanceTable = new int[graph.GraphVertices.Count,graph.GraphVertices.Count];
+            float[,] distanceTable = new float[graph.GraphVertices.Count,graph.GraphVertices.Count];
             for (int startVertex = 0; startVertex < graph.GraphVertices.Count; startVertex++)
             {
-                int[] distances = DijkstraAlgorithm(graph.AdjacencyMatrix, startVertex);
+                float[] distances = DijkstraAlgorithm(graph.AdjacencyMatrix, startVertex);
                 for (int j = 0; j < graph.GraphVertices.Count; j++)
                 {
                     distanceTable[startVertex,j] = distances[j];
@@ -88,10 +88,10 @@ namespace IntegrationTest
             return distanceTable;
         }
 
-        private static int[] DijkstraAlgorithm(int[,] adjacencyMatrix, int startVertex)
+        private static float[] DijkstraAlgorithm(float[,] adjacencyMatrix, int startVertex)
         {
             int numberOfVertices = adjacencyMatrix.GetLength(0);
-            int[] distances = new int[numberOfVertices];
+            float[] distances = new float[numberOfVertices];
             bool[] inShortestPath = new bool[numberOfVertices];
 
             const int INFINITY = int.MaxValue;
@@ -132,9 +132,9 @@ namespace IntegrationTest
         /// <param name="distances"></param>
         /// <param name="inShortestPath"></param>
         /// <returns></returns>
-        private static int MinDistance(int[] distances, bool[] inShortestPath)
+        private static int MinDistance(float[] distances, bool[] inShortestPath)
         {
-            int min = int.MaxValue;
+            float min = int.MaxValue;
             int minVertexIndex = -1;
 
             for (int v = 0; v < distances.Length; v++)
@@ -147,7 +147,7 @@ namespace IntegrationTest
             return minVertexIndex;
         }
 
-        private static int CountRoutesDistanceFixed(int[,] distanceTable, int distance)
+        private static int CountRoutesDistanceFixed(float[,] distanceTable, int distance)
         {
             int count = 0;
 
@@ -316,7 +316,7 @@ namespace IntegrationTest
             }
         }
 
-        private static void PrintMatrix(int[,] matrix)
+        private static void PrintMatrix(float[,] matrix)
         {
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
@@ -327,7 +327,18 @@ namespace IntegrationTest
                 }
             }
         }
-        private static void PrintDistanceTable(int[,] distanceTable)
+        private static void PrintIntMatrix(int[,] matrix)
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                Console.WriteLine();
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+            }
+        }
+        private static void PrintDistanceTable(float[,] distanceTable)
         {
             for (int i = 0; i < distanceTable.GetLength(0); i++)
             {

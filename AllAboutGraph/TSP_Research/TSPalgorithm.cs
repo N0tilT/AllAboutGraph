@@ -1,6 +1,7 @@
 ﻿using AllAboutGraph.MVC.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,7 @@ namespace TSP_Research
 
         internal float FullSearchTimer()
         {
-            int[,] distanceTable = Graph.GetDistanceTable();
+            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -60,18 +61,60 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> FullSearch(MyGraph graph, int[,] distanceTable)
+        private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
             List<int[]> paths = GetAllPossiblePaths(graph.GraphVertices);
             int[] minPath = FindMinPath(paths, distanceTable);
             return new List<int>(minPath);
         }
+
+        static List<int[]> permutations = new List<int[]>();
         private List<int[]> GetAllPossiblePaths(List<GraphVertex> graphVertices)
         {
-            throw new NotImplementedException();
+            int[] permutationRow = new int[graphVertices.Count];
+            for (int i = 0; i < graphVertices.Count; i++)
+            {
+                permutationRow[i] = int.Parse(graphVertices[i].Name);
+            }
+
+            Permutate(permutationRow, 0);
+
+            return permutations;
         }
 
-        private int[] FindMinPath(List<int[]> paths, int[,] distanceTable)
+        private void Permutate(int[] row, int start)
+        {
+            if(start >= row.Length)
+            {
+                int[] nextPermutation = new int[row.Length];
+
+                for (int i = 0; i < nextPermutation.Length; i++)
+                {
+                    nextPermutation[i] = row[i];
+                }
+
+                permutations.Add(nextPermutation);
+                return;
+            }
+
+            Permutate(row, start+1);
+            for (int i = start+1; i < row.Length; i++)
+            {
+                Swap(row, start, i);
+                Permutate(row, start+1);
+                Swap(row, start, i);
+            }
+
+        }
+
+        private void Swap(int[] row, int start, int i)
+        {
+            int tmp = row[i];
+            row[i] = row[start];
+            row[start] = tmp;
+        }
+
+        private int[] FindMinPath(List<int[]> paths, float[,] distanceTable)
         {
             int[] minPath = paths[0];
             float minPathLength = Distance(paths[0], distanceTable);
@@ -87,19 +130,19 @@ namespace TSP_Research
             return minPath;
         }
 
-        private float Distance(int[] path,int[,] distanceTable)
+        private float Distance(int[] path,float[,] distanceTable)
         {
             float distance = 0;
             for (int i = 0; i < path.Length-1; i++)
             {
-                distance += distanceTable[path[i],path[i+1]];
+                distance += distanceTable[path[i]-1,path[i+1]-1];
             }
             return distance;
         }
 
         internal float RandomFullSearchTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -109,14 +152,14 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> RandomFullSearch(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> RandomFullSearch(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
 
         internal float NearestNeighbourTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -126,14 +169,14 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> NearestNeighbour(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> NearestNeighbour(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
 
         internal float ImprovedNearestNeighbourTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -143,14 +186,14 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> ImprovedNearestNeighbour(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
 
         internal float SimulatedAnnealingTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -160,14 +203,14 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> SimulatedAnnealing(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> SimulatedAnnealing(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
 
         internal float BranchesAndBoundariesTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -177,14 +220,14 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> BranchesAndBoundaries(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> BranchesAndBoundaries(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
 
         internal float AntColonyAlgorithmTimer()
         {
-            int[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -194,7 +237,7 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> AntColonyAlgorithm(MyGraph graph, int[,] adjacencyMatrix)
+        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] adjacencyMatrix)
         {
             return new List<int>();
         }
