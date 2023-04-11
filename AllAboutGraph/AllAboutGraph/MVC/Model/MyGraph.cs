@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,9 +27,56 @@ namespace AllAboutGraph.MVC.Model
         public List<GraphVertex> GraphVertices { get { return _graphVertices; } }
         public bool IsDirected { get { return _isDirected; } }
 
-        public int[,] AdjacencyMatrix { get { return _adjacencyMatrix; } }
-        public List<List<int>> AdjacencyList { get { return _adjacencyList; } }
-        public int[,] IncidenceMatrix { get { return _incidenceMatrix; } }
+        public int[,] AdjacencyMatrix 
+        { 
+            get 
+            {
+                if(_adjacencyMatrix == null)
+                {
+                    _adjacencyMatrix = new AdjacencyMatrix(GraphVertices, GraphEdges).Matrix;
+                }
+                if (_adjacencyMatrix.GetLength(0) < GraphVertices.Count)
+                {
+                    _adjacencyMatrix = new AdjacencyMatrix(GraphVertices, GraphEdges).Matrix;
+                }
+
+                return _adjacencyMatrix;
+            }
+        }
+        public List<List<int>> AdjacencyList
+        { 
+            get 
+            { 
+                if(_adjacencyList == null)
+                {
+                    _adjacencyList = new AdjacencyList(GraphVertices, GraphEdges).List;
+                }
+
+                if(_adjacencyList.Count < GraphVertices.Count)
+                {
+                    _adjacencyList = new AdjacencyList(GraphVertices, GraphEdges).List;
+                }
+
+                return _adjacencyList; 
+            }
+        }
+        public int[,] IncidenceMatrix 
+        { 
+            get 
+            { 
+                if(_incidenceMatrix == null)
+                {
+                    _incidenceMatrix = new IncidenceMatrix(GraphVertices, GraphEdges).Matrix;
+                }
+
+                if(_incidenceMatrix.GetLength(1) < GraphVertices.Count)
+                {
+                    _incidenceMatrix = new IncidenceMatrix(GraphVertices, GraphEdges).Matrix;
+                }
+
+                return _incidenceMatrix; 
+            } 
+        }
 
         public int[,] DegreeTable { get { return GetDegreeTableFromIncidenceMatrix(IncidenceMatrix); } }
 
@@ -271,19 +319,20 @@ namespace AllAboutGraph.MVC.Model
 
             return points;
         }
+        #endregion
 
-
-        private int[,] GetDegreeTableFromIncidenceMatrix(int[,] incidenceMatrix)
+        #region SubTables
+        public int[,] GetDegreeTableFromIncidenceMatrix()
         {
             List<int> outDegrees, inDegrees;
-            CountDegrees(incidenceMatrix, out outDegrees, out inDegrees);
+            CountDegrees(IncidenceMatrix, out outDegrees, out inDegrees);
 
-            int[,] degreeTable = FillDegreeTable(incidenceMatrix, outDegrees, inDegrees);
+            int[,] degreeTable = FillDegreeTable(IncidenceMatrix, outDegrees, inDegrees);
 
             return degreeTable;
         }
 
-        private static void CountDegrees(int[,] incidenceMatrix, out List<int> outDegrees, out List<int> inDegrees)
+        private void CountDegrees(int[,] incidenceMatrix, out List<int> outDegrees, out List<int> inDegrees)
         {
             outDegrees = new List<int>();
             inDegrees = new List<int>();
@@ -309,7 +358,7 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
-        private static int[,] FillDegreeTable(int[,] incidenceMatrix, List<int> outDegrees, List<int> inDegrees)
+        private int[,] FillDegreeTable(int[,] incidenceMatrix, List<int> outDegrees, List<int> inDegrees)
         {
             int[,] degreeTable = new int[incidenceMatrix.GetLength(1), 3];
             for (int i = 0; i < degreeTable.GetLength(0); i++)
@@ -321,6 +370,80 @@ namespace AllAboutGraph.MVC.Model
 
             return degreeTable;
         }
+
+        public int[,] GetDistanceTable()
+        {
+            int[,] distanceTable = new int[GraphVertices.Count, GraphVertices.Count];
+            for (int startVertex = 0; startVertex < GraphVertices.Count; startVertex++)
+            {
+                int[] distances = DijkstraAlgorithm(AdjacencyMatrix, startVertex);
+                for (int j = 0; j < GraphVertices.Count; j++)
+                {
+                    distanceTable[startVertex, j] = distances[j];
+                }
+            }
+            return distanceTable;
+        }
+
+        private static int[] DijkstraAlgorithm(int[,] adjacencyMatrix, int startVertex)
+        {
+            int numberOfVertices = adjacencyMatrix.GetLength(0);
+            int[] distances = new int[numberOfVertices];
+            bool[] inShortestPath = new bool[numberOfVertices];
+
+            const int INFINITY = int.MaxValue;
+
+            for (int i = 0; i < numberOfVertices; i++)
+            {
+                distances[i] = INFINITY;
+                inShortestPath[i] = false;
+            }
+
+            distances[startVertex] = 0;
+
+            for (int i = 0; i < numberOfVertices - 1; i++)
+            {
+                int minVertex = MinDistance(distances, inShortestPath);
+
+                inShortestPath[minVertex] = true;
+
+                for (int adjacentVertex = 0; adjacentVertex < numberOfVertices; adjacentVertex++)
+                {
+                    if (!inShortestPath[adjacentVertex]
+                        && adjacencyMatrix[minVertex, adjacentVertex] != 0
+                        && distances[minVertex] != INFINITY
+                        && distances[minVertex] + adjacencyMatrix[minVertex, adjacentVertex] < distances[adjacentVertex])
+                    {
+                        distances[adjacentVertex] = distances[minVertex] + adjacencyMatrix[minVertex, adjacentVertex];
+                    }
+                }
+
+            }
+
+            return distances;
+        }
+
+        /// <summary>
+        /// Найти вершину с минимальным путём до неё, которой ещё нет в кратчайшем пути
+        /// </summary>
+        /// <param name="distances"></param>
+        /// <param name="inShortestPath"></param>
+        /// <returns></returns>
+        private static int MinDistance(int[] distances, bool[] inShortestPath)
+        {
+            int min = int.MaxValue;
+            int minVertexIndex = -1;
+
+            for (int v = 0; v < distances.Length; v++)
+                if (inShortestPath[v] == false && distances[v] <= min)
+                {
+                    min = distances[v];
+                    minVertexIndex = v;
+                }
+
+            return minVertexIndex;
+        }
+
         #endregion
 
         #region VerticesName
@@ -390,7 +513,7 @@ namespace AllAboutGraph.MVC.Model
                 vertex.DrawVertex(Graphics,pen,backgroundBrush,fontBrush,font,format);
             }
         }
-
+        
         #endregion
 
         #endregion

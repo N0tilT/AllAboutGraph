@@ -16,7 +16,7 @@ namespace TSP_Research
     public partial class TSPForm : Form
     {
         #region Constants
-        const int verticesCountStep = 10;
+        const int verticesCountStep = 5;
         const int maxVerticesCount = 100;
         #endregion
         #region Fields
@@ -101,13 +101,13 @@ namespace TSP_Research
             {
                 TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
 
-                TSPchart.Series[0].Points.Add(tspAlgorithm.FullSearch());
-                TSPchart.Series[1].Points.Add(tspAlgorithm.RandomFullSearch());
-                TSPchart.Series[2].Points.Add(tspAlgorithm.NearestNeighbour());
-                TSPchart.Series[3].Points.Add(tspAlgorithm.ImprovedNearestNeighbour());
-                TSPchart.Series[4].Points.Add(tspAlgorithm.SimulatedAnnealing());
-                TSPchart.Series[5].Points.Add(tspAlgorithm.BranchesAndBoundaries());
-                TSPchart.Series[6].Points.Add(tspAlgorithm.AntColonyAlgorithm());
+                TSPchart.Series[0].Points.Add(tspAlgorithm.FullSearchTimer());
+                TSPchart.Series[1].Points.Add(tspAlgorithm.RandomFullSearchTimer());
+                TSPchart.Series[2].Points.Add(tspAlgorithm.NearestNeighbourTimer());
+                TSPchart.Series[3].Points.Add(tspAlgorithm.ImprovedNearestNeighbourTimer());
+                TSPchart.Series[4].Points.Add(tspAlgorithm.SimulatedAnnealingTimer());
+                TSPchart.Series[5].Points.Add(tspAlgorithm.BranchesAndBoundariesTimer());
+                TSPchart.Series[6].Points.Add(tspAlgorithm.AntColonyAlgorithmTimer());
             }
             SelectedGraph = Graphs[1];
 
@@ -187,7 +187,7 @@ namespace TSP_Research
             for (int currentVertex = 0; currentVertex < numberOfVertices; currentVertex++)
             {
                 PointF location = new PointF(random.Next(20,xBorder-20), random.Next(20,yBorder-20));
-                graph.AddVertex(new GraphVertex(Convert.ToString(currentVertex),location,10));
+                graph.AddVertex(new GraphVertex(Convert.ToString(currentVertex+1),location,10));
             }
 
             foreach(GraphVertex vertex in graph.GraphVertices)
