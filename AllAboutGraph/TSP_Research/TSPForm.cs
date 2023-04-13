@@ -102,16 +102,20 @@ namespace TSP_Research
                 TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
 
                 TSPchart.Series[0].Points.Add(tspAlgorithm.FullSearchTimer());
-                TSPchart.Series[1].Points.Add(tspAlgorithm.RandomFullSearchTimer());
-                TSPchart.Series[2].Points.Add(tspAlgorithm.NearestNeighbourTimer());
-                TSPchart.Series[3].Points.Add(tspAlgorithm.ImprovedNearestNeighbourTimer());
-                TSPchart.Series[4].Points.Add(tspAlgorithm.SimulatedAnnealingTimer());
-                TSPchart.Series[5].Points.Add(tspAlgorithm.BranchesAndBoundariesTimer());
-                TSPchart.Series[6].Points.Add(tspAlgorithm.AntColonyAlgorithmTimer());
+                TSPchart.Series[1].Points.Add(tspAlgorithm.NearestNeighbourTimer());
+                TSPchart.Series[2].Points.Add(tspAlgorithm.ImprovedNearestNeighbourTimer());
+                TSPchart.Series[3].Points.Add(tspAlgorithm.SimulatedAnnealingTimer());
+                TSPchart.Series[4].Points.Add(tspAlgorithm.BranchesAndBoundariesTimer());
+                TSPchart.Series[5].Points.Add(tspAlgorithm.AntColonyAlgorithmTimer());
 
-                MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath));
+                //MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath) + " " + tspAlgorithm.FullSearchResultPathLength);
+                //MessageBox.Show(PrintPath(tspAlgorithm.NearestNeighbourResultPath) + " " + tspAlgorithm.NearestNeighbourResultPathLength);
+                //MessageBox.Show(PrintPath(tspAlgorithm.ImprovedNearestNeighbourResultPath) + " " + tspAlgorithm.ImprovedNearestNeighbourResultPathLength);
+                //MessageBox.Show(PrintPath(tspAlgorithm.SimulatedAnnealingResultPath) + " " + tspAlgorithm.SimulatedAnnealingResultPathLength);
+                //MessageBox.Show(PrintPath(tspAlgorithm.BranchesAndBoundariesResultPath) + " " + tspAlgorithm.BranchesAndBoundariesResultPathLength);
+                //MessageBox.Show(PrintPath(tspAlgorithm.AntColonyAlgorithmResultPath) + " " + tspAlgorithm.AntColonyAlgorithmResultPathLength);
             }
-            SelectedGraph = Graphs[1];
+            SelectedGraph = Graphs[0];
             SetDefaultPaintingProperties();
 
             InitializeCanvas();

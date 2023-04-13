@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace TSP_Research
@@ -24,6 +25,14 @@ namespace TSP_Research
         private List<int> _simulatedAnnealingResultPath;
         private List<int> _branchesAndBoundariesResultPath;
         private List<int> _antColonyAlgorithmResultPath;
+
+        private float _fullSearchResultPathLength;
+        private float _randomFullSearchresultPathLength;
+        private float _nearestNeighbourResultPathLength;
+        private float _improvedNearestNeighbourResultPathLength;
+        private float _simulatedAnnealingResultPathLength;
+        private float _branchesAndBoundariesResultPathLength;
+        private float _antColonyAlgorithmResultPathLength;
         #endregion
 
         #endregion
@@ -39,6 +48,13 @@ namespace TSP_Research
         public List<int> SimulatedAnnealingResultPath { get => _simulatedAnnealingResultPath; set => _simulatedAnnealingResultPath = value; }
         public List<int> BranchesAndBoundariesResultPath { get => _branchesAndBoundariesResultPath; set => _branchesAndBoundariesResultPath = value; }
         public List<int> AntColonyAlgorithmResultPath { get => _antColonyAlgorithmResultPath; set => _antColonyAlgorithmResultPath = value; }
+        public float FullSearchResultPathLength { get => _fullSearchResultPathLength; set => _fullSearchResultPathLength = value; }
+        public float RandomFullSearchresultPathLength { get => _randomFullSearchresultPathLength; set => _randomFullSearchresultPathLength = value; }
+        public float NearestNeighbourResultPathLength { get => _nearestNeighbourResultPathLength; set => _nearestNeighbourResultPathLength = value; }
+        public float ImprovedNearestNeighbourResultPathLength { get => _improvedNearestNeighbourResultPathLength; set => _improvedNearestNeighbourResultPathLength = value; }
+        public float SimulatedAnnealingResultPathLength { get => _simulatedAnnealingResultPathLength; set => _simulatedAnnealingResultPathLength = value; }
+        public float BranchesAndBoundariesResultPathLength { get => _branchesAndBoundariesResultPathLength; set => _branchesAndBoundariesResultPathLength = value; }
+        public float AntColonyAlgorithmResultPathLength { get => _antColonyAlgorithmResultPathLength; set => _antColonyAlgorithmResultPathLength = value; }
         #endregion
 
         #endregion
@@ -57,12 +73,17 @@ namespace TSP_Research
 
             FullSearchResultPath = FullSearch(Graph,distanceTable);
 
+            if (FullSearchResultPath.Count == 0) return 0;
+
             stopwatch.Stop();
-            return stopwatch.ElapsedMilliseconds;
+
+            FullSearchResultPathLength = Distance(FullSearchResultPath.ToArray(),distanceTable);
+            return (float)stopwatch.Elapsed.TotalSeconds;
         }
 
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
+            if (graph.GraphVertices.Count >= 15) return new List<int>();
             List<int[]> paths = GetAllPossiblePaths(graph.GraphVertices);
             int[] minPath = FindMinPath(paths, distanceTable);
             return new List<int>(minPath);
@@ -71,6 +92,7 @@ namespace TSP_Research
         static List<int[]> permutations = new List<int[]>();
         private List<int[]> GetAllPossiblePaths(List<GraphVertex> graphVertices)
         {
+            permutations = new List<int[]>();
             int[] permutationRow = new int[graphVertices.Count];
             for (int i = 0; i < graphVertices.Count; i++)
             {
@@ -140,38 +162,63 @@ namespace TSP_Research
             return distance;
         }
 
-        internal float RandomFullSearchTimer()
-        {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            RandomFullSearchResultPath = RandomFullSearch(Graph, adjacencyMatrix);
-
-            stopwatch.Stop();
-            return stopwatch.ElapsedMilliseconds;
-        }
-
-        private List<int> RandomFullSearch(MyGraph graph, float[,] adjacencyMatrix)
-        {
-            return new List<int>();
-        }
-
         internal float NearestNeighbourTimer()
         {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            NearestNeighbourResultPath = NearestNeighbour(Graph, adjacencyMatrix);
+            NearestNeighbourResultPath = NearestNeighbour(Graph, distanceTable);
 
             stopwatch.Stop();
-            return stopwatch.ElapsedMilliseconds;
+            NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),distanceTable);
+            return (float)stopwatch.Elapsed.TotalSeconds*1000;
         }
 
-        private List<int> NearestNeighbour(MyGraph graph, float[,] adjacencyMatrix)
+
+        private List<int> NearestNeighbour(MyGraph graph, float[,] distanceTable)
         {
-            return new List<int>();
+            int n = graph.GraphVertices.Count;
+            bool[] visited = new bool[n];
+
+            List<int> path = new List<int>();
+
+
+            int nearestVertexIndex = 0;
+            path.Add(nearestVertexIndex+1);
+            while (visited.Contains(false))
+            {
+                if(!visited[nearestVertexIndex])
+                {
+                    visited[nearestVertexIndex] = true;
+                    if (visited.Contains(false))
+                    {
+                        nearestVertexIndex = FindShortestEdge(distanceTable, nearestVertexIndex, visited);
+                        path.Add(nearestVertexIndex + 1);
+                    }
+                }
+            }
+
+            return path;
+        }
+
+        private int FindShortestEdge(float[,] distanceTable, int currentVertexIndex, bool[] visited)
+        {
+            float shortestEdge = float.MaxValue;
+            int nearest = currentVertexIndex;
+            for (int neighbour = 0; neighbour < distanceTable.GetLength(0); neighbour++)
+            {
+                if (neighbour != currentVertexIndex && !visited[neighbour])
+                {
+                    if (distanceTable[currentVertexIndex, neighbour] < shortestEdge)
+                    {
+                        shortestEdge = distanceTable[currentVertexIndex, neighbour];
+                        nearest = neighbour;
+                    }
+                }
+            }
+
+            return nearest;
         }
 
         internal float ImprovedNearestNeighbourTimer()
