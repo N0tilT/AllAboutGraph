@@ -168,7 +168,7 @@ namespace TSP_Research
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            NearestNeighbourResultPath = NearestNeighbour(Graph, distanceTable);
+            NearestNeighbourResultPath = NearestNeighbour(Graph, 0, distanceTable);
 
             stopwatch.Stop();
             NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),distanceTable);
@@ -176,7 +176,7 @@ namespace TSP_Research
         }
 
 
-        private List<int> NearestNeighbour(MyGraph graph, float[,] distanceTable)
+        private List<int> NearestNeighbour(MyGraph graph, int startIndex, float[,] distanceTable)
         {
             int n = graph.GraphVertices.Count;
             bool[] visited = new bool[n];
@@ -184,7 +184,7 @@ namespace TSP_Research
             List<int> path = new List<int>();
 
 
-            int nearestVertexIndex = 0;
+            int nearestVertexIndex = startIndex;
             path.Add(nearestVertexIndex+1);
             while (visited.Contains(false))
             {
@@ -223,19 +223,25 @@ namespace TSP_Research
 
         internal float ImprovedNearestNeighbourTimer()
         {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            ImprovedNearestNeighbourResultPath = ImprovedNearestNeighbour(Graph, adjacencyMatrix);
+            ImprovedNearestNeighbourResultPath = ImprovedNearestNeighbour(Graph, distanceTable);
 
             stopwatch.Stop();
+            ImprovedNearestNeighbourResultPathLength = Distance(ImprovedNearestNeighbourResultPath.ToArray(), distanceTable);
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] adjacencyMatrix)
+        private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] distanceTable)
         {
-            return new List<int>();
+            List<int[]> possiblePaths = new List<int[]>();
+            foreach(GraphVertex startVertex in graph.GraphVertices)
+            {
+                possiblePaths.Add(NearestNeighbour(graph,int.Parse(startVertex.Name)-1,distanceTable).ToArray());
+            }
+            return new List<int>(FindMinPath(possiblePaths, distanceTable));
         }
 
         internal float SimulatedAnnealingTimer()
