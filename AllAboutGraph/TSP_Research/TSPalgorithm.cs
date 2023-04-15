@@ -198,7 +198,7 @@ namespace TSP_Research
                     }
                 }
             }
-
+            path.Add(startIndex+1);
             return path;
         }
 
@@ -246,19 +246,113 @@ namespace TSP_Research
 
         internal float SimulatedAnnealingTimer()
         {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
+            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, adjacencyMatrix);
+            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, distanceTable, 10,0.00001);
 
             stopwatch.Stop();
+            SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),distanceTable);
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> SimulatedAnnealing(MyGraph graph, float[,] adjacencyMatrix)
+        private List<int> SimulatedAnnealing(MyGraph graph, float[,] distanceTable, double initialTemperature, double endTemperature)
         {
-            return new List<int>();
+            List<int> localBestPath = new List<int>();
+            
+            //Start path - vertices in order: 1234561 e.t.c
+            foreach(GraphVertex vertex in graph.GraphVertices)
+            {
+                localBestPath.Add(int.Parse(vertex.Name));
+            }
+            localBestPath.Add(int.Parse(graph.GraphVertices[0].Name));
+
+            double T = initialTemperature;
+            float bestPathLength = Distance(localBestPath.ToArray(), distanceTable);
+
+            int i = 0;
+            while (T>endTemperature)
+            {
+                List<int> nextCandidate = GenerateCandidate(localBestPath);
+                float candidatePathLength = Distance(nextCandidate.ToArray(),distanceTable);
+
+                if (candidatePathLength < bestPathLength)
+                {
+                    bestPathLength = candidatePathLength;
+                    localBestPath = nextCandidate;
+                }
+                else
+                {
+                    double p = GetTransitionProbability(candidatePathLength - bestPathLength,T);
+                    Random random = new Random();
+                    double nextrnd = random.NextDouble();
+
+                    if (nextrnd <= p)
+                    {
+                        bestPathLength = candidatePathLength;
+                        localBestPath = nextCandidate;
+                    }
+
+                }
+                i++;
+                T = initialTemperature*0.1/i;
+
+            }
+
+            return localBestPath;
+        }
+
+        private double GetTransitionProbability(float delta, double temperature)
+        {
+            return Math.Exp((-1) * delta/temperature);
+        }
+
+        private List<int> GenerateCandidate(List<int> localBestPath)
+        {
+            Random random = new Random();
+
+            int firstReverseIndex = random.Next(1,localBestPath.Count - 1);    //any without first and last elements
+            int secondReverseIndex = random.Next(1, localBestPath.Count - 1);
+
+            if (firstReverseIndex < secondReverseIndex)
+            {
+                return new List<int>(ReverseArray(localBestPath.ToArray(), firstReverseIndex, secondReverseIndex));
+            }
+            else
+            {
+                return new List<int>(ReverseArray(localBestPath.ToArray(), secondReverseIndex, firstReverseIndex));
+            }
+        }
+
+        private int[] ReverseArray(int[] array, int start, int end)
+        {
+            int[] answer = new int[array.Length];
+
+            int[] segment = new int[end-start+1];
+
+            int j = 0;
+            for (int i = end; i >= start; i--)
+            {
+                segment[j] = array[i];
+                j++;
+            }
+
+            j = 0;
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (i >= start && i <= end)
+                {
+                    answer[i] = segment[j];
+                    j++;
+                }
+                else
+                {
+                    answer[i] = array[i];
+                }
+            }
+
+            return answer;
         }
 
         internal float BranchesAndBoundariesTimer()

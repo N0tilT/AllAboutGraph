@@ -101,12 +101,12 @@ namespace TSP_Research
             {
                 TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
 
-                TSPchart.Series[0].Points.Add(tspAlgorithm.FullSearchTimer());
-                TSPchart.Series[1].Points.Add(tspAlgorithm.NearestNeighbourTimer());
-                TSPchart.Series[2].Points.Add(tspAlgorithm.ImprovedNearestNeighbourTimer());
-                TSPchart.Series[3].Points.Add(tspAlgorithm.SimulatedAnnealingTimer());
-                TSPchart.Series[4].Points.Add(tspAlgorithm.BranchesAndBoundariesTimer());
-                TSPchart.Series[5].Points.Add(tspAlgorithm.AntColonyAlgorithmTimer());
+                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count,tspAlgorithm.FullSearchTimer()));
+                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
+                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
+                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
 
                 //MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath) + " " + tspAlgorithm.FullSearchResultPathLength);
                 //MessageBox.Show(PrintPath(tspAlgorithm.NearestNeighbourResultPath) + " " + tspAlgorithm.NearestNeighbourResultPathLength);
@@ -126,7 +126,7 @@ namespace TSP_Research
             string result = "";
             foreach(int item in path)
             {
-                result += Convert.ToString(item);
+                result += Convert.ToString(item) + " ";
             }
             return result;
         }
