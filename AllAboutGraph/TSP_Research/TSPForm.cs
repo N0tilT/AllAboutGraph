@@ -101,6 +101,8 @@ namespace TSP_Research
             {
                 TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
 
+                //tspAlgorithm.Initialize();
+
                 TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count,tspAlgorithm.FullSearchTimer()));
                 TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
                 TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
@@ -114,7 +116,16 @@ namespace TSP_Research
                 //MessageBox.Show(PrintPath(tspAlgorithm.SimulatedAnnealingResultPath) + " " + tspAlgorithm.SimulatedAnnealingResultPathLength);
                 //MessageBox.Show(PrintPath(tspAlgorithm.BranchesAndBoundariesResultPath) + " " + tspAlgorithm.BranchesAndBoundariesResultPathLength);
                 //MessageBox.Show(PrintPath(tspAlgorithm.AntColonyAlgorithmResultPath) + " " + tspAlgorithm.AntColonyAlgorithmResultPathLength);
+
+                FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength;
+                NearestNeighbourResult.Text = "" + tspAlgorithm.NearestNeighbourResultPathLength;
+                ImprovedNearestNeighbourResult.Text = "" + tspAlgorithm.ImprovedNearestNeighbourResultPathLength;
+                SimulatedAnnealingResult.Text = "" + tspAlgorithm.SimulatedAnnealingResultPathLength;
+                BranchesAndBoundariesResult.Text = "" + tspAlgorithm.BranchesAndBoundariesResultPathLength;
+                AntColonyResult.Text = "" + tspAlgorithm.AntColonyAlgorithmResultPathLength;
             }
+
+
             SelectedGraph = Graphs[0];
             SetDefaultPaintingProperties();
 
@@ -186,7 +197,7 @@ namespace TSP_Research
         private List<MyGraph> InitializeGraphs(int maxVertices, int step)
         {
             List<MyGraph> graphs = new List<MyGraph>();
-            int start = step;
+            int start = 5;
             for (int numberOfVertices = start; numberOfVertices <= maxVertices; numberOfVertices+=step)
             {
                 graphs.Add(CreateCompleteGraph(numberOfVertices,(int)Math.Truncate((decimal)Canvas.Width), (int)Math.Truncate((decimal)Canvas.Height)));

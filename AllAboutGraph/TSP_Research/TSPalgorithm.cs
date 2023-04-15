@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -15,7 +16,8 @@ namespace TSP_Research
     internal class TSPalgorithm
     {
         #region Fields
-        MyGraph _graph;
+        private MyGraph _graph;
+        private float[,] _distanceTable;
 
         #region Results
         private List<int> _fullSearchResultPath;
@@ -39,6 +41,7 @@ namespace TSP_Research
 
         #region Properties
         public MyGraph Graph { get => _graph; set => _graph = value; }
+        public float[,] DistanceTable { get => _distanceTable; set => _distanceTable = value; }
 
         #region Results
         public List<int> FullSearchResultPath { get => _fullSearchResultPath; set => _fullSearchResultPath = value; }
@@ -63,27 +66,38 @@ namespace TSP_Research
         public TSPalgorithm(MyGraph graph)
         {
             Graph = graph;
+            DistanceTable = Graph.GetDistanceTable();
+        }
+
+        public void Initialize()
+        {
+            float tmp = 0;
+            tmp = FullSearchTimer();
+            tmp = NearestNeighbourTimer();
+            tmp = ImprovedNearestNeighbourTimer();
+            tmp = SimulatedAnnealingTimer();
+            tmp = BranchesAndBoundariesTimer();
+            tmp = AntColonyAlgorithmTimer();
         }
 
         internal float FullSearchTimer()
         {
-            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            FullSearchResultPath = FullSearch(Graph,distanceTable);
+            FullSearchResultPath = FullSearch(Graph,DistanceTable);
 
             if (FullSearchResultPath.Count == 0) return 0;
 
             stopwatch.Stop();
 
-            FullSearchResultPathLength = Distance(FullSearchResultPath.ToArray(),distanceTable);
+            FullSearchResultPathLength = Distance(FullSearchResultPath.ToArray(), DistanceTable);
             return (float)stopwatch.Elapsed.TotalSeconds;
         }
 
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
-            if (graph.GraphVertices.Count >= 15) return new List<int>();
+            if (graph.GraphVertices.Count >= 11) return new List<int>();
             List<int[]> paths = GetAllPossiblePaths(graph.GraphVertices);
             int[] minPath = FindMinPath(paths, distanceTable);
             return new List<int>(minPath);
@@ -164,15 +178,14 @@ namespace TSP_Research
 
         internal float NearestNeighbourTimer()
         {
-            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            NearestNeighbourResultPath = NearestNeighbour(Graph, 0, distanceTable);
+            NearestNeighbourResultPath = NearestNeighbour(Graph, 0, DistanceTable);
 
             stopwatch.Stop();
-            NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),distanceTable);
-            return (float)stopwatch.Elapsed.TotalSeconds*1000;
+            NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),DistanceTable);
+            return (float)stopwatch.Elapsed.TotalSeconds;
         }
 
 
@@ -204,7 +217,7 @@ namespace TSP_Research
 
         private int FindShortestEdge(float[,] distanceTable, int currentVertexIndex, bool[] visited)
         {
-            float shortestEdge = float.MaxValue;
+            float shortestEdge = int.MaxValue;
             int nearest = currentVertexIndex;
             for (int neighbour = 0; neighbour < distanceTable.GetLength(0); neighbour++)
             {
@@ -223,15 +236,14 @@ namespace TSP_Research
 
         internal float ImprovedNearestNeighbourTimer()
         {
-            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            ImprovedNearestNeighbourResultPath = ImprovedNearestNeighbour(Graph, distanceTable);
+            ImprovedNearestNeighbourResultPath = ImprovedNearestNeighbour(Graph, DistanceTable);
 
             stopwatch.Stop();
-            ImprovedNearestNeighbourResultPathLength = Distance(ImprovedNearestNeighbourResultPath.ToArray(), distanceTable);
-            return stopwatch.ElapsedMilliseconds;
+            ImprovedNearestNeighbourResultPathLength = Distance(ImprovedNearestNeighbourResultPath.ToArray(), DistanceTable);
+            return (float)stopwatch.Elapsed.TotalSeconds;
         }
 
         private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] distanceTable)
@@ -246,15 +258,14 @@ namespace TSP_Research
 
         internal float SimulatedAnnealingTimer()
         {
-            float[,] distanceTable = Graph.GetDistanceTable();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, distanceTable, 10,0.00001);
+            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, DistanceTable, 10,0.00001);
 
             stopwatch.Stop();
-            SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),distanceTable);
-            return stopwatch.ElapsedMilliseconds;
+            SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),DistanceTable);
+            return (float)stopwatch.Elapsed.TotalSeconds;
         }
 
         private List<int> SimulatedAnnealing(MyGraph graph, float[,] distanceTable, double initialTemperature, double endTemperature)
@@ -357,34 +368,32 @@ namespace TSP_Research
 
         internal float BranchesAndBoundariesTimer()
         {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, adjacencyMatrix);
+            BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, DistanceTable);
 
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> BranchesAndBoundaries(MyGraph graph, float[,] adjacencyMatrix)
+        private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
         {
             return new List<int>();
         }
 
         internal float AntColonyAlgorithmTimer()
         {
-            float[,] adjacencyMatrix = Graph.AdjacencyMatrix;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, adjacencyMatrix);
+            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable);
 
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] adjacencyMatrix)
+        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable)
         {
             return new List<int>();
         }

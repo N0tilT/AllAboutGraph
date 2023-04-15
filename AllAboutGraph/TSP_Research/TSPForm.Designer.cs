@@ -38,8 +38,17 @@
             System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.TSPchart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.Canvas = new System.Windows.Forms.PictureBox();
+            this.FullSearchResult = new System.Windows.Forms.TextBox();
+            this.NearestNeighbourResult = new System.Windows.Forms.TextBox();
+            this.SimulatedAnnealingResult = new System.Windows.Forms.TextBox();
+            this.ImprovedNearestNeighbourResult = new System.Windows.Forms.TextBox();
+            this.AntColonyResult = new System.Windows.Forms.TextBox();
+            this.BranchesAndBoundariesResult = new System.Windows.Forms.TextBox();
+            this.labelLengths = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.TSPchart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // TSPchart
@@ -50,7 +59,7 @@
             this.TSPchart.Dock = System.Windows.Forms.DockStyle.Fill;
             legend1.Name = "Legend1";
             this.TSPchart.Legends.Add(legend1);
-            this.TSPchart.Location = new System.Drawing.Point(528, 0);
+            this.TSPchart.Location = new System.Drawing.Point(468, 0);
             this.TSPchart.Name = "TSPchart";
             series1.BorderWidth = 3;
             series1.ChartArea = "ChartArea1";
@@ -95,7 +104,7 @@
             this.TSPchart.Series.Add(series4);
             this.TSPchart.Series.Add(series5);
             this.TSPchart.Series.Add(series6);
-            this.TSPchart.Size = new System.Drawing.Size(848, 775);
+            this.TSPchart.Size = new System.Drawing.Size(664, 775);
             this.TSPchart.TabIndex = 0;
             this.TSPchart.Text = "chart1";
             // 
@@ -104,10 +113,84 @@
             this.Canvas.Dock = System.Windows.Forms.DockStyle.Left;
             this.Canvas.Location = new System.Drawing.Point(0, 0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(528, 775);
+            this.Canvas.Size = new System.Drawing.Size(468, 775);
             this.Canvas.TabIndex = 1;
             this.Canvas.TabStop = false;
             this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
+            // 
+            // FullSearchResult
+            // 
+            this.FullSearchResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FullSearchResult.Location = new System.Drawing.Point(13, 259);
+            this.FullSearchResult.Name = "FullSearchResult";
+            this.FullSearchResult.Size = new System.Drawing.Size(219, 33);
+            this.FullSearchResult.TabIndex = 2;
+            // 
+            // NearestNeighbourResult
+            // 
+            this.NearestNeighbourResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.NearestNeighbourResult.Location = new System.Drawing.Point(13, 298);
+            this.NearestNeighbourResult.Name = "NearestNeighbourResult";
+            this.NearestNeighbourResult.Size = new System.Drawing.Size(219, 33);
+            this.NearestNeighbourResult.TabIndex = 3;
+            // 
+            // SimulatedAnnealingResult
+            // 
+            this.SimulatedAnnealingResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.SimulatedAnnealingResult.Location = new System.Drawing.Point(13, 376);
+            this.SimulatedAnnealingResult.Name = "SimulatedAnnealingResult";
+            this.SimulatedAnnealingResult.Size = new System.Drawing.Size(219, 33);
+            this.SimulatedAnnealingResult.TabIndex = 5;
+            // 
+            // ImprovedNearestNeighbourResult
+            // 
+            this.ImprovedNearestNeighbourResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ImprovedNearestNeighbourResult.Location = new System.Drawing.Point(13, 337);
+            this.ImprovedNearestNeighbourResult.Name = "ImprovedNearestNeighbourResult";
+            this.ImprovedNearestNeighbourResult.Size = new System.Drawing.Size(219, 33);
+            this.ImprovedNearestNeighbourResult.TabIndex = 4;
+            // 
+            // AntColonyResult
+            // 
+            this.AntColonyResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AntColonyResult.Location = new System.Drawing.Point(13, 454);
+            this.AntColonyResult.Name = "AntColonyResult";
+            this.AntColonyResult.Size = new System.Drawing.Size(219, 33);
+            this.AntColonyResult.TabIndex = 7;
+            // 
+            // BranchesAndBoundariesResult
+            // 
+            this.BranchesAndBoundariesResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BranchesAndBoundariesResult.Location = new System.Drawing.Point(13, 415);
+            this.BranchesAndBoundariesResult.Name = "BranchesAndBoundariesResult";
+            this.BranchesAndBoundariesResult.Size = new System.Drawing.Size(219, 33);
+            this.BranchesAndBoundariesResult.TabIndex = 6;
+            // 
+            // labelLengths
+            // 
+            this.labelLengths.AutoSize = true;
+            this.labelLengths.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelLengths.Location = new System.Drawing.Point(9, 235);
+            this.labelLengths.Name = "labelLengths";
+            this.labelLengths.Size = new System.Drawing.Size(223, 21);
+            this.labelLengths.TabIndex = 8;
+            this.labelLengths.Text = "Оценка точности алгоритмов";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.labelLengths);
+            this.panel1.Controls.Add(this.FullSearchResult);
+            this.panel1.Controls.Add(this.AntColonyResult);
+            this.panel1.Controls.Add(this.NearestNeighbourResult);
+            this.panel1.Controls.Add(this.BranchesAndBoundariesResult);
+            this.panel1.Controls.Add(this.ImprovedNearestNeighbourResult);
+            this.panel1.Controls.Add(this.SimulatedAnnealingResult);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(1132, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(244, 775);
+            this.panel1.TabIndex = 9;
             // 
             // TSPForm
             // 
@@ -116,10 +199,13 @@
             this.ClientSize = new System.Drawing.Size(1376, 775);
             this.Controls.Add(this.TSPchart);
             this.Controls.Add(this.Canvas);
+            this.Controls.Add(this.panel1);
             this.Name = "TSPForm";
             this.Text = "TSPResearch";
             ((System.ComponentModel.ISupportInitialize)(this.TSPchart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -128,6 +214,14 @@
 
         private System.Windows.Forms.DataVisualization.Charting.Chart TSPchart;
         private System.Windows.Forms.PictureBox Canvas;
+        private System.Windows.Forms.TextBox FullSearchResult;
+        private System.Windows.Forms.TextBox NearestNeighbourResult;
+        private System.Windows.Forms.TextBox SimulatedAnnealingResult;
+        private System.Windows.Forms.TextBox ImprovedNearestNeighbourResult;
+        private System.Windows.Forms.TextBox AntColonyResult;
+        private System.Windows.Forms.TextBox BranchesAndBoundariesResult;
+        private System.Windows.Forms.Label labelLengths;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
