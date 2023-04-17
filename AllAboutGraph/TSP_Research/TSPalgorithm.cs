@@ -71,7 +71,7 @@ namespace TSP_Research
 
         public void Initialize()
         {
-            float tmp = 0;
+            double tmp = 0;
             tmp = FullSearchTimer();
             tmp = NearestNeighbourTimer();
             tmp = ImprovedNearestNeighbourTimer();
@@ -80,7 +80,7 @@ namespace TSP_Research
             tmp = AntColonyAlgorithmTimer();
         }
 
-        internal float FullSearchTimer()
+        internal double FullSearchTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -92,7 +92,7 @@ namespace TSP_Research
             stopwatch.Stop();
 
             FullSearchResultPathLength = Distance(FullSearchResultPath.ToArray(), DistanceTable);
-            return (float)stopwatch.Elapsed.TotalSeconds;
+            return stopwatch.Elapsed.TotalSeconds/100;
         }
 
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
@@ -165,6 +165,21 @@ namespace TSP_Research
             }
             return minPath;
         }
+        private List<int> FindMinPath(List<List<int>> paths, float[,] distanceTable)
+        {
+            List<int> minPath = paths[0];
+            float minPathLength = Distance(paths[0].ToArray(), distanceTable);
+            foreach (List<int> path in paths)
+            {
+                float curPathLength = Distance(path.ToArray(), distanceTable);
+                if (curPathLength < minPathLength)
+                {
+                    minPathLength = curPathLength;
+                    minPath = path;
+                }
+            }
+            return minPath;
+        }
 
         private float Distance(int[] path,float[,] distanceTable)
         {
@@ -176,7 +191,7 @@ namespace TSP_Research
             return distance;
         }
 
-        internal float NearestNeighbourTimer()
+        internal double NearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -185,7 +200,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),DistanceTable);
-            return (float)stopwatch.Elapsed.TotalSeconds;
+            return stopwatch.Elapsed.TotalSeconds*10000;
         }
 
 
@@ -234,7 +249,7 @@ namespace TSP_Research
             return nearest;
         }
 
-        internal float ImprovedNearestNeighbourTimer()
+        internal double ImprovedNearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -243,7 +258,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             ImprovedNearestNeighbourResultPathLength = Distance(ImprovedNearestNeighbourResultPath.ToArray(), DistanceTable);
-            return (float)stopwatch.Elapsed.TotalSeconds;
+            return stopwatch.Elapsed.TotalSeconds * 100;
         }
 
         private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] distanceTable)
@@ -256,7 +271,7 @@ namespace TSP_Research
             return new List<int>(FindMinPath(possiblePaths, distanceTable));
         }
 
-        internal float SimulatedAnnealingTimer()
+        internal double SimulatedAnnealingTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -265,7 +280,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),DistanceTable);
-            return (float)stopwatch.Elapsed.TotalSeconds;
+            return stopwatch.Elapsed.TotalSeconds*10;
         }
 
         private List<int> SimulatedAnnealing(MyGraph graph, float[,] distanceTable, double initialTemperature, double endTemperature)
@@ -366,7 +381,7 @@ namespace TSP_Research
             return answer;
         }
 
-        internal float BranchesAndBoundariesTimer()
+        internal double BranchesAndBoundariesTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -382,20 +397,133 @@ namespace TSP_Research
             return new List<int>();
         }
 
-        internal float AntColonyAlgorithmTimer()
+        internal double AntColonyAlgorithmTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable);
+            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable,10,1,1,1,1);
 
             stopwatch.Stop();
+            AntColonyAlgorithmResultPathLength = Distance(AntColonyAlgorithmResultPath.ToArray(), DistanceTable);
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable)
+        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable, int itetationsCount, double alpha,double beta, double q,double oblivionNumber)
         {
-            return new List<int>();
+            List<List<int>> Iterations = new List<List<int>>();
+
+            int counter = itetationsCount;
+            while (counter > 0)
+            {
+                int startIndex = 0;
+
+                double[,] feromoneTable = InitializeFeromoneTable(graph.GraphVertices.Count);
+                bool[] visited = InitializeVisited(graph.GraphVertices.Count);
+
+                List<int> antPath = new List<int>();
+                int i = startIndex;
+                antPath.Add(i+1);
+                while (visited.Contains(false))
+                {
+                    visited[i] = true;
+
+                    List<double> attractiveness = new List<double>();
+                    List<double> roulette = new List<double>();
+                    List<int> candidates = new List<int>();
+
+
+                    roulette.Add(0);
+
+                    int edgeIndex = 0;
+                    double sumAttractiveness = 0;
+                    for (int j = 0; j < graph.GraphVertices.Count; j++)
+                    {
+                        if (!visited[j])
+                        {
+                            attractiveness.Add(Attractiveness(i,j,distancetable,feromoneTable,alpha,beta));
+                            sumAttractiveness = attractiveness.Sum();
+                            candidates.Add(j);
+                            edgeIndex++;
+                        }
+                    }
+
+                    edgeIndex = 0;
+                    for (int j = 0; j < graph.GraphVertices.Count; j++)
+                    {
+                        if (!visited[j])
+                        {
+                            double probability = attractiveness[edgeIndex] / sumAttractiveness;
+                            double previous = roulette.Count > 1 ? roulette[edgeIndex] : 0;
+                            roulette.Add(previous + probability);
+                            edgeIndex++;
+                        } 
+                    }
+
+                    Random random = new Random();
+                    double stepProbability = random.NextDouble();
+
+                    for (int j = 0; j < roulette.Count-1; j++)
+                    {
+                        if (stepProbability > roulette[j] && stepProbability < roulette[j+1])
+                        {
+                            i = candidates[j];
+                            antPath.Add(candidates[j]+1);
+                            break;
+                        }
+                    }
+                }
+
+                Iterations.Add(antPath);
+
+                double deltaF = q / Distance(antPath.ToArray(), distancetable);
+
+                for (int j = 0; j < antPath.Count-1; j++)
+                {
+                    feromoneTable[antPath[j]-1, antPath[j + 1]-1] = (oblivionNumber) * feromoneTable[antPath[j] - 1, antPath[j + 1] - 1] + deltaF;
+                }
+
+                counter--;
+
+            }
+
+            return FindMinPath(Iterations,distancetable);
+
+        }
+
+        private double Attractiveness(int i, int j, float[,] distancetable, double[,] feromoneTable,double alpha, double beta)
+        {
+            return Math.Pow(feromoneTable[i, j], beta) / Math.Pow(distancetable[i, j], alpha);
+        }
+
+        private bool[] InitializeVisited(int verticesCount)
+        {
+            bool[] visited = new bool[verticesCount];
+            for (int i = 0; i < visited.Length; i++)
+            {
+                visited[i] = false;
+            }
+            return visited;
+        }
+
+        private double[,] InitializeFeromoneTable(int verticesCount)
+        {
+            double[,] table = new double[verticesCount,verticesCount];
+            for (int i = 0; i < table.GetLength(0); i++)
+            {
+                for (int j = 0; j < table.GetLength(1); j++)
+                {
+                    if (i == j)
+                    {
+                        table[i, j] = 0;
+                    }
+                    else
+                    {
+                        table[i, j] = 1;
+                    }
+                }
+            }
+            return table;
         }
         #endregion
 

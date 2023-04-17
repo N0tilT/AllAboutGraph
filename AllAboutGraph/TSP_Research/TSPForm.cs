@@ -16,8 +16,8 @@ namespace TSP_Research
     public partial class TSPForm : Form
     {
         #region Constants
-        const int verticesCountStep = 5;
-        const int maxVerticesCount = 100;
+        const int verticesCountStep = 15;
+        const int maxVerticesCount = 1000;
         #endregion
         #region Fields
         private Bitmap _whitePlaneBitmap;
@@ -102,8 +102,9 @@ namespace TSP_Research
                 TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
 
                 //tspAlgorithm.Initialize();
+                //tspAlgorithm.Initialize();
 
-                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count,tspAlgorithm.FullSearchTimer()));
+                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
                 TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
                 TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
                 TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
