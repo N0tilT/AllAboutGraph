@@ -394,7 +394,195 @@ namespace TSP_Research
 
         private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
         {
+            float[] rowDeltas = GetRowDeltas(distanceTable);
+            float[] columnDeltas = GetColumnDeltas(distanceTable);
+
+            float[,] rowsReduced = ReduceMatrixRows(distanceTable,rowDeltas);
+            float[,] reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
+
+            float rootScore = BottomScore(0, rowDeltas, columnDeltas);
+            MyGraph decisionTree = new MyGraph();
+            int parentVertexIndex = 0;
+            while (reduced.GetLength(0) != 0)
+            {
+                decisionTree.AddVertex(new GraphVertex("init"));
+                decisionTree.AddVertex(new GraphVertex("root"));
+                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[0], decisionTree.GraphVertices[1], rootScore, true));
+                parentVertexIndex++;
+
+                List<List<float>> zeroScores = ZeroScores(reduced);
+                List<float> maxZeroScore = FindMaxScore(zeroScores);
+
+                float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, (int)maxZeroScore[1], (int)maxZeroScore[2]);
+                float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
+                float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge);
+
+                float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex].Weight, cutRowDeltas, cutColumnDeltas);
+                float uncutScore = decisionTree.GraphEdges[decisionTree.GraphEdges.Count - 1].Weight + maxZeroScore[0];
+
+                decisionTree.AddVertex(new GraphVertex("cut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
+                decisionTree.AddVertex(new GraphVertex("uncut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
+
+                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[],graph.GraphVertices[graph.GraphVertices.Count-2]));
+                    
+            }
+            
+            
+
             return new List<int>();
+        }
+
+        private List<float> FindMaxScore(List<List<float>> scores)
+        {
+            float min = scores[0][0];
+            int minIndex = 0;
+            for (int i = 1; i < scores.Count; i++)
+            {
+                if (scores[i][0] < min)
+                {
+                    min = scores[i][0];
+                    minIndex = i;
+                }
+            }
+
+            return scores[minIndex];
+        }
+
+        private float[] GetRowDeltas(float[,] matrix)
+        {
+            List<float> deltas = new List<float>();
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                deltas.Add(FindRowMinimum(matrix,i));
+            }
+            return deltas.ToArray();
+        }
+        private float[] GetColumnDeltas(float[,] matrix)
+        {
+            List<float> deltas = new List<float>();
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                deltas.Add(FindColumnMinimum(matrix, i));
+            }
+            return deltas.ToArray();
+        }
+
+        private List<List<float>> ZeroScores(float[,] matrix)
+        {
+            List<List<float>> scores = new List<List<float>>();
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (matrix[i,j] == 0)
+                    {
+                        float score = FindRowMinimum(matrix,i) + FindColumnMinimum(matrix,j);
+                        scores.Add(new List<float> { score,i,j});
+                    }
+                }
+            }
+
+            return scores;
+        }
+
+        private float BottomScore(float rootScore, float[] rowDeltas, float[] columnDeltas)
+        {
+            float score = rootScore;
+
+            for (int i = 0; i < rowDeltas.Length; i++)
+            {
+                score += rowDeltas[i] + columnDeltas[i];
+            }
+
+            return score;
+        }
+
+        private float[,] ReduceMatrixColumns(float[,] matrix, float[] delta)
+        {
+            float[,] reduced = new float[matrix.GetLength(0), matrix.GetLength(1)];
+
+            for (int i = 0; i < reduced.GetLength(0); i++)
+            {
+                for (int j = 0; j < reduced.GetLength(1); j++)
+                {
+                    if (reduced[i, j] != 0)
+                    {
+                        reduced[i, j] = matrix[i, j] - delta[j];
+                    }
+                }
+            }
+
+            return reduced;
+        }
+
+        private float[,] ReduceMatrixRows(float[,] matrix, float[] delta)
+        {
+            float[,] reduced = new float[matrix.GetLength(0),matrix.GetLength(1)];
+
+            for (int i = 0; i < reduced.GetLength(0); i++)
+            {
+                for (int j = 0; j < reduced.GetLength(1); j++)
+                {
+                    if (reduced[i, j] != 0)
+                    {
+                        reduced[i,j] = matrix[i, j]-delta[i];
+                    }
+                }
+            }
+
+            return reduced;
+        }
+
+        private float FindRowMinimum(float[,] matrix, int row)
+        {
+            float min = matrix[row,0];
+            for (int i = 1; i < matrix.GetLength(1); i++)
+            {
+                if (matrix[row, i] < min)
+                {
+                    min = matrix[row, i];
+                }
+            }
+            return min;
+        }
+
+        private float FindColumnMinimum(float[,] matrix, int column)
+        {
+            float min = matrix[0,column];
+            for (int i = 1; i < matrix.GetLength(0); i++)
+            {
+                if (matrix[i,column] < min)
+                {
+                    min = matrix[i,column];
+                }
+            }
+            return min;
+        }
+
+        private float[,] CutRowAndColumnFromMatrix(float[,] matrix,int row,int column)
+        {
+            float[,] cut = new float[matrix.GetLength(0)-1, matrix.GetLength(1)-1];
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                if (i != row)
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        if (j != column)
+                        {
+                            int rowDelta = i > row ? 1 : 0;
+                            int columnDelta = j>column ? 1 : 0;
+
+                            cut[i - rowDelta, j - columnDelta] = matrix[i, j];
+
+                        }
+                    }
+                }
+            }
+
+            return cut;
         }
 
         internal double AntColonyAlgorithmTimer()
