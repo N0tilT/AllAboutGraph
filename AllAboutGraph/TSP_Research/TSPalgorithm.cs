@@ -402,14 +402,16 @@ namespace TSP_Research
 
             float rootScore = BottomScore(0, rowDeltas, columnDeltas);
             MyGraph decisionTree = new MyGraph();
-            int parentVertexIndex = 0;
+            int parentVertexIndex = 0; 
+            
+            decisionTree.AddVertex(new GraphVertex("init"));
+            decisionTree.AddVertex(new GraphVertex("root"));
+            decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[0], decisionTree.GraphVertices[1], rootScore, true));
+            parentVertexIndex++;
+            decisionTree.LinkVertices(parentVertexIndex - 1, parentVertexIndex, parentVertexIndex - 1);
+
             while (reduced.GetLength(0) != 0)
             {
-                decisionTree.AddVertex(new GraphVertex("init"));
-                decisionTree.AddVertex(new GraphVertex("root"));
-                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[0], decisionTree.GraphVertices[1], rootScore, true));
-                parentVertexIndex++;
-
                 List<List<float>> zeroScores = ZeroScores(reduced);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
@@ -417,19 +419,48 @@ namespace TSP_Research
                 float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
                 float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge);
 
-                float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex].Weight, cutRowDeltas, cutColumnDeltas);
-                float uncutScore = decisionTree.GraphEdges[decisionTree.GraphEdges.Count - 1].Weight + maxZeroScore[0];
+                float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex-1].Weight, cutRowDeltas, cutColumnDeltas);
+                float uncutScore = decisionTree.GraphEdges[parentVertexIndex-1].Weight + maxZeroScore[0];
 
                 decisionTree.AddVertex(new GraphVertex("cut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
                 decisionTree.AddVertex(new GraphVertex("uncut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
 
-                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[],graph.GraphVertices[graph.GraphVertices.Count-2]));
-                    
+                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[parentVertexIndex],graph.GraphVertices[graph.GraphVertices.Count-2],cutScore,true));
+                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[parentVertexIndex], graph.GraphVertices[graph.GraphVertices.Count-1], uncutScore, true));
+
+                decisionTree.LinkVertices(parentVertexIndex, graph.GraphVertices.Count - 2, graph.GraphEdges.Count - 2);
+                decisionTree.LinkVertices(parentVertexIndex,graph.GraphVertices.Count-1, graph.GraphEdges.Count - 1);
+
+                int minLeafIndex = FindMinLeaf(decisionTree);
+
+                parentVertexIndex = minLeafIndex;
             }
             
             
 
             return new List<int>();
+        }
+
+        private int FindMinLeaf(MyGraph decisionTree)
+        {
+            float min = int.MaxValue;
+            int minIndex = 0;
+
+            int i = 0;
+            foreach(GraphVertex vertex in decisionTree.GraphVertices)
+            {
+                if (vertex.OutEdges.Count == 0)
+                {
+                    if (vertex.InEdges[0].Weight < min)
+                    {
+                        min = vertex.InEdges[0].Weight;
+                        minIndex = i;
+                    }
+                }
+                i++;
+            }
+
+            return minIndex;
         }
 
         private List<float> FindMaxScore(List<List<float>> scores)
