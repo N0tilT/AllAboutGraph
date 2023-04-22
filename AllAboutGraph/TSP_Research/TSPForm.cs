@@ -17,7 +17,7 @@ namespace TSP_Research
     {
         #region Constants
         const int verticesCountStep = 15;
-        const int maxVerticesCount = 1000;
+        const int maxVerticesCount = 100;
         #endregion
         #region Fields
         private Bitmap _whitePlaneBitmap;
@@ -104,12 +104,12 @@ namespace TSP_Research
                 //tspAlgorithm.Initialize();
                 //tspAlgorithm.Initialize();
 
-                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
-                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
-                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
-                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                //TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
+                //TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                //TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
+                //TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
                 TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
-                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
+                //TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
 
                 //MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath) + " " + tspAlgorithm.FullSearchResultPathLength);
                 //MessageBox.Show(PrintPath(tspAlgorithm.NearestNeighbourResultPath) + " " + tspAlgorithm.NearestNeighbourResultPathLength);

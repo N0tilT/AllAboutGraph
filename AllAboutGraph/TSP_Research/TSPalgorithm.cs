@@ -1,6 +1,7 @@
 ﻿using AllAboutGraph.MVC.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
@@ -394,10 +395,12 @@ namespace TSP_Research
 
         private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
         {
-            float[] rowDeltas = GetRowDeltas(distanceTable);
-            float[] columnDeltas = GetColumnDeltas(distanceTable);
+            float[,] distanceTableReorganized = ReorganizeDistanceTable(distanceTable,int.MaxValue);
 
-            float[,] rowsReduced = ReduceMatrixRows(distanceTable,rowDeltas);
+            float[] rowDeltas = GetRowDeltas(distanceTableReorganized);
+            float[,] rowsReduced = ReduceMatrixRows(distanceTableReorganized, rowDeltas);
+
+            float[] columnDeltas = GetColumnDeltas(rowsReduced);
             float[,] reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
 
             float rootScore = BottomScore(0, rowDeltas, columnDeltas);
@@ -410,35 +413,79 @@ namespace TSP_Research
             parentVertexIndex++;
             decisionTree.LinkVertices(parentVertexIndex - 1, parentVertexIndex, parentVertexIndex - 1);
 
+            List<float[,]> reducedMatrices = new List<float[,]>();
+            reducedMatrices.Add(distanceTableReorganized);
+            reducedMatrices.Add(distanceTableReorganized);
+            bool needReduce = false;
+
             while (reduced.GetLength(0) != 0)
             {
+                //Reduce if uncut chosen
+                if (needReduce)
+                {
+                    rowDeltas = GetRowDeltas(distanceTableReorganized);
+                    rowsReduced = ReduceMatrixRows(distanceTableReorganized, rowDeltas);
+
+                    columnDeltas = GetColumnDeltas(rowsReduced);
+                    reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
+                }
+
                 List<List<float>> zeroScores = ZeroScores(reduced);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
                 float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, (int)maxZeroScore[1], (int)maxZeroScore[2]);
+                
                 float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
+                reducedWithoutEdge = ReduceMatrixRows(reducedWithoutEdge, cutRowDeltas);
                 float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge);
+                reducedWithoutEdge = ReduceMatrixColumns(reducedWithoutEdge, cutColumnDeltas);
 
                 float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex-1].Weight, cutRowDeltas, cutColumnDeltas);
                 float uncutScore = decisionTree.GraphEdges[parentVertexIndex-1].Weight + maxZeroScore[0];
 
-                decisionTree.AddVertex(new GraphVertex("cut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
-                decisionTree.AddVertex(new GraphVertex("uncut " + graph.GraphVertices[(int)maxZeroScore[1]] + "-" + graph.GraphVertices[(int)maxZeroScore[2]]));
+                reducedMatrices.Add(reducedWithoutEdge);
+                reducedMatrices.Add(reduced);
 
-                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[parentVertexIndex],graph.GraphVertices[graph.GraphVertices.Count-2],cutScore,true));
-                decisionTree.AddEdge(new GraphEdge(graph.GraphVertices[parentVertexIndex], graph.GraphVertices[graph.GraphVertices.Count-1], uncutScore, true));
+                decisionTree.AddVertex(new GraphVertex("cut " + graph.GraphVertices[(int)maxZeroScore[1]].Name + "-" + graph.GraphVertices[(int)maxZeroScore[2]].Name));
+                decisionTree.AddVertex(new GraphVertex("uncut " + graph.GraphVertices[(int)maxZeroScore[1]].Name + "-" + graph.GraphVertices[(int)maxZeroScore[2]].Name));
 
-                decisionTree.LinkVertices(parentVertexIndex, graph.GraphVertices.Count - 2, graph.GraphEdges.Count - 2);
-                decisionTree.LinkVertices(parentVertexIndex,graph.GraphVertices.Count-1, graph.GraphEdges.Count - 1);
+                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[parentVertexIndex], decisionTree.GraphVertices[decisionTree.GraphVertices.Count-2],cutScore,true));
+                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[parentVertexIndex], decisionTree.GraphVertices[decisionTree.GraphVertices.Count-1], uncutScore, true));
+
+                decisionTree.LinkVertices(parentVertexIndex, decisionTree.GraphVertices.Count - 2, decisionTree.GraphEdges.Count - 2);
+                decisionTree.LinkVertices(parentVertexIndex,decisionTree.GraphVertices.Count-1, decisionTree.GraphEdges.Count - 1);
 
                 int minLeafIndex = FindMinLeaf(decisionTree);
 
                 parentVertexIndex = minLeafIndex;
+                float[,] previousReduced = reduced;
+                reduced = reducedMatrices[parentVertexIndex];
+
+                //Uncut branch chosen
+                if(reduced.GetLength(0) == previousReduced.GetLength(0))
+                {
+                    needReduce = true;
+                }
             }
             
             
 
             return new List<int>();
+        }
+
+        private float[,] ReorganizeDistanceTable(float[,] distanceTable, int maxValue)
+        {
+            float[,] reorganized = new float[distanceTable.GetLength(0), distanceTable.GetLength(1)];
+
+            for (int i = 0; i < reorganized.GetLength(0); i++)
+            {
+                for (int j = 0; j < reorganized.GetLength(1); j++)
+                {
+                    reorganized[i, j] = distanceTable[i, j] == 0 ? maxValue : distanceTable[i, j];
+                }
+            }
+
+            return reorganized;
         }
 
         private int FindMinLeaf(MyGraph decisionTree)
@@ -451,7 +498,7 @@ namespace TSP_Research
             {
                 if (vertex.OutEdges.Count == 0)
                 {
-                    if (vertex.InEdges[0].Weight < min)
+                    if (vertex.InEdges[0].Weight <= min)
                     {
                         min = vertex.InEdges[0].Weight;
                         minIndex = i;
@@ -465,18 +512,18 @@ namespace TSP_Research
 
         private List<float> FindMaxScore(List<List<float>> scores)
         {
-            float min = scores[0][0];
-            int minIndex = 0;
+            float max = scores[0][0];
+            int maxIndex = 0;
             for (int i = 1; i < scores.Count; i++)
             {
-                if (scores[i][0] < min)
+                if (scores[i][0] > max)
                 {
-                    min = scores[i][0];
-                    minIndex = i;
+                    max = scores[i][0];
+                    maxIndex = i;
                 }
             }
 
-            return scores[minIndex];
+            return scores[maxIndex];
         }
 
         private float[] GetRowDeltas(float[,] matrix)
@@ -508,13 +555,49 @@ namespace TSP_Research
                 {
                     if (matrix[i,j] == 0)
                     {
-                        float score = FindRowMinimum(matrix,i) + FindColumnMinimum(matrix,j);
+                        float score = FindRowMinimumZeroScore(matrix,i,j) + FindColumnMinimumZeroScore(matrix,i,j);
                         scores.Add(new List<float> { score,i,j});
                     }
                 }
             }
 
             return scores;
+        }
+
+        private float FindColumnMinimumZeroScore(float[,] matrix, int row, int column)
+        {
+            float min = int.MaxValue;
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                if (i != row)
+                {
+                    if (matrix[i, column] < min && matrix[i, column] != int.MaxValue)
+                    {
+                        min = matrix[i, column];
+                    } 
+                }
+            }
+
+            return min;
+        }
+
+        private float FindRowMinimumZeroScore(float[,] matrix, int row, int column)
+        {
+            float min = int.MaxValue;
+
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                if (i != column)
+                {
+                    if (matrix[row,i] < min && matrix[row,i] != int.MaxValue)
+                    {
+                        min = matrix[row,i];
+                    }
+                }
+            }
+
+            return min;
         }
 
         private float BottomScore(float rootScore, float[] rowDeltas, float[] columnDeltas)
@@ -537,9 +620,13 @@ namespace TSP_Research
             {
                 for (int j = 0; j < reduced.GetLength(1); j++)
                 {
-                    if (reduced[i, j] != 0)
+                    if (matrix[i, j] != int.MaxValue)
                     {
                         reduced[i, j] = matrix[i, j] - delta[j];
+                    }
+                    else
+                    {
+                        reduced[i, j] = int.MaxValue;
                     }
                 }
             }
@@ -555,9 +642,13 @@ namespace TSP_Research
             {
                 for (int j = 0; j < reduced.GetLength(1); j++)
                 {
-                    if (reduced[i, j] != 0)
+                    if (matrix[i, j] != int.MaxValue)
                     {
                         reduced[i,j] = matrix[i, j]-delta[i];
+                    }
+                    else
+                    {
+                        reduced[i, j] = int.MaxValue;
                     }
                 }
             }
@@ -567,8 +658,8 @@ namespace TSP_Research
 
         private float FindRowMinimum(float[,] matrix, int row)
         {
-            float min = matrix[row,0];
-            for (int i = 1; i < matrix.GetLength(1); i++)
+            float min = int.MaxValue;
+            for (int i = 0; i < matrix.GetLength(1); i++)
             {
                 if (matrix[row, i] < min)
                 {
@@ -580,8 +671,8 @@ namespace TSP_Research
 
         private float FindColumnMinimum(float[,] matrix, int column)
         {
-            float min = matrix[0,column];
-            for (int i = 1; i < matrix.GetLength(0); i++)
+            float min = int.MaxValue;
+            for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 if (matrix[i,column] < min)
                 {
@@ -593,20 +684,22 @@ namespace TSP_Research
 
         private float[,] CutRowAndColumnFromMatrix(float[,] matrix,int row,int column)
         {
-            float[,] cut = new float[matrix.GetLength(0)-1, matrix.GetLength(1)-1];
+            float[,] prepared = PrepareMatrix(matrix, row, column);
 
-            for (int i = 0; i < matrix.GetLength(0); i++)
+            float[,] cut = new float[prepared.GetLength(0) - 1, prepared.GetLength(1) - 1];
+
+            for (int i = 0; i < prepared.GetLength(0); i++)
             {
                 if (i != row)
                 {
-                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    for (int j = 0; j < prepared.GetLength(1); j++)
                     {
                         if (j != column)
                         {
                             int rowDelta = i > row ? 1 : 0;
-                            int columnDelta = j>column ? 1 : 0;
+                            int columnDelta = j > column ? 1 : 0;
 
-                            cut[i - rowDelta, j - columnDelta] = matrix[i, j];
+                            cut[i - rowDelta, j - columnDelta] = prepared[i, j];
 
                         }
                     }
@@ -614,6 +707,22 @@ namespace TSP_Research
             }
 
             return cut;
+        }
+
+        private float[,] PrepareMatrix(float[,] matrix, int row, int column)
+        {
+            float[,] prepared = new float[matrix.GetLength(0), matrix.GetLength(1)];
+
+            for (int i = 0; i < prepared.GetLength(0); i++)
+            {
+                for (int j = 0; j < prepared.GetLength(1); j++)
+                {
+                    prepared[i, j] = matrix[i, j];
+                }
+            }
+
+            prepared[column, row] = int.MaxValue;
+            return prepared;
         }
 
         internal double AntColonyAlgorithmTimer()
