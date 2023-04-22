@@ -54,6 +54,8 @@
     <Compile Include="MVC\Model\GraphVertex.cs" />
     <Compile Include="MVC\Model\IncidenceMatrix.cs" />
     <Compile Include="MVC\Model\MyGraph.cs" />
+    <Compile Include="MVC\Model\MyTree.cs" />
+    <Compile Include="MVC\Model\TreeAlgorithms.cs" />
     <Compile Include="MVC\View\MainView.cs">
       <SubType>Form</SubType>
     </Compile>

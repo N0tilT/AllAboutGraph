@@ -418,7 +418,10 @@ namespace TSP_Research
             reducedMatrices.Add(distanceTableReorganized);
             bool needReduce = false;
 
-            while (reduced.GetLength(0) != 0)
+            //не переключается на новую ветку в ветке "uncut" вероятно из-за того, что нолик не пропадает
+            //Возврат к первому разветвлению на "uncut" ведёт к забыванию того, что мы тут были уже
+
+            while (reduced.GetLength(0) != 1)
             {
                 //Reduce if uncut chosen
                 if (needReduce)
@@ -433,6 +436,8 @@ namespace TSP_Research
                 List<List<float>> zeroScores = ZeroScores(reduced);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
+                reduced[(int)maxZeroScore[1], (int)maxZeroScore[2]] = int.MaxValue;
+
                 float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, (int)maxZeroScore[1], (int)maxZeroScore[2]);
                 
                 float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
@@ -442,6 +447,7 @@ namespace TSP_Research
 
                 float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex-1].Weight, cutRowDeltas, cutColumnDeltas);
                 float uncutScore = decisionTree.GraphEdges[parentVertexIndex-1].Weight + maxZeroScore[0];
+
 
                 reducedMatrices.Add(reducedWithoutEdge);
                 reducedMatrices.Add(reduced);
