@@ -12,9 +12,49 @@ namespace IntegrationTest
     {
         static void Main(string[] args)
         {
-            Task2();
+            TestTrees();
+
+            //Task2();
 
             //TestIncidenceMatrix();
+            Console.ReadKey();
+        }
+
+        private static void TestTrees()
+        {
+            MyTree<int> tree = new MyTree<int>();
+            tree.Add(10, new Node<int>(), true);    //10
+            tree.Add(20, tree.Root, true);  //10->20
+            Node<int> currentNode = tree.Root.LeftChild;
+            for (int i = 0; i < 3; i++)
+            {
+                tree.Add(i, currentNode, false);
+                tree.Add((i+1)*2, currentNode.RightSibling, false);
+                tree.Add((i + 1) * 3, currentNode.RightSibling, true);
+                currentNode = currentNode.RightSibling.LeftChild;
+            }
+
+            TreeAlgorithms<int> treeAlgorithms = new TreeAlgorithms<int>(tree);
+
+            List<Node<int>> preOrder = treeAlgorithms.PreOrder(tree.Root);
+            List<Node<int>> inOrder = treeAlgorithms.InOrder(tree.Root);
+            List<Node<int>> postOrder = treeAlgorithms.PostOrder(tree.Root);
+
+            Console.WriteLine(tree.ToString());
+
+            PrintNodesList(preOrder);
+            PrintNodesList(inOrder);
+            PrintNodesList(postOrder);
+
+        }
+
+        private static void PrintNodesList<T>(List<Node<T>> order)
+        {
+            foreach(Node<T> node in order)
+            {
+                Console.Write(node.Data + " ");
+            }
+            Console.WriteLine();
         }
 
         private static void Task2()

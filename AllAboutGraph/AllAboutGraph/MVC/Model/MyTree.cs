@@ -34,6 +34,14 @@ namespace AllAboutGraph.MVC.Model
         {
             RightSibling = rightSibling;
         }
+
+        public override string ToString()
+        {
+            string node = "";
+            node += Data + " " + RightSibling?.ToString() + "\n" + LeftChild?.ToString();
+            return node;
+        }
+
     }
 
     public class MyTree<T>
@@ -43,15 +51,33 @@ namespace AllAboutGraph.MVC.Model
         
         public MyTree() 
         {
-            Root = new Node<T>();
             Count = 0;
         }
 
-        public void Add(T item) 
+        public void Add(T item, Node<T> tree, bool isChild) 
         {
-            if (Count == 0)
+            if(tree.Parent == null && Root==null)
             {
                 Root = new Node<T>(item);
+                Count++;
+                return;
+            }
+
+            if (isChild)
+            {
+                tree.LeftChild = new Node<T>(item)
+                {
+                    Parent = tree
+                };
+                Count++;
+                return;
+            }
+            else if (!isChild)
+            {
+                tree.RightSibling = new Node<T>(item)
+                {
+                    Parent = tree.Parent
+                };
                 Count++;
                 return;
             }
@@ -59,7 +85,17 @@ namespace AllAboutGraph.MVC.Model
 
         }
 
+        public override string ToString()
+        {
+            string tree = "";
+            if (Root != null)
+            {
+                tree += Root.Data.ToString();
 
+                tree += "\n" + Root.LeftChild.ToString();
+            }
+            return tree;
+        }
 
     }
 }
