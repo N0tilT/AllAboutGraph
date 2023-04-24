@@ -31,7 +31,7 @@ namespace IntegrationTest
 
             int[] array = new int[18];
             Random random = new Random();
-            Console.WriteLine("Исходный массив:");
+            Console.WriteLine("Random array:");
             for (int i = 0; i < 18; i++)
             {
                 array[i] = random.Next(0, 23);
@@ -42,7 +42,16 @@ namespace IntegrationTest
 
             array = tree.TournamentSort(array);
 
-            for (int i = 1; i < array.Length; i++)
+            Console.WriteLine("Sorted array:");
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write(array[i] + " ");
+            }
+
+            Array.Sort(array);
+
+            Console.WriteLine("Sorted array:");
+            for (int i = 0; i < array.Length; i++)
             {
                 Console.Write(array[i] + " ");
             }

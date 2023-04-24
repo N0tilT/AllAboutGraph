@@ -70,17 +70,53 @@ namespace TSP_Research
             DistanceTable = Graph.GetDistanceTable();
         }
 
-        public void Initialize()
-        {
-            double tmp = 0;
-            tmp = FullSearchTimer();
-            tmp = NearestNeighbourTimer();
-            tmp = ImprovedNearestNeighbourTimer();
-            tmp = SimulatedAnnealingTimer();
-            tmp = BranchesAndBoundariesTimer();
-            tmp = AntColonyAlgorithmTimer();
-        }
+        #endregion
 
+        #region Methods
+
+        #region Other
+        private float Distance(int[] path, float[,] distanceTable)
+        {
+            float distance = 0;
+            for (int i = 0; i < path.Length - 1; i++)
+            {
+                distance += distanceTable[path[i] - 1, path[i + 1] - 1];
+            }
+            return distance;
+        }
+        private int[] FindMinPath(List<int[]> paths, float[,] distanceTable)
+        {
+            int[] minPath = paths[0];
+            float minPathLength = Distance(paths[0], distanceTable);
+            foreach (int[] path in paths)
+            {
+                float curPathLength = Distance(path, distanceTable);
+                if (curPathLength < minPathLength)
+                {
+                    minPathLength = curPathLength;
+                    minPath = path;
+                }
+            }
+            return minPath;
+        }
+        private List<int> FindMinPath(List<List<int>> paths, float[,] distanceTable)
+        {
+            List<int> minPath = paths[0];
+            float minPathLength = Distance(paths[0].ToArray(), distanceTable);
+            foreach (List<int> path in paths)
+            {
+                float curPathLength = Distance(path.ToArray(), distanceTable);
+                if (curPathLength < minPathLength)
+                {
+                    minPathLength = curPathLength;
+                    minPath = path;
+                }
+            }
+            return minPath;
+        }
+        #endregion
+
+        #region FullSearch
         internal double FullSearchTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -150,48 +186,9 @@ namespace TSP_Research
             row[i] = row[start];
             row[start] = tmp;
         }
+        #endregion
 
-        private int[] FindMinPath(List<int[]> paths, float[,] distanceTable)
-        {
-            int[] minPath = paths[0];
-            float minPathLength = Distance(paths[0], distanceTable);
-            foreach (int[] path in paths)
-            {
-                float curPathLength = Distance(path, distanceTable);
-                if (curPathLength < minPathLength)
-                {
-                    minPathLength = curPathLength;
-                    minPath = path;
-                }
-            }
-            return minPath;
-        }
-        private List<int> FindMinPath(List<List<int>> paths, float[,] distanceTable)
-        {
-            List<int> minPath = paths[0];
-            float minPathLength = Distance(paths[0].ToArray(), distanceTable);
-            foreach (List<int> path in paths)
-            {
-                float curPathLength = Distance(path.ToArray(), distanceTable);
-                if (curPathLength < minPathLength)
-                {
-                    minPathLength = curPathLength;
-                    minPath = path;
-                }
-            }
-            return minPath;
-        }
-
-        private float Distance(int[] path,float[,] distanceTable)
-        {
-            float distance = 0;
-            for (int i = 0; i < path.Length-1; i++)
-            {
-                distance += distanceTable[path[i]-1,path[i+1]-1];
-            }
-            return distance;
-        }
-
+        #region NearestNeighbour
         internal double NearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -249,7 +246,9 @@ namespace TSP_Research
 
             return nearest;
         }
+        #endregion
 
+        #region ImprovaedNearestNeighbour
         internal double ImprovedNearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -271,7 +270,9 @@ namespace TSP_Research
             }
             return new List<int>(FindMinPath(possiblePaths, distanceTable));
         }
+        #endregion
 
+        #region SimulatedAnnealing
         internal double SimulatedAnnealingTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -381,7 +382,9 @@ namespace TSP_Research
 
             return answer;
         }
+        #endregion
 
+        #region BranchesAndBoundaries
         internal double BranchesAndBoundariesTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -418,16 +421,19 @@ namespace TSP_Research
             reducedMatrices.Add(distanceTableReorganized);
             bool needReduce = false;
 
+            List<List<int>> trees = new List<List<int>>();
+            trees.Add();
+
             //не переключается на новую ветку в ветке "uncut" вероятно из-за того, что нолик не пропадает
             //Возврат к первому разветвлению на "uncut" ведёт к забыванию того, что мы тут были уже
 
-            while (reduced.GetLength(0) != 1)
+            while (reduced.GetLength(0) != 0)
             {
                 //Reduce if uncut chosen
                 if (needReduce)
                 {
-                    rowDeltas = GetRowDeltas(distanceTableReorganized);
-                    rowsReduced = ReduceMatrixRows(distanceTableReorganized, rowDeltas);
+                    rowDeltas = GetRowDeltas(reduced);
+                    rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
 
                     columnDeltas = GetColumnDeltas(rowsReduced);
                     reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
@@ -472,6 +478,10 @@ namespace TSP_Research
                 {
                     needReduce = true;
                 }
+                else
+                {
+                    needReduce = false;
+                }
             }
             
             
@@ -479,6 +489,12 @@ namespace TSP_Research
             return new List<int>();
         }
 
+        /// <summary>
+        /// Put "infinity" in cells with zero - no path between vertices
+        /// </summary>
+        /// <param name="distanceTable"></param>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
         private float[,] ReorganizeDistanceTable(float[,] distanceTable, int maxValue)
         {
             float[,] reorganized = new float[distanceTable.GetLength(0), distanceTable.GetLength(1)];
@@ -532,6 +548,11 @@ namespace TSP_Research
             return scores[maxIndex];
         }
 
+        /// <summary>
+        /// Find smallest number in each row
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         private float[] GetRowDeltas(float[,] matrix)
         {
             List<float> deltas = new List<float>();
@@ -541,6 +562,11 @@ namespace TSP_Research
             }
             return deltas.ToArray();
         }
+        /// <summary>
+        /// Find smallest number in each column
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         private float[] GetColumnDeltas(float[,] matrix)
         {
             List<float> deltas = new List<float>();
@@ -618,6 +644,12 @@ namespace TSP_Research
             return score;
         }
 
+        /// <summary>
+        /// Sustract column delta from each column item
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="delta"></param>
+        /// <returns></returns>
         private float[,] ReduceMatrixColumns(float[,] matrix, float[] delta)
         {
             float[,] reduced = new float[matrix.GetLength(0), matrix.GetLength(1)];
@@ -640,6 +672,12 @@ namespace TSP_Research
             return reduced;
         }
 
+        /// <summary>
+        /// Substract row delta from each row item
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="delta"></param>
+        /// <returns></returns>
         private float[,] ReduceMatrixRows(float[,] matrix, float[] delta)
         {
             float[,] reduced = new float[matrix.GetLength(0),matrix.GetLength(1)];
@@ -730,7 +768,9 @@ namespace TSP_Research
             prepared[column, row] = int.MaxValue;
             return prepared;
         }
+        #endregion
 
+        #region AntColony
         internal double AntColonyAlgorithmTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -860,10 +900,8 @@ namespace TSP_Research
             return table;
         }
         #endregion
-
-        #region Methods
-
         #endregion
+
 
     }
 }

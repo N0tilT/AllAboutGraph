@@ -116,12 +116,11 @@ namespace AllAboutGraph.MVC.Model
             int size = 128;
 
             int[] tree = new int[size * 2];
-            int k;
-            int i;
 
             tree = InitializeTree(array,tree,size);
 
-            for (k = 17; k >= 2; k--)
+            int i;
+            for (int k = 17; k >= 2; k--)
             {
                 i = tree[1]; 
                 array[k] = tree[i]; 
@@ -136,12 +135,18 @@ namespace AllAboutGraph.MVC.Model
 
         private int[] Readjust(int[] tree, int i)
         {
-            int j;
 
-            if ((i % 2) != 0) tree[i / 2] = i - 1;
-            else tree[i / 2] = i + 1;
+            if ((i % 2) != 0)
+            {
+                tree[i / 2] = i - 1;
+            }
+            else
+            {
+                tree[i / 2] = i + 1;
+            }
 
             i /= 2;
+            int j;
             while (i > 1)
             {
                 if ((i % 2) != 0)
@@ -169,7 +174,7 @@ namespace AllAboutGraph.MVC.Model
 
         private int[] InitializeTree(int[] array, int[] tree, int size)
         {
-            int j = 1, k;
+            int j = 0;
 
             while (j < 18)
             {
@@ -196,7 +201,7 @@ namespace AllAboutGraph.MVC.Model
                 j += 2;
             }
 
-            k = size / 2;
+            int k = size / 2;
 
             while (k > 1)
             {
