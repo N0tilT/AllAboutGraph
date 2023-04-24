@@ -90,7 +90,7 @@ namespace AllAboutGraph.MVC.Model
             string tree = "";
             if (Root != null)
             {
-                tree += Root.Data.ToString();
+                tree += "\n" + Root.Data.ToString() + "\n";
 
                 tree += "\n" + Root.LeftChild.ToString();
             }

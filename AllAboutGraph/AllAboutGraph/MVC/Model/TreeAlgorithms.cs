@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -110,5 +111,107 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        public int[] TournamentSort(int[] array)
+        {
+            int size = 128;
+
+            int[] tree = new int[size * 2];
+            int k;
+            int i;
+
+            tree = InitializeTree(array,tree,size);
+
+            for (k = 17; k >= 2; k--)
+            {
+                i = tree[1]; 
+                array[k] = tree[i]; 
+                tree[i] = int.MinValue;
+
+                tree = Readjust(tree, i);   
+            }
+            array[1] = tree[tree[1]];
+
+            return array;
+        }
+
+        private int[] Readjust(int[] tree, int i)
+        {
+            int j;
+
+            if ((i % 2) != 0) tree[i / 2] = i - 1;
+            else tree[i / 2] = i + 1;
+
+            i /= 2;
+            while (i > 1)
+            {
+                if ((i % 2) != 0)
+                {
+                    j = i - 1;
+                }
+                else
+                {
+                    j = i + 1;
+                }
+
+                if (tree[tree[i]] > tree[tree[j]])
+                {
+                    tree[i / 2] = tree[i];
+                }
+                else
+                {
+                    tree[i / 2] = tree[j];
+                }
+                i /= 2;
+            }
+
+            return tree;
+        }
+
+        private int[] InitializeTree(int[] array, int[] tree, int size)
+        {
+            int j = 1, k;
+
+            while (j < 18)
+            {
+                tree[size + j - 1] = array[j];
+                j++;
+            }
+
+            for (j = size+18; j <= size-1; j++)
+            {
+                tree[j] = int.MinValue;
+            }
+
+            j = size;
+            while (j <= 2 * size - 1)
+            {
+                if (tree[j] >= tree[j + 1])
+                {
+                    tree[j / 2] = j;
+                }
+                else 
+                { 
+                    tree[j / 2] = j + 1; 
+                }
+                j += 2;
+            }
+
+            k = size / 2;
+
+            while (k > 1)
+            {
+                j = k;
+                while (j <= 2 * k - 1)
+                {
+                    if (tree[tree[j]] >= tree[tree[j + 1]])
+                        tree[j / 2] = tree[j];
+                    else tree[j / 2] = tree[j + 1];
+                    j += 2;
+                }
+                k /= 2;
+            }
+
+            return tree;
+        }
     }
 }
