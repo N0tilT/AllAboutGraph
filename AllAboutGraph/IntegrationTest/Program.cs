@@ -12,12 +12,40 @@ namespace IntegrationTest
     {
         static void Main(string[] args)
         {
+            BinaryTreeSort();
+
             TestTrees();
 
             //Task2();
 
             //TestIncidenceMatrix();
             Console.ReadKey();
+        }
+
+        private static void BinaryTreeSort()
+        {
+            int[] array = new int[10];
+            Random random = new Random();
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = random.Next(0, 100);
+            }
+
+            Console.WriteLine("Random Array: {0}", string.Join(" ", array));
+
+            Console.WriteLine("Sorted Array: {0}", string.Join(" ", TreeSort(array)));
+
+        }
+
+        private static int[] TreeSort(int[] array)
+        {
+            MyBinaryTree<int> tree = new MyBinaryTree<int>(array[0]);
+            for (int i = 1; i < array.Length; i++)
+            {
+                tree.Add(new MyBinaryTree<int>(array[i]));
+            }
+
+            return tree.Transform();
         }
 
         private static void TestTrees()
@@ -34,7 +62,7 @@ namespace IntegrationTest
                 currentNode = currentNode.RightSibling.LeftChild;
             }
 
-            TreeAlgorithms<int> treeAlgorithms = new TreeAlgorithms<int>(tree);
+            TreeAlgorithms<int> treeAlgorithms = new TreeAlgorithms<int>(tree, new MyBinaryTree<int>(10));
 
             List<Node<int>> preOrder = treeAlgorithms.PreOrder(tree.Root);
             List<Node<int>> inOrder = treeAlgorithms.InOrder(tree.Root);

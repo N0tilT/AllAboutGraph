@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
-    public class TreeAlgorithms<T>
+    public class TreeAlgorithms<T> where T : IComparable<T>
     {
         MyTree<T> Tree { get; set; }
 
@@ -62,9 +62,9 @@ namespace AllAboutGraph.MVC.Model
             return order;
         }
 
-        public List<BinaryNode<T>> BinaryPreOrder(BinaryNode<T> root)
+        public List<MyBinaryTree<T>> BinaryPreOrder(MyBinaryTree<T> root)
         {
-            List<BinaryNode<T>> order = new List<BinaryNode<T>>();
+            List<MyBinaryTree<T>> order = new List<MyBinaryTree<T>>();
             if (root != null)
             {
                 order.Add(root);
@@ -83,13 +83,13 @@ namespace AllAboutGraph.MVC.Model
             return order;
         }
 
-        public List<BinaryNode<T>> BinaryPreOrder_NotRecursive(BinaryNode<T> root)
+        public List<MyBinaryTree<T>> BinaryPreOrder_NotRecursive(MyBinaryTree<T> root)
         {
-            List<BinaryNode<T>> order = new List<BinaryNode<T>>();
+            List<MyBinaryTree<T>> order = new List<MyBinaryTree<T>>();
             
-            Stack<BinaryNode<T>> stack = new Stack<BinaryNode<T>>();
+            Stack<MyBinaryTree<T>> stack = new Stack<MyBinaryTree<T>>();
 
-            BinaryNode<T> currentNode = root;
+            MyBinaryTree<T> currentNode = root;
             while (true)
             {
                 if(currentNode != null)
