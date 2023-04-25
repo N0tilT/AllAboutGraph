@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -134,28 +135,30 @@ namespace TSP_Research
 
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
-            if (graph.GraphVertices.Count >= 11) return new List<int>();
-            List<int[]> paths = GetAllPossiblePaths(graph.GraphVertices);
-            int[] minPath = FindMinPath(paths, distanceTable);
-            return new List<int>(minPath);
+            if(graph.GraphVertices.Count >=15) return new List<int> { 0 };
+            int[] path = GetMinimumPath(graph.GraphVertices,distanceTable);
+            return new List<int>(path);
         }
 
-        static List<int[]> permutations = new List<int[]>();
-        private List<int[]> GetAllPossiblePaths(List<GraphVertex> graphVertices)
+        private static int[] minimumPermutation;
+        private static float minPathLength;
+        private int[] GetMinimumPath(List<GraphVertex> graphVertices, float[,] distanceTable)
         {
-            permutations = new List<int[]>();
+            minimumPermutation = new int[graphVertices.Count];
             int[] permutationRow = new int[graphVertices.Count];
             for (int i = 0; i < graphVertices.Count; i++)
             {
                 permutationRow[i] = int.Parse(graphVertices[i].Name);
+                minimumPermutation[i] = permutationRow[i];
             }
+            minPathLength = Distance(minimumPermutation, distanceTable);
 
-            Permutate(permutationRow, 0);
+            Permutate(permutationRow, 0, distanceTable);
 
-            return permutations;
+            return minimumPermutation;
         }
 
-        private void Permutate(int[] row, int start)
+        private void Permutate(int[] row, int start, float[,] distanceTable)
         {
             if(start >= row.Length)
             {
@@ -166,15 +169,20 @@ namespace TSP_Research
                     nextPermutation[i] = row[i];
                 }
 
-                permutations.Add(nextPermutation);
+                float pathLength = Distance(nextPermutation, distanceTable);
+                if (pathLength < minPathLength)
+                {
+                    minimumPermutation = nextPermutation;
+                    minPathLength = pathLength;
+                }
                 return;
             }
 
-            Permutate(row, start+1);
+            Permutate(row, start+1,distanceTable);
             for (int i = start+1; i < row.Length; i++)
             {
                 Swap(row, start, i);
-                Permutate(row, start+1);
+                Permutate(row, start+1, distanceTable);
                 Swap(row, start, i);
             }
 
@@ -248,7 +256,7 @@ namespace TSP_Research
         }
         #endregion
 
-        #region ImprovaedNearestNeighbour
+        #region ImprovedNearestNeighbour
         internal double ImprovedNearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -384,6 +392,137 @@ namespace TSP_Research
         }
         #endregion
 
+        #region AntColony
+        internal double AntColonyAlgorithmTimer()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable, 10, 1, 1, 1, 1);
+
+            stopwatch.Stop();
+            AntColonyAlgorithmResultPathLength = Distance(AntColonyAlgorithmResultPath.ToArray(), DistanceTable);
+            return stopwatch.ElapsedMilliseconds;
+        }
+
+        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable, int itetationsCount, double alpha, double beta, double q, double oblivionNumber)
+        {
+            List<List<int>> Iterations = new List<List<int>>();
+
+            int counter = itetationsCount;
+            while (counter > 0)
+            {
+                int startIndex = 0;
+
+                double[,] feromoneTable = InitializeFeromoneTable(graph.GraphVertices.Count);
+                bool[] visited = InitializeVisited(graph.GraphVertices.Count);
+
+                List<int> antPath = new List<int>();
+                int i = startIndex;
+                antPath.Add(i + 1);
+                while (visited.Contains(false))
+                {
+                    visited[i] = true;
+
+                    List<double> attractiveness = new List<double>();
+                    List<double> roulette = new List<double>();
+                    List<int> candidates = new List<int>();
+
+
+                    roulette.Add(0);
+
+                    int edgeIndex = 0;
+                    double sumAttractiveness = 0;
+                    for (int j = 0; j < graph.GraphVertices.Count; j++)
+                    {
+                        if (!visited[j])
+                        {
+                            attractiveness.Add(Attractiveness(i, j, distancetable, feromoneTable, alpha, beta));
+                            sumAttractiveness = attractiveness.Sum();
+                            candidates.Add(j);
+                            edgeIndex++;
+                        }
+                    }
+
+                    edgeIndex = 0;
+                    for (int j = 0; j < graph.GraphVertices.Count; j++)
+                    {
+                        if (!visited[j])
+                        {
+                            double probability = attractiveness[edgeIndex] / sumAttractiveness;
+                            double previous = roulette.Count > 1 ? roulette[edgeIndex] : 0;
+                            roulette.Add(previous + probability);
+                            edgeIndex++;
+                        }
+                    }
+
+                    Random random = new Random();
+                    double stepProbability = random.NextDouble();
+
+                    for (int j = 0; j < roulette.Count - 1; j++)
+                    {
+                        if (stepProbability > roulette[j] && stepProbability < roulette[j + 1])
+                        {
+                            i = candidates[j];
+                            antPath.Add(candidates[j] + 1);
+                            break;
+                        }
+                    }
+                }
+
+                Iterations.Add(antPath);
+
+                double deltaF = q / Distance(antPath.ToArray(), distancetable);
+
+                for (int j = 0; j < antPath.Count - 1; j++)
+                {
+                    feromoneTable[antPath[j] - 1, antPath[j + 1] - 1] = (oblivionNumber) * feromoneTable[antPath[j] - 1, antPath[j + 1] - 1] + deltaF;
+                }
+
+                counter--;
+
+            }
+
+            return FindMinPath(Iterations, distancetable);
+
+        }
+
+        private double Attractiveness(int i, int j, float[,] distancetable, double[,] feromoneTable, double alpha, double beta)
+        {
+            return Math.Pow(feromoneTable[i, j], beta) / Math.Pow(distancetable[i, j], alpha);
+        }
+
+        private bool[] InitializeVisited(int verticesCount)
+        {
+            bool[] visited = new bool[verticesCount];
+            for (int i = 0; i < visited.Length; i++)
+            {
+                visited[i] = false;
+            }
+            return visited;
+        }
+
+        private double[,] InitializeFeromoneTable(int verticesCount)
+        {
+            double[,] table = new double[verticesCount, verticesCount];
+            for (int i = 0; i < table.GetLength(0); i++)
+            {
+                for (int j = 0; j < table.GetLength(1); j++)
+                {
+                    if (i == j)
+                    {
+                        table[i, j] = 0;
+                    }
+                    else
+                    {
+                        table[i, j] = 1;
+                    }
+                }
+            }
+            return table;
+        }
+        #endregion
+
         #region BranchesAndBoundaries
         internal double BranchesAndBoundariesTimer()
         {
@@ -394,6 +533,12 @@ namespace TSP_Research
 
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
+        }
+
+        private class SolutionNode<T>
+        {
+            public T Value { get; set; }
+            public SolutionNode<T> 
         }
 
         private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
@@ -422,7 +567,7 @@ namespace TSP_Research
             bool needReduce = false;
 
             List<List<int>> trees = new List<List<int>>();
-            trees.Add();
+            
 
             //не переключается на новую ветку в ветке "uncut" вероятно из-за того, что нолик не пропадает
             //Возврат к первому разветвлению на "uncut" ведёт к забыванию того, что мы тут были уже
@@ -484,6 +629,7 @@ namespace TSP_Research
                 }
             }
             
+
             
 
             return new List<int>();
@@ -770,136 +916,6 @@ namespace TSP_Research
         }
         #endregion
 
-        #region AntColony
-        internal double AntColonyAlgorithmTimer()
-        {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable,10,1,1,1,1);
-
-            stopwatch.Stop();
-            AntColonyAlgorithmResultPathLength = Distance(AntColonyAlgorithmResultPath.ToArray(), DistanceTable);
-            return stopwatch.ElapsedMilliseconds;
-        }
-
-        private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable, int itetationsCount, double alpha,double beta, double q,double oblivionNumber)
-        {
-            List<List<int>> Iterations = new List<List<int>>();
-
-            int counter = itetationsCount;
-            while (counter > 0)
-            {
-                int startIndex = 0;
-
-                double[,] feromoneTable = InitializeFeromoneTable(graph.GraphVertices.Count);
-                bool[] visited = InitializeVisited(graph.GraphVertices.Count);
-
-                List<int> antPath = new List<int>();
-                int i = startIndex;
-                antPath.Add(i+1);
-                while (visited.Contains(false))
-                {
-                    visited[i] = true;
-
-                    List<double> attractiveness = new List<double>();
-                    List<double> roulette = new List<double>();
-                    List<int> candidates = new List<int>();
-
-
-                    roulette.Add(0);
-
-                    int edgeIndex = 0;
-                    double sumAttractiveness = 0;
-                    for (int j = 0; j < graph.GraphVertices.Count; j++)
-                    {
-                        if (!visited[j])
-                        {
-                            attractiveness.Add(Attractiveness(i,j,distancetable,feromoneTable,alpha,beta));
-                            sumAttractiveness = attractiveness.Sum();
-                            candidates.Add(j);
-                            edgeIndex++;
-                        }
-                    }
-
-                    edgeIndex = 0;
-                    for (int j = 0; j < graph.GraphVertices.Count; j++)
-                    {
-                        if (!visited[j])
-                        {
-                            double probability = attractiveness[edgeIndex] / sumAttractiveness;
-                            double previous = roulette.Count > 1 ? roulette[edgeIndex] : 0;
-                            roulette.Add(previous + probability);
-                            edgeIndex++;
-                        } 
-                    }
-
-                    Random random = new Random();
-                    double stepProbability = random.NextDouble();
-
-                    for (int j = 0; j < roulette.Count-1; j++)
-                    {
-                        if (stepProbability > roulette[j] && stepProbability < roulette[j+1])
-                        {
-                            i = candidates[j];
-                            antPath.Add(candidates[j]+1);
-                            break;
-                        }
-                    }
-                }
-
-                Iterations.Add(antPath);
-
-                double deltaF = q / Distance(antPath.ToArray(), distancetable);
-
-                for (int j = 0; j < antPath.Count-1; j++)
-                {
-                    feromoneTable[antPath[j]-1, antPath[j + 1]-1] = (oblivionNumber) * feromoneTable[antPath[j] - 1, antPath[j + 1] - 1] + deltaF;
-                }
-
-                counter--;
-
-            }
-
-            return FindMinPath(Iterations,distancetable);
-
-        }
-
-        private double Attractiveness(int i, int j, float[,] distancetable, double[,] feromoneTable,double alpha, double beta)
-        {
-            return Math.Pow(feromoneTable[i, j], beta) / Math.Pow(distancetable[i, j], alpha);
-        }
-
-        private bool[] InitializeVisited(int verticesCount)
-        {
-            bool[] visited = new bool[verticesCount];
-            for (int i = 0; i < visited.Length; i++)
-            {
-                visited[i] = false;
-            }
-            return visited;
-        }
-
-        private double[,] InitializeFeromoneTable(int verticesCount)
-        {
-            double[,] table = new double[verticesCount,verticesCount];
-            for (int i = 0; i < table.GetLength(0); i++)
-            {
-                for (int j = 0; j < table.GetLength(1); j++)
-                {
-                    if (i == j)
-                    {
-                        table[i, j] = 0;
-                    }
-                    else
-                    {
-                        table[i, j] = 1;
-                    }
-                }
-            }
-            return table;
-        }
-        #endregion
         #endregion
 
 

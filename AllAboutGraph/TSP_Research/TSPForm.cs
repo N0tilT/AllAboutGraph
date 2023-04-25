@@ -15,10 +15,6 @@ namespace TSP_Research
 {
     public partial class TSPForm : Form
     {
-        #region Constants
-        const int verticesCountStep = 15;
-        const int maxVerticesCount = 100;
-        #endregion
         #region Fields
         private Bitmap _whitePlaneBitmap;
 
@@ -31,8 +27,14 @@ namespace TSP_Research
 
         private List<MyGraph> graphs;
         private MyGraph _selectedGraph;
+
+        private int verticesCountStep;
+        private int maxVerticesCount;
         #endregion
         #region Properties
+        public int VerticesCountStep { get => verticesCountStep; set => verticesCountStep = value; }
+        public int MaxVerticesCount { get => maxVerticesCount; set => maxVerticesCount = value; }
+
         public List<MyGraph> Graphs { get => graphs; set => graphs = value; }
 
         public MyGraph SelectedGraph { get => _selectedGraph; set => _selectedGraph = value; }
@@ -85,8 +87,6 @@ namespace TSP_Research
             get { return _selectedStringFormat; }
             set { _selectedStringFormat = value; }
         }
-
-
         #endregion
         #endregion
 
@@ -95,7 +95,23 @@ namespace TSP_Research
         {
             InitializeComponent();
 
-            Graphs = InitializeGraphs(maxVerticesCount, verticesCountStep);
+            SelectedGraph = new MyGraph();
+
+            SetDefaultPaintingProperties();
+
+            InitializeCanvas();
+        }
+
+        private void CalculateTSP()
+        {
+            TSPchart.Series[0].Points.Clear();
+            TSPchart.Series[1].Points.Clear();
+            TSPchart.Series[2].Points.Clear();
+            TSPchart.Series[3].Points.Clear();
+            TSPchart.Series[4].Points.Clear();
+            TSPchart.Series[5].Points.Clear();
+
+            Graphs = InitializeGraphs(MaxVerticesCount, VerticesCountStep);
 
             foreach (MyGraph graph in graphs)
             {
@@ -104,12 +120,12 @@ namespace TSP_Research
                 //tspAlgorithm.Initialize();
                 //tspAlgorithm.Initialize();
 
-                //TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
-                //TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
-                //TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
-                //TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
+                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
+                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
                 TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
-                //TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
+                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
 
                 //MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath) + " " + tspAlgorithm.FullSearchResultPathLength);
                 //MessageBox.Show(PrintPath(tspAlgorithm.NearestNeighbourResultPath) + " " + tspAlgorithm.NearestNeighbourResultPathLength);
@@ -128,9 +144,6 @@ namespace TSP_Research
 
 
             SelectedGraph = Graphs[0];
-            SetDefaultPaintingProperties();
-
-            InitializeCanvas();
         }
 
         private string PrintPath(List<int> path)
@@ -242,6 +255,31 @@ namespace TSP_Research
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
             SelectedGraph.DrawGraph(e.Graphics, SelectedPen, SelectedBackgroundBrush, SelectedFontBrush, SelectedFont, SelectedStringFormat);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                VerticesCountStep = int.Parse(textBoxStep.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Неверно введён шаг","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+
+            try
+            {
+                MaxVerticesCount = int.Parse(textBoxMaxValue.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Неверно введено максимальное количество вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            CalculateTSP();
+            Canvas.Invalidate();
+
         }
     }
 }

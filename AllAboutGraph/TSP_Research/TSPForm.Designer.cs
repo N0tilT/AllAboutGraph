@@ -46,6 +46,11 @@
             this.BranchesAndBoundariesResult = new System.Windows.Forms.TextBox();
             this.labelLengths = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonCalc = new System.Windows.Forms.Button();
+            this.textBoxMaxValue = new System.Windows.Forms.TextBox();
+            this.textBoxStep = new System.Windows.Forms.TextBox();
+            this.labelMaxValue = new System.Windows.Forms.Label();
+            this.labelStep = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.TSPchart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -179,6 +184,11 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.labelStep);
+            this.panel1.Controls.Add(this.labelMaxValue);
+            this.panel1.Controls.Add(this.textBoxStep);
+            this.panel1.Controls.Add(this.textBoxMaxValue);
+            this.panel1.Controls.Add(this.buttonCalc);
             this.panel1.Controls.Add(this.labelLengths);
             this.panel1.Controls.Add(this.FullSearchResult);
             this.panel1.Controls.Add(this.AntColonyResult);
@@ -191,6 +201,51 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(244, 775);
             this.panel1.TabIndex = 9;
+            // 
+            // buttonCalc
+            // 
+            this.buttonCalc.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonCalc.Location = new System.Drawing.Point(13, 127);
+            this.buttonCalc.Name = "buttonCalc";
+            this.buttonCalc.Size = new System.Drawing.Size(219, 38);
+            this.buttonCalc.TabIndex = 9;
+            this.buttonCalc.Text = "Рассчитать";
+            this.buttonCalc.UseVisualStyleBackColor = true;
+            this.buttonCalc.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // textBoxMaxValue
+            // 
+            this.textBoxMaxValue.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxMaxValue.Location = new System.Drawing.Point(13, 87);
+            this.textBoxMaxValue.Name = "textBoxMaxValue";
+            this.textBoxMaxValue.Size = new System.Drawing.Size(219, 27);
+            this.textBoxMaxValue.TabIndex = 10;
+            // 
+            // textBoxStep
+            // 
+            this.textBoxStep.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxStep.Location = new System.Drawing.Point(13, 35);
+            this.textBoxStep.Name = "textBoxStep";
+            this.textBoxStep.Size = new System.Drawing.Size(219, 27);
+            this.textBoxStep.TabIndex = 11;
+            // 
+            // labelMaxValue
+            // 
+            this.labelMaxValue.AutoSize = true;
+            this.labelMaxValue.Location = new System.Drawing.Point(13, 68);
+            this.labelMaxValue.Name = "labelMaxValue";
+            this.labelMaxValue.Size = new System.Drawing.Size(134, 13);
+            this.labelMaxValue.TabIndex = 12;
+            this.labelMaxValue.Text = "Максимальное значение";
+            // 
+            // labelStep
+            // 
+            this.labelStep.AutoSize = true;
+            this.labelStep.Location = new System.Drawing.Point(13, 19);
+            this.labelStep.Name = "labelStep";
+            this.labelStep.Size = new System.Drawing.Size(27, 13);
+            this.labelStep.TabIndex = 13;
+            this.labelStep.Text = "Шаг";
             // 
             // TSPForm
             // 
@@ -222,6 +277,11 @@
         private System.Windows.Forms.TextBox BranchesAndBoundariesResult;
         private System.Windows.Forms.Label labelLengths;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button buttonCalc;
+        private System.Windows.Forms.Label labelStep;
+        private System.Windows.Forms.Label labelMaxValue;
+        private System.Windows.Forms.TextBox textBoxStep;
+        private System.Windows.Forms.TextBox textBoxMaxValue;
     }
 }
 
