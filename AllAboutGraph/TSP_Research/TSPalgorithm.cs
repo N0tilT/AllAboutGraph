@@ -47,14 +47,12 @@ namespace TSP_Research
 
         #region Results
         public List<int> FullSearchResultPath { get => _fullSearchResultPath; set => _fullSearchResultPath = value; }
-        public List<int> RandomFullSearchResultPath { get => _randomFullSearchresultPath; set => _randomFullSearchresultPath = value; }
         public List<int> NearestNeighbourResultPath { get => _nearestNeighbourResultPath; set => _nearestNeighbourResultPath = value; }
         public List<int> ImprovedNearestNeighbourResultPath { get => _improvedNearestNeighbourResultPath; set => _improvedNearestNeighbourResultPath = value; }
         public List<int> SimulatedAnnealingResultPath { get => _simulatedAnnealingResultPath; set => _simulatedAnnealingResultPath = value; }
         public List<int> BranchesAndBoundariesResultPath { get => _branchesAndBoundariesResultPath; set => _branchesAndBoundariesResultPath = value; }
         public List<int> AntColonyAlgorithmResultPath { get => _antColonyAlgorithmResultPath; set => _antColonyAlgorithmResultPath = value; }
         public float FullSearchResultPathLength { get => _fullSearchResultPathLength; set => _fullSearchResultPathLength = value; }
-        public float RandomFullSearchresultPathLength { get => _randomFullSearchresultPathLength; set => _randomFullSearchresultPathLength = value; }
         public float NearestNeighbourResultPathLength { get => _nearestNeighbourResultPathLength; set => _nearestNeighbourResultPathLength = value; }
         public float ImprovedNearestNeighbourResultPathLength { get => _improvedNearestNeighbourResultPathLength; set => _improvedNearestNeighbourResultPathLength = value; }
         public float SimulatedAnnealingResultPathLength { get => _simulatedAnnealingResultPathLength; set => _simulatedAnnealingResultPathLength = value; }
@@ -526,10 +524,12 @@ namespace TSP_Research
         #region BranchesAndBoundaries
         internal double BranchesAndBoundariesTimer()
         {
+            float[,] distanceTableReorganized = ReorganizeDistanceTable(DistanceTable, int.MaxValue);
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, DistanceTable);
+            BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, distanceTableReorganized);
 
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
@@ -537,100 +537,95 @@ namespace TSP_Research
 
         private class SolutionNode<T>
         {
+            public int Nodes { get; set; }
             public T Value { get; set; }
-            public SolutionNode<T> 
+            public bool IsRoot { get; set; }
+            public SolutionNode<T> CutEdge { get; set; }
+            public SolutionNode<T> UncutEdge { get; set; }
+            public SolutionNode<T> Parent { get; set; }
+            public int NumberOfVertices { get => Matrix.GetLength(0); }
+            public T[,] Matrix { get; set; }
+            public SolutionNode() { }
+            public SolutionNode(T item) { Value = item; }
+            public SolutionNode(T item, T[,] matrix) : this(item) { Matrix = matrix; }
         }
 
         private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
         {
-            float[,] distanceTableReorganized = ReorganizeDistanceTable(distanceTable,int.MaxValue);
-
-            float[] rowDeltas = GetRowDeltas(distanceTableReorganized);
-            float[,] rowsReduced = ReduceMatrixRows(distanceTableReorganized, rowDeltas);
+            //Reduce Matrix
+            float[] rowDeltas = GetRowDeltas(distanceTable);
+            float[,] rowsReduced = ReduceMatrixRows(distanceTable, rowDeltas);
 
             float[] columnDeltas = GetColumnDeltas(rowsReduced);
             float[,] reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
 
+            //Calc root score
             float rootScore = BottomScore(0, rowDeltas, columnDeltas);
-            MyGraph decisionTree = new MyGraph();
-            int parentVertexIndex = 0; 
-            
-            decisionTree.AddVertex(new GraphVertex("init"));
-            decisionTree.AddVertex(new GraphVertex("root"));
-            decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[0], decisionTree.GraphVertices[1], rootScore, true));
-            parentVertexIndex++;
-            decisionTree.LinkVertices(parentVertexIndex - 1, parentVertexIndex, parentVertexIndex - 1);
 
-            List<float[,]> reducedMatrices = new List<float[,]>();
-            reducedMatrices.Add(distanceTableReorganized);
-            reducedMatrices.Add(distanceTableReorganized);
-            bool needReduce = false;
+            //Initialize solutionTree
 
-            List<List<int>> trees = new List<List<int>>();
-            
 
-            //не переключается на новую ветку в ветке "uncut" вероятно из-за того, что нолик не пропадает
-            //Возврат к первому разветвлению на "uncut" ведёт к забыванию того, что мы тут были уже
-
-            while (reduced.GetLength(0) != 0)
+            SolutionNode<float> solutionTree = new SolutionNode<float>(rootScore, reduced)
             {
-                //Reduce if uncut chosen
-                if (needReduce)
-                {
-                    rowDeltas = GetRowDeltas(reduced);
-                    rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
+                IsRoot = true,
+                Nodes = 1,
+            };
 
-                    columnDeltas = GetColumnDeltas(rowsReduced);
-                    reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
-                }
 
+            SolutionNode<float> currentNode = solutionTree;
+            float parentValue = rootScore;
+
+
+            int counter = 0;
+
+            while (reduced.GetLength(0) != 1)
+            {
+                //Reduce matrix
+                rowDeltas = GetRowDeltas(reduced);
+                rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
+
+                columnDeltas = GetColumnDeltas(rowsReduced);
+                reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
+
+                //Find maximum zero score
                 List<List<float>> zeroScores = ZeroScores(reduced);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
+                //Create new branches - no way to max zero score vertex
                 reduced[(int)maxZeroScore[1], (int)maxZeroScore[2]] = int.MaxValue;
 
                 float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, (int)maxZeroScore[1], (int)maxZeroScore[2]);
                 
+                //Reduce matrix without max zero score edge
                 float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
                 reducedWithoutEdge = ReduceMatrixRows(reducedWithoutEdge, cutRowDeltas);
                 float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge);
                 reducedWithoutEdge = ReduceMatrixColumns(reducedWithoutEdge, cutColumnDeltas);
 
-                float cutScore = BottomScore(decisionTree.GraphEdges[parentVertexIndex-1].Weight, cutRowDeltas, cutColumnDeltas);
-                float uncutScore = decisionTree.GraphEdges[parentVertexIndex-1].Weight + maxZeroScore[0];
-
-
-                reducedMatrices.Add(reducedWithoutEdge);
-                reducedMatrices.Add(reduced);
-
-                decisionTree.AddVertex(new GraphVertex("cut " + graph.GraphVertices[(int)maxZeroScore[1]].Name + "-" + graph.GraphVertices[(int)maxZeroScore[2]].Name));
-                decisionTree.AddVertex(new GraphVertex("uncut " + graph.GraphVertices[(int)maxZeroScore[1]].Name + "-" + graph.GraphVertices[(int)maxZeroScore[2]].Name));
-
-                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[parentVertexIndex], decisionTree.GraphVertices[decisionTree.GraphVertices.Count-2],cutScore,true));
-                decisionTree.AddEdge(new GraphEdge(decisionTree.GraphVertices[parentVertexIndex], decisionTree.GraphVertices[decisionTree.GraphVertices.Count-1], uncutScore, true));
-
-                decisionTree.LinkVertices(parentVertexIndex, decisionTree.GraphVertices.Count - 2, decisionTree.GraphEdges.Count - 2);
-                decisionTree.LinkVertices(parentVertexIndex,decisionTree.GraphVertices.Count-1, decisionTree.GraphEdges.Count - 1);
-
-                int minLeafIndex = FindMinLeaf(decisionTree);
-
-                parentVertexIndex = minLeafIndex;
-                float[,] previousReduced = reduced;
-                reduced = reducedMatrices[parentVertexIndex];
-
-                //Uncut branch chosen
-                if(reduced.GetLength(0) == previousReduced.GetLength(0))
+                //Find scores
+                float cutScore = BottomScore(parentValue, cutRowDeltas, cutColumnDeltas);
+                currentNode.CutEdge = new SolutionNode<float>(cutScore, reducedWithoutEdge) 
                 {
-                    needReduce = true;
-                }
-                else
+                    Parent = currentNode,
+                };
+
+
+                float uncutScore = parentValue + maxZeroScore[0];
+                currentNode.UncutEdge = new SolutionNode<float>(uncutScore,reduced)
                 {
-                    needReduce = false;
-                }
+                    Parent = currentNode,
+                };
+                solutionTree.Nodes += 2;
+
+                //Find minimumLeaf
+                currentNode = FindMinLeaf(solutionTree);
+                reduced = currentNode.Matrix;
+                parentValue = currentNode.Value;
+                counter++;
             }
-            
 
-            
+
+            BranchesAndBoundariesResultPathLength = currentNode.Value;
 
             return new List<int>();
         }
@@ -656,26 +651,55 @@ namespace TSP_Research
             return reorganized;
         }
 
-        private int FindMinLeaf(MyGraph decisionTree)
+        private SolutionNode<T> FindMinLeaf<T>(SolutionNode<T> node) where T: IComparable<T>
         {
-            float min = int.MaxValue;
-            int minIndex = 0;
+            List<SolutionNode<T>> leafs = new List<SolutionNode<T>>();
+            leafs.AddRange(CollectLeafs(node));
 
-            int i = 0;
-            foreach(GraphVertex vertex in decisionTree.GraphVertices)
+            T minimum = leafs[0].Value;
+            SolutionNode<T> minLeaf = leafs[0];
+
+            foreach (SolutionNode<T> leaf in leafs)
             {
-                if (vertex.OutEdges.Count == 0)
+                if (leaf.Value.CompareTo(minimum)<0)
                 {
-                    if (vertex.InEdges[0].Weight <= min)
-                    {
-                        min = vertex.InEdges[0].Weight;
-                        minIndex = i;
-                    }
+                    minimum = leaf.Value;
+                    minLeaf = leaf;
                 }
-                i++;
             }
 
-            return minIndex;
+            return minLeaf;
+        }
+
+        private IEnumerable<SolutionNode<T>> CollectLeafs<T>(SolutionNode<T> node)
+        {
+            List<SolutionNode<T>> values = new List<SolutionNode<T>>();
+
+            SolutionNode<T> currentNode = node;
+
+            Queue<SolutionNode<T>> queue = new Queue<SolutionNode<T>>();
+            do
+            {
+                if(currentNode.CutEdge == null && currentNode.UncutEdge == null)
+                {
+                    values.Add(currentNode);
+                }
+
+                if(currentNode.CutEdge!=null) queue.Enqueue(currentNode.CutEdge);
+                if(currentNode.UncutEdge!=null) queue.Enqueue( currentNode.UncutEdge);
+                if (queue.Count != 0)
+                {
+                    currentNode = queue.Dequeue();
+                }
+                else
+                {
+                    break;
+                }
+
+
+            } while (true);
+
+            return values;
         }
 
         private List<float> FindMaxScore(List<List<float>> scores)

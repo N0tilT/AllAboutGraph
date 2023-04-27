@@ -105,7 +105,7 @@ namespace AllAboutGraph.MVC.Model
                     {
                         return order;
                     }
-                    stack.Pop();
+                    currentNode = stack.Pop();
                     currentNode = currentNode.Right;
                 }
             }
