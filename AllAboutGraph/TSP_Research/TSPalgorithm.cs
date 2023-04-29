@@ -133,7 +133,7 @@ namespace TSP_Research
 
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
-            if(graph.GraphVertices.Count >=15) return new List<int> { 0 };
+            if(graph.GraphVertices.Count >=12) return new List<int> { 0 };
             int[] path = GetMinimumPath(graph.GraphVertices,distanceTable);
             return new List<int>(path);
         }
@@ -160,12 +160,14 @@ namespace TSP_Research
         {
             if(start >= row.Length)
             {
-                int[] nextPermutation = new int[row.Length];
+                int[] nextPermutation = new int[row.Length+1];
 
-                for (int i = 0; i < nextPermutation.Length; i++)
+                for (int i = 0; i < nextPermutation.Length-1; i++)
                 {
                     nextPermutation[i] = row[i];
                 }
+
+                nextPermutation[nextPermutation.Length-1] = nextPermutation[0];
 
                 float pathLength = Distance(nextPermutation, distanceTable);
                 if (pathLength < minPathLength)
@@ -535,16 +537,89 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
+        private class SolutionEdge<T>
+        {
+            /// <summary>
+            /// Вес ребра решения
+            /// </summary>
+            public T Weight { get; set; }
+
+            /// <summary>
+            /// Исходящая вершина
+            /// </summary>
+            public int VertexIn { get; set; }
+
+            /// <summary>
+            /// Входящая вершина
+            /// </summary>
+            public int VertexOut { get; set; }
+
+            public SolutionEdge() { }
+            public SolutionEdge(T weight, int vertexOut, int vertexIn)
+            {
+                Weight = weight;
+                VertexIn = vertexIn;
+                VertexOut = vertexOut;
+            }
+        }
+
         private class SolutionNode<T>
         {
+            /// <summary>
+            /// Количество узлов
+            /// </summary>
             public int Nodes { get; set; }
+
+            /// <summary>
+            /// Значение узла
+            /// </summary>
             public T Value { get; set; }
+
+            /// <summary>
+            /// Является ли корнем
+            /// </summary>
             public bool IsRoot { get; set; }
+
+            /// <summary>
+            /// Ветвь без ребра
+            /// </summary>
             public SolutionNode<T> CutEdge { get; set; }
+
+            /// <summary>
+            /// Ветвь с ребром
+            /// </summary>
             public SolutionNode<T> UncutEdge { get; set; }
+
+            /// <summary>
+            /// Родитель узла
+            /// </summary>
             public SolutionNode<T> Parent { get; set; }
+
+            /// <summary>
+            /// Порядок матрицы расстояний
+            /// </summary>
             public int NumberOfVertices { get => Matrix.GetLength(0); }
+
+            /// <summary>
+            /// Матрица расстояний
+            /// </summary>
             public T[,] Matrix { get; set; }
+
+            /// <summary>
+            /// Доступные в строке матрицы расстояний вершины
+            /// </summary>
+            public List<int> RowVertices { get; set; }
+
+            /// <summary>
+            /// Доступные в столбце матрицы расстояний вершины
+            /// </summary>
+            public List<int> ColumnVertices { get; set; }
+
+            /// <summary>
+            /// Список вычеркнутых рёбер в узле
+            /// </summary>
+            public List<SolutionEdge<T>> CutEdgesList { get; set; }
+
             public SolutionNode() { }
             public SolutionNode(T item) { Value = item; }
             public SolutionNode(T item, T[,] matrix) : this(item) { Matrix = matrix; }
@@ -571,6 +646,14 @@ namespace TSP_Research
                 Nodes = 1,
             };
 
+            List<int> vertices = new List<int>();
+            for (int i = 0; i < graph.GraphVertices.Count; i++)
+            {
+                vertices.Add(i);
+            }
+            solutionTree.RowVertices = vertices;
+            solutionTree.ColumnVertices = new List<int>(vertices);
+            solutionTree.CutEdgesList = new List<SolutionEdge<float>>();
 
             SolutionNode<float> currentNode = solutionTree;
             float parentValue = rootScore;
@@ -609,12 +692,32 @@ namespace TSP_Research
                     Parent = currentNode,
                 };
 
+                int cutRowVertexTrueIndex = currentNode.RowVertices[(int)maxZeroScore[1]];
+                int cutColumnVertexTrueIndex = currentNode.ColumnVertices[(int)maxZeroScore[2]];
+
+                currentNode.CutEdge.CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList)
+                {
+                    new SolutionEdge<float>(distanceTable[cutRowVertexTrueIndex, cutColumnVertexTrueIndex], cutRowVertexTrueIndex, cutColumnVertexTrueIndex)
+                };
+
+                List<int> cutRows = new List<int>(currentNode.RowVertices);
+                cutRows.RemoveAt((int)maxZeroScore[1]);
+                currentNode.CutEdge.RowVertices = cutRows;
+
+                List<int> cutColumns = new List<int>(currentNode.ColumnVertices);
+                cutColumns.RemoveAt((int)maxZeroScore[2]);
+                currentNode.CutEdge.ColumnVertices = cutColumns;
+
 
                 float uncutScore = parentValue + maxZeroScore[0];
-                currentNode.UncutEdge = new SolutionNode<float>(uncutScore,reduced)
+                currentNode.UncutEdge = new SolutionNode<float>(uncutScore, reduced)
                 {
                     Parent = currentNode,
+                    CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList),
+                    RowVertices = new List<int>(currentNode.RowVertices),
+                    ColumnVertices = new List<int>(currentNode.ColumnVertices)
                 };
+
                 solutionTree.Nodes += 2;
 
                 //Find minimumLeaf
@@ -624,11 +727,47 @@ namespace TSP_Research
                 counter++;
             }
 
+            int lastRowVertex = currentNode.RowVertices[0];
+            int lastColumnVertex = currentNode.ColumnVertices[0];
 
-            BranchesAndBoundariesResultPathLength = currentNode.Value;
+            currentNode.CutEdgesList.Add(new SolutionEdge<float>(distanceTable[lastRowVertex,lastColumnVertex],lastRowVertex,lastColumnVertex));
+
+            BranchesAndBoundariesResultPath = GetPath(currentNode.CutEdgesList);
 
             return new List<int>();
         }
+
+        private List<int> GetPath<T>(List<SolutionEdge<T>> cutEdgesList)
+        {
+            List<int> path = new List<int>();
+
+            int startIndex = FindVertexOut(0,cutEdgesList);
+            SolutionEdge<T> currentEdge = cutEdgesList[startIndex];
+            path.Add(currentEdge.VertexOut+1);
+            int nextVertexIndex = startIndex;
+
+            while (currentEdge.VertexIn != cutEdgesList[startIndex].VertexOut)
+            {
+                nextVertexIndex = FindVertexOut(currentEdge.VertexIn, cutEdgesList);
+                currentEdge = cutEdgesList[nextVertexIndex];
+                path.Add(currentEdge.VertexIn+1);
+            }
+
+            return path;
+        }
+
+        private int FindVertexOut<T>(int v, List<SolutionEdge<T>> cutEdgesList)
+        {
+            for (int i = 0; i < cutEdgesList.Count; i++)
+            {
+                if (cutEdgesList[i].VertexOut == v)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
 
         /// <summary>
         /// Put "infinity" in cells with zero - no path between vertices
@@ -661,7 +800,7 @@ namespace TSP_Research
 
             foreach (SolutionNode<T> leaf in leafs)
             {
-                if (leaf.Value.CompareTo(minimum)<0)
+                if (leaf.Value.CompareTo(minimum)<=0 && leaf.NumberOfVertices < minLeaf.NumberOfVertices)
                 {
                     minimum = leaf.Value;
                     minLeaf = leaf;
