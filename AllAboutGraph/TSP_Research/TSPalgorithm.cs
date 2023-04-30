@@ -15,7 +15,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace TSP_Research
 {
-    internal class TSPalgorithm
+    public class TSPalgorithm
     {
         #region Fields
         private MyGraph _graph;
@@ -63,6 +63,7 @@ namespace TSP_Research
         #endregion
 
         #region Constructors
+        public TSPalgorithm() { }
         public TSPalgorithm(MyGraph graph)
         {
             Graph = graph;
@@ -534,6 +535,8 @@ namespace TSP_Research
             BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, distanceTableReorganized);
 
             stopwatch.Stop();
+
+            BranchesAndBoundariesResultPathLength = Distance(BranchesAndBoundariesResultPath.ToArray(), DistanceTable);
             return stopwatch.ElapsedMilliseconds;
         }
 
@@ -625,7 +628,7 @@ namespace TSP_Research
             public SolutionNode(T item, T[,] matrix) : this(item) { Matrix = matrix; }
         }
 
-        private List<int> BranchesAndBoundaries(MyGraph graph, float[,] distanceTable)
+        public List<int> BranchesAndBoundaries(MyGraph graph,float[,] distanceTable)
         {
             //Reduce Matrix
             float[] rowDeltas = GetRowDeltas(distanceTable);
@@ -677,7 +680,7 @@ namespace TSP_Research
                 //Create new branches - no way to max zero score vertex
                 reduced[(int)maxZeroScore[1], (int)maxZeroScore[2]] = int.MaxValue;
 
-                float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, (int)maxZeroScore[1], (int)maxZeroScore[2]);
+                float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, currentNode, (int)maxZeroScore[1], (int)maxZeroScore[2]);
                 
                 //Reduce matrix without max zero score edge
                 float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
@@ -732,9 +735,7 @@ namespace TSP_Research
 
             currentNode.CutEdgesList.Add(new SolutionEdge<float>(distanceTable[lastRowVertex,lastColumnVertex],lastRowVertex,lastColumnVertex));
 
-            BranchesAndBoundariesResultPath = GetPath(currentNode.CutEdgesList);
-
-            return new List<int>();
+            return GetPath(currentNode.CutEdgesList);
         }
 
         private List<int> GetPath<T>(List<SolutionEdge<T>> cutEdgesList)
@@ -744,6 +745,7 @@ namespace TSP_Research
             int startIndex = FindVertexOut(0,cutEdgesList);
             SolutionEdge<T> currentEdge = cutEdgesList[startIndex];
             path.Add(currentEdge.VertexOut+1);
+            path.Add(currentEdge.VertexIn + 1);
             int nextVertexIndex = startIndex;
 
             while (currentEdge.VertexIn != cutEdgesList[startIndex].VertexOut)
@@ -800,10 +802,18 @@ namespace TSP_Research
 
             foreach (SolutionNode<T> leaf in leafs)
             {
-                if (leaf.Value.CompareTo(minimum)<=0 && leaf.NumberOfVertices < minLeaf.NumberOfVertices)
+                if (leaf.Value.CompareTo(minimum)<0)
                 {
                     minimum = leaf.Value;
                     minLeaf = leaf;
+                }
+                else if(leaf.Value.CompareTo(minimum) == 0)
+                {
+                    if(leaf.NumberOfVertices < minLeaf.NumberOfVertices)
+                    {
+                        minimum = leaf.Value;
+                        minLeaf = leaf;
+                    }
                 }
             }
 
@@ -1035,9 +1045,9 @@ namespace TSP_Research
             return min;
         }
 
-        private float[,] CutRowAndColumnFromMatrix(float[,] matrix,int row,int column)
+        private float[,] CutRowAndColumnFromMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
         {
-            float[,] prepared = PrepareMatrix(matrix, row, column);
+            float[,] prepared = PrepareMatrix(matrix, node, row, column);
 
             float[,] cut = new float[prepared.GetLength(0) - 1, prepared.GetLength(1) - 1];
 
@@ -1062,7 +1072,7 @@ namespace TSP_Research
             return cut;
         }
 
-        private float[,] PrepareMatrix(float[,] matrix, int row, int column)
+        private float[,] PrepareMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
         {
             float[,] prepared = new float[matrix.GetLength(0), matrix.GetLength(1)];
 
@@ -1074,7 +1084,13 @@ namespace TSP_Research
                 }
             }
 
-            prepared[column, row] = int.MaxValue;
+            int rowTrueIndex = node.RowVertices.FindIndex(x => x == node.ColumnVertices[column]);
+            int columnTrueIndex = node.ColumnVertices.FindIndex(x => x== node.RowVertices[row]);
+
+            if(rowTrueIndex != -1 && columnTrueIndex != -1)
+            {
+                prepared[rowTrueIndex, columnTrueIndex] = int.MaxValue;
+            }
             return prepared;
         }
         #endregion

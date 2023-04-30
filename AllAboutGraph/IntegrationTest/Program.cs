@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AllAboutGraph.MVC.Model;
+using TSP_Research;
 
 namespace IntegrationTest
 {
@@ -12,17 +13,37 @@ namespace IntegrationTest
     {
         static void Main(string[] args)
         {
+
+            BnP();
+
             //TestTrees();
 
 
             //BinaryTreeSort();
 
-            TestTournamentSort();
+            //TestTournamentSort();
 
             //Task2();
 
             //TestIncidenceMatrix();
             Console.ReadKey();
+        }
+
+        private static void BnP()
+        {
+            TSPalgorithm tsp = new TSPalgorithm();
+
+            float INF = int.MaxValue;
+
+            float[,] dTable = new float[5, 5]
+            {
+                {INF, 20, 18, 12, 8 },
+                {5, INF, 14, 7, 11 },
+                {12, 18, INF, 6, 11 },
+                {11, 17, 11, INF, 12 },
+                {5, 5, 5, 5, INF }
+            };
+            List<int> path = tsp.BranchesAndBoundaries(new List<int>() {1,2,3,4,5 },dTable);
         }
 
         private static void TestTournamentSort()
