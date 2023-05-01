@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс графа
+    /// </summary>
     public class MyGraph
     {
         #region Fields
@@ -23,10 +26,22 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Список рёбер графа
+        /// </summary>
         public List<GraphEdge> GraphEdges { get { return _graphEdges; } }
+        /// <summary>
+        /// Список вершин графа
+        /// </summary>
         public List<GraphVertex> GraphVertices { get { return _graphVertices; } }
+        /// <summary>
+        /// Ориентирован ли граф
+        /// </summary>
         public bool IsDirected { get { return _isDirected; } }
 
+        /// <summary>
+        /// Доступ к матрице смежности
+        /// </summary>
         public float[,] AdjacencyMatrix 
         { 
             get 
@@ -43,6 +58,9 @@ namespace AllAboutGraph.MVC.Model
                 return _adjacencyMatrix;
             }
         }
+        /// <summary>
+        /// Доступ к списку смежности
+        /// </summary>
         public List<List<int>> AdjacencyList
         { 
             get 
@@ -60,6 +78,9 @@ namespace AllAboutGraph.MVC.Model
                 return _adjacencyList; 
             }
         }
+        /// <summary>
+        /// Доступ к матрице инцидентности
+        /// </summary>
         public int[,] IncidenceMatrix 
         { 
             get 
@@ -78,15 +99,30 @@ namespace AllAboutGraph.MVC.Model
             } 
         }
 
+        /// <summary>
+        /// Получить матрицу степеней вершин
+        /// </summary>
         public int[,] DegreeTable { get { return GetDegreeTableFromIncidenceMatrix(); } }
 
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public MyGraph() { }
 
+        /// <summary>
+        /// Конструктор по списку рёбер
+        /// </summary>
+        /// <param name="graphEdges"></param>
         public MyGraph(List<GraphEdge> graphEdges) { _graphEdges = graphEdges; }
 
+        /// <summary>
+        /// Конструктор по списку вершин и рёбер графа
+        /// </summary>
+        /// <param name="graphVertices">список вершин</param>
+        /// <param name="graphEdges">список рёбер</param>
         public MyGraph(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
         {
             _graphEdges = graphEdges;
@@ -97,11 +133,21 @@ namespace AllAboutGraph.MVC.Model
             _incidenceMatrix = new IncidenceMatrix(graphVertices, graphEdges).Matrix;
         }
 
+        /// <summary>
+        /// Конструктор по списку вершин, рёбер и ориентированности
+        /// </summary>
+        /// <param name="graphVertices">список вершин</param>
+        /// <param name="graphEdges">список рёбер</param>
+        /// <param name="isDirected">ориентирован ли граф</param>
         public MyGraph(List<GraphVertex> graphVertices,List<GraphEdge> graphEdges, bool isDirected) : this(graphVertices,graphEdges)
         {
             _isDirected = isDirected;
         }
 
+        /// <summary>
+        /// Конструктор по матрице смежности
+        /// </summary>
+        /// <param name="adjMatrix"></param>
         public MyGraph(AdjacencyMatrix adjMatrix)
         {
             _adjacencyMatrix = adjMatrix.Matrix;
@@ -114,7 +160,10 @@ namespace AllAboutGraph.MVC.Model
             _incidenceMatrix = incidenceMatrix.Matrix;
         }
 
-
+        /// <summary>
+        /// Конструктор по списку смежности
+        /// </summary>
+        /// <param name="adjList"></param>
         public MyGraph(AdjacencyList adjList)
         {
             _adjacencyList = adjList.List;
@@ -127,6 +176,10 @@ namespace AllAboutGraph.MVC.Model
             _incidenceMatrix = incidenceMatrix.Matrix;
         }
 
+        /// <summary>
+        /// Конструктор по матрице инцидентности
+        /// </summary>
+        /// <param name="incidenceMatrix"></param>
         public MyGraph(IncidenceMatrix incidenceMatrix)
         {
             _incidenceMatrix = incidenceMatrix.Matrix;
@@ -145,6 +198,10 @@ namespace AllAboutGraph.MVC.Model
 
 
         #region GraphCreation
+        /// <summary>
+        /// Создание графа по матрице смежности
+        /// </summary>
+        /// <param name="adjMatrix"></param>
         private void CreateGraphFromAdjacencyMatrix(AdjacencyMatrix adjMatrix)
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(adjMatrix.Rank, 200, new PointF(250, 250));
@@ -191,6 +248,11 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        /// <summary>
+        /// Создать вершины из матрицы смежности
+        /// </summary>
+        /// <param name="adjMatrix">матрица смежности</param>
+        /// <param name="verticesPoints">координаты вершин</param>
         private void CreateVerticesFromAdjacencyMatrix(float[,] adjMatrix, PointF[] verticesPoints)
         {
             for (int i = 0; i < adjMatrix.GetLength(1); i++)
@@ -202,6 +264,11 @@ namespace AllAboutGraph.MVC.Model
                 AddVertex(vertex);
             }
         }
+        /// <summary>
+        /// Создать вершины из матрицы инцидентности
+        /// </summary>
+        /// <param name="incMatrix">матрица инцидентности</param>
+        /// <param name="verticesPoints">координаты вершин</param>
         private void CreateVerticesFromIncidenceMatrix(int[,] incMatrix, PointF[] verticesPoints)
         {
             for (int i = 0; i < incMatrix.GetLength(1); i++)
@@ -213,7 +280,10 @@ namespace AllAboutGraph.MVC.Model
                 AddVertex(vertex);
             }
         }
-
+        /// <summary>
+        /// Создать граф по списку смежности
+        /// </summary>
+        /// <param name="adjList">список смежности</param>
         private void CreateGraphFromAdjacencyList(AdjacencyList adjList)
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(adjList.CountVertices, 200, new PointF(250, 250));
@@ -246,6 +316,11 @@ namespace AllAboutGraph.MVC.Model
                 }
             }
         }
+        /// <summary>
+        /// Копировать список
+        /// </summary>
+        /// <param name="adjList"></param>
+        /// <returns></returns>
         private AdjacencyList CopyList(AdjacencyList adjList)
         {
             List<List<int>> copyList = new List<List<int>>();
@@ -263,6 +338,11 @@ namespace AllAboutGraph.MVC.Model
 
         }
 
+        /// <summary>
+        /// Создать вершины из списка смежности
+        /// </summary>
+        /// <param name="adjList">список смежности</param>
+        /// <param name="verticesPoints">координаты вершин</param>
         private void CreateVerticesFromAdjacencyList(AdjacencyList adjList, PointF[] verticesPoints)
         {
             for (int i = 0; i < adjList.CountVertices; i++)
@@ -275,6 +355,10 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        /// <summary>
+        /// Создать граф из матрицы инцидентности
+        /// </summary>
+        /// <param name="incMatrix">матрица инцидентности</param>
         private void CreateGraphFromIncidenceMatrix(IncidenceMatrix incMatrix)
         {
             PointF[] verticesPoints = GetGraphVerticesPoints(incMatrix.CountVertices, 200, new PointF(250, 250));
@@ -316,6 +400,13 @@ namespace AllAboutGraph.MVC.Model
             }
 
         }
+        /// <summary>
+        /// Получить координаты вершин графа
+        /// </summary>
+        /// <param name="numberOfVertices">количество вершин</param>
+        /// <param name="radius">радиус круга, по которому расположены вершины</param>
+        /// <param name="center">центр круга</param>
+        /// <returns></returns>
         private PointF[] GetGraphVerticesPoints(int numberOfVertices, float radius, PointF center)
         {
             PointF[] points = new PointF[numberOfVertices];
@@ -333,6 +424,10 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region SubTables
+        /// <summary>
+        /// Получить матрицу вершин из матрицы инцидентности
+        /// </summary>
+        /// <returns></returns>
         public int[,] GetDegreeTableFromIncidenceMatrix()
         {
             List<int> outDegrees, inDegrees;
@@ -343,6 +438,12 @@ namespace AllAboutGraph.MVC.Model
             return degreeTable;
         }
 
+        /// <summary>
+        /// Подсчитать степени вершин
+        /// </summary>
+        /// <param name="incidenceMatrix">матрица иницдентности</param>
+        /// <param name="outDegrees">исходящие степени</param>
+        /// <param name="inDegrees">входящие степени</param>
         private void CountDegrees(int[,] incidenceMatrix, out List<int> outDegrees, out List<int> inDegrees)
         {
             outDegrees = new List<int>();
@@ -368,7 +469,13 @@ namespace AllAboutGraph.MVC.Model
                 inDegrees.Add(currentVertexInDegree);
             }
         }
-
+        /// <summary>
+        /// Заполнить таблицу степеней вершин
+        /// </summary>
+        /// <param name="incidenceMatrix">матрица инцидентности</param>
+        /// <param name="outDegrees">исходящие вершины</param>
+        /// <param name="inDegrees">входящие вершины</param>
+        /// <returns></returns>
         private int[,] FillDegreeTable(int[,] incidenceMatrix, List<int> outDegrees, List<int> inDegrees)
         {
             int[,] degreeTable = new int[incidenceMatrix.GetLength(1), 3];
@@ -382,6 +489,10 @@ namespace AllAboutGraph.MVC.Model
             return degreeTable;
         }
 
+        /// <summary>
+        /// Получить таблицу расстояний с помощью алгоритма Дейкстры
+        /// </summary>
+        /// <returns></returns>
         public float[,] GetDistanceTable()
         {
             float[,] distanceTable = new float[GraphVertices.Count, GraphVertices.Count];
@@ -396,6 +507,12 @@ namespace AllAboutGraph.MVC.Model
             return distanceTable;
         }
 
+        /// <summary>
+        /// Получить расстояния до вершин от указанной с помощью алгоритма Дейкстры
+        /// </summary>
+        /// <param name="adjacencyMatrix">матрица смежности</param>
+        /// <param name="startVertex">начальная вершина</param>
+        /// <returns></returns>
         private static float[] DijkstraAlgorithm(float[,] adjacencyMatrix, int startVertex)
         {
             int numberOfVertices = adjacencyMatrix.GetLength(0);
@@ -459,6 +576,11 @@ namespace AllAboutGraph.MVC.Model
 
         #region VerticesName
 
+        /// <summary>
+        /// Получить имя очередной вершины
+        /// </summary>
+        /// <param name="i">номер вершины</param>
+        /// <returns></returns>
         private string GetVertexName(int i)
         {
             char index = Convert.ToChar(i + 64);
@@ -482,26 +604,48 @@ namespace AllAboutGraph.MVC.Model
 
         #region VerticesAndEdges
 
+        /// <summary>
+        /// Добавить вершину в граф
+        /// </summary>
+        /// <param name="vertex"></param>
         public void AddVertex(GraphVertex vertex)
         {
             _graphVertices.Add(vertex);
         }
 
+        /// <summary>
+        /// Удалить вершину графа
+        /// </summary>
+        /// <param name="vertex"></param>
         public void RemoveVertex(GraphVertex vertex)
         {
             _graphVertices.Remove(vertex);
         }
 
+        /// <summary>
+        /// Добавить ребро в граф
+        /// </summary>
+        /// <param name="edge"></param>
         public void AddEdge(GraphEdge edge)
         {
             _graphEdges.Add(edge);
         }
 
+        /// <summary>
+        /// Удалить ребро из графа
+        /// </summary>
+        /// <param name="edge"></param>
         public void RemoveEdge(GraphEdge edge)
         {
             _graphEdges.Remove(edge);
         }
 
+        /// <summary>
+        /// Связать вершины ребром
+        /// </summary>
+        /// <param name="firstVertexIndex">индекс исходящей вершины</param>
+        /// <param name="secondVertexIndex">индекс входящей вершины</param>
+        /// <param name="edgeIndex">индекс ребра, связывающего вершины</param>
         public void LinkVertices(int firstVertexIndex, int secondVertexIndex, int edgeIndex)
         {
             GraphVertices[firstVertexIndex].OutEdges.Add(GraphEdges[edgeIndex]);
@@ -512,6 +656,15 @@ namespace AllAboutGraph.MVC.Model
 
         #region Draw
 
+        /// <summary>
+        /// Изобразить граф на экране
+        /// </summary>
+        /// <param name="Graphics">объект графики</param>
+        /// <param name="pen">цвет обводки графа</param>
+        /// <param name="backgroundBrush">цвет заливки вершин графа</param>
+        /// <param name="fontBrush">цвет шрифта</param>
+        /// <param name="font">шрифт</param>
+        /// <param name="format">формат текста</param>
         public void DrawGraph(Graphics Graphics,Pen pen,Brush backgroundBrush,Brush fontBrush, Font font, StringFormat format)
         {
             foreach (GraphEdge edge in GraphEdges)

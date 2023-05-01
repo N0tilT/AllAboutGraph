@@ -105,7 +105,7 @@
             this.TSPchart.Series.Add(series3);
             this.TSPchart.Series.Add(series4);
             this.TSPchart.Series.Add(series5);
-            this.TSPchart.Size = new System.Drawing.Size(574, 775);
+            this.TSPchart.Size = new System.Drawing.Size(838, 807);
             this.TSPchart.TabIndex = 0;
             this.TSPchart.Text = "chart1";
             // 
@@ -114,7 +114,7 @@
             this.Canvas.Dock = System.Windows.Forms.DockStyle.Left;
             this.Canvas.Location = new System.Drawing.Point(0, 0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(468, 775);
+            this.Canvas.Size = new System.Drawing.Size(468, 807);
             this.Canvas.TabIndex = 1;
             this.Canvas.TabStop = false;
             this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
@@ -124,7 +124,7 @@
             this.FullSearchResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FullSearchResult.Location = new System.Drawing.Point(13, 283);
             this.FullSearchResult.Name = "FullSearchResult";
-            this.FullSearchResult.Size = new System.Drawing.Size(309, 33);
+            this.FullSearchResult.Size = new System.Drawing.Size(275, 33);
             this.FullSearchResult.TabIndex = 2;
             // 
             // NearestNeighbourResult
@@ -132,7 +132,7 @@
             this.NearestNeighbourResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.NearestNeighbourResult.Location = new System.Drawing.Point(13, 339);
             this.NearestNeighbourResult.Name = "NearestNeighbourResult";
-            this.NearestNeighbourResult.Size = new System.Drawing.Size(309, 33);
+            this.NearestNeighbourResult.Size = new System.Drawing.Size(275, 33);
             this.NearestNeighbourResult.TabIndex = 3;
             // 
             // SimulatedAnnealingResult
@@ -140,7 +140,7 @@
             this.SimulatedAnnealingResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.SimulatedAnnealingResult.Location = new System.Drawing.Point(13, 468);
             this.SimulatedAnnealingResult.Name = "SimulatedAnnealingResult";
-            this.SimulatedAnnealingResult.Size = new System.Drawing.Size(309, 33);
+            this.SimulatedAnnealingResult.Size = new System.Drawing.Size(275, 33);
             this.SimulatedAnnealingResult.TabIndex = 5;
             // 
             // ImprovedNearestNeighbourResult
@@ -148,7 +148,7 @@
             this.ImprovedNearestNeighbourResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ImprovedNearestNeighbourResult.Location = new System.Drawing.Point(13, 412);
             this.ImprovedNearestNeighbourResult.Name = "ImprovedNearestNeighbourResult";
-            this.ImprovedNearestNeighbourResult.Size = new System.Drawing.Size(309, 33);
+            this.ImprovedNearestNeighbourResult.Size = new System.Drawing.Size(275, 33);
             this.ImprovedNearestNeighbourResult.TabIndex = 4;
             // 
             // AntColonyResult
@@ -156,7 +156,7 @@
             this.AntColonyResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AntColonyResult.Location = new System.Drawing.Point(13, 524);
             this.AntColonyResult.Name = "AntColonyResult";
-            this.AntColonyResult.Size = new System.Drawing.Size(309, 33);
+            this.AntColonyResult.Size = new System.Drawing.Size(275, 33);
             this.AntColonyResult.TabIndex = 7;
             // 
             // labelLengths
@@ -189,9 +189,9 @@
             this.panel1.Controls.Add(this.ImprovedNearestNeighbourResult);
             this.panel1.Controls.Add(this.SimulatedAnnealingResult);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(1042, 0);
+            this.panel1.Location = new System.Drawing.Point(1306, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(334, 775);
+            this.panel1.Size = new System.Drawing.Size(301, 807);
             this.panel1.TabIndex = 9;
             // 
             // labelStep
@@ -293,7 +293,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1376, 775);
+            this.ClientSize = new System.Drawing.Size(1607, 807);
             this.Controls.Add(this.TSPchart);
             this.Controls.Add(this.Canvas);
             this.Controls.Add(this.panel1);

@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace AllAboutGraph.MVC.Controller
 {
+    /// <summary>
+    /// Класс контроллера
+    /// </summary>
     public class Controller
     {
         #region Constants
@@ -42,23 +45,36 @@ namespace AllAboutGraph.MVC.Controller
 
         #region Properties
 
+        /// <summary>
+        /// Доступ к View
+        /// </summary>
         public MainView View
         {
             get { return _view; }
         }
 
+        /// <summary>
+        /// Доступ к отображаемому графу
+        /// </summary>
         public MyGraph Graph
         {
             get { return _graph; }
             set { _graph = value; }
         }
 
+        /// <summary>
+        /// Количество вершин графа
+        /// </summary>
         public int NumberOfVertices
         {
             get { return _numberOfVertices; }
             set { _numberOfVertices = value; }
         }
 
+        /// <summary>
+        /// Установить количество вершин графа
+        /// </summary>
+        /// <param name="userInput">Количество вершин, введённое пользователем</param>
         public void SetNumberOfVertices(string userInput)
         {
             try
@@ -76,16 +92,22 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
+        /// <summary>
+        /// Доступ к тестовой Harcode матрице
+        /// </summary>
         public AdjacencyMatrix TestAdjMatrix
         {
             get { return new AdjacencyMatrix(_testAdjMatrix); }
         }
 
-        public object Fleury { get; internal set; }
         #endregion
 
         #region Initialization
 
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        /// <param name="view"></param>
         public Controller(MainView view)
         {
             this._view = view;
@@ -100,6 +122,11 @@ namespace AllAboutGraph.MVC.Controller
 
         #region CreateGraph
 
+        /// <summary>
+        /// Метод создания графа по его представлению и методу создания
+        /// </summary>
+        /// <param name="representation">Представление графа</param>
+        /// <param name="creationMethod">Метод создания графа</param>
         public void CreateGraph(string representation, string creationMethod)
         {
             dataGotSuccessfully = true;
@@ -125,7 +152,12 @@ namespace AllAboutGraph.MVC.Controller
                 Graph = new MyGraph(TestAdjMatrix);
             }
         }
-
+        
+        /// <summary>
+        /// Получить матрицу смежности от пользователя
+        /// </summary>
+        /// <param name="representation">Представление графа</param>
+        /// <returns>Матрицу смежности</returns>
         private AdjacencyMatrix GetAdjacencyMatrixFromUser(string representation)
         {
             int[,] matrix = new int[0, 0];
@@ -150,6 +182,11 @@ namespace AllAboutGraph.MVC.Controller
             return adjacencyMatrix;
         }
 
+        /// <summary>
+        /// Получить список смжености от пользователя
+        /// </summary>
+        /// <param name="representation">Представление графа</param>
+        /// <returns>Список смежности</returns>
         private AdjacencyList GetAdjacencyListFromUser(string representation)
         {
             List<List<int>> list;
@@ -170,6 +207,11 @@ namespace AllAboutGraph.MVC.Controller
             return adjacencyList;
         }
 
+        /// <summary>
+        /// Получить матрицу из ввода пользователя
+        /// </summary>
+        /// <param name="userInput">Ввод пользователя</param>
+        /// <returns>Матрица</returns>
         private int[,] GetMatrixRepresentation(string userInput)
         {
             List<int[]> listMatrix = new List<int[]>();
@@ -186,7 +228,11 @@ namespace AllAboutGraph.MVC.Controller
             return arrayMatrix;
         }
 
-
+        /// <summary>
+        /// Получить список списков из ввода пользователя
+        /// </summary>
+        /// <param name="userInput">Ввод пользователя</param>
+        /// <returns>Список списков</returns>
         private List<List<int>> GetListRepresentation(string userInput)
         {
             List<List<int>> list = new List<List<int>>();
@@ -207,6 +253,11 @@ namespace AllAboutGraph.MVC.Controller
             return list;
         }
         #region RepresentationConvert
+        /// <summary>
+        /// Получить представление строк ввода пользователя
+        /// </summary>
+        /// <param name="userInput">ввод пользователя</param>
+        /// <returns>массив строк представления</returns>
         private string[] GetRepresentationRows(string userInput)
         {
             string[] tmp = new string[0];
@@ -230,6 +281,11 @@ namespace AllAboutGraph.MVC.Controller
 
         }
 
+        /// <summary>
+        /// Получить целочисленное представление строки
+        /// </summary>
+        /// <param name="row">Строка</param>
+        /// <returns>Список целых чисел - представление строки</returns>
         private List<int> GetIntRowRepresentation(string row)
         {
             List<int> intRow = new List<int>();
@@ -256,6 +312,12 @@ namespace AllAboutGraph.MVC.Controller
 
         #region GraphAlgorithms
 
+        /// <summary>
+        /// Поиск в ширину
+        /// </summary>
+        /// <param name="startIndex">начальная вершина</param>
+        /// <param name="g">объект графики</param>
+        /// <param name="highlightingPen">цвет выделения рёбер</param>
         public async void BreadthFirstSearch(int startIndex, Graphics g, Pen highlightingPen)
         {
             List<int> visitedVertices = new List<int>
@@ -284,6 +346,12 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
+        /// <summary>
+        /// Поиск в глубину
+        /// </summary>
+        /// <param name="startIndex">начальная вершина</param>
+        /// <param name="g">объект графики</param>
+        /// <param name="highlightingPen">цвет выделения рёбер</param>
         public void DepthFirstSearch(int startIndex, Graphics g, Pen pen)
         {
             List<int> visitedVertices = new List<int>();
@@ -307,6 +375,13 @@ namespace AllAboutGraph.MVC.Controller
             }
         }
 
+        /// <summary>
+        /// Вывести все пути в графе
+        /// </summary>
+        /// <param name="start">начальная вершина</param>
+        /// <param name="destination">конечная вершина</param>
+        /// <param name="g">объект графики</param>
+        /// <param name="highlightingPen">цвет выделения рёбер</param>
         public void PrintAllPaths(int start, int destination,Graphics g,Pen highlightPen)
         {
             bool[] isVisited = new bool[Graph.GraphVertices.Count];
@@ -343,6 +418,12 @@ namespace AllAboutGraph.MVC.Controller
             isVisited[start] = false;
         }
 
+        /// <summary>
+        /// Выделить путь на экране
+        /// </summary>
+        /// <param name="localPathList">путь</param>
+        /// <param name="g">объект графики</param>
+        /// <param name="highlightingPen">цвет выделения рёбер</param>
         private void DrawPath(List<int> localPathList,Graphics g, Pen pen)
         {
             for (int i = 0; i < localPathList.Count - 1; i++)

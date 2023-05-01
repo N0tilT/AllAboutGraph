@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс ребра графа
+    /// </summary>
     public class GraphEdge
     {
         #region Constants
@@ -20,29 +23,44 @@ namespace AllAboutGraph.MVC.Model
 
         #region Properties
 
+        /// <summary>
+        /// Вершина, из которой выходит ребро
+        /// </summary>
         public GraphVertex VertexOut
         {
             get { return _vertexOut; }
             set { _vertexOut = value; }
         }
 
+        /// <summary>
+        /// Вершина, в которую входит ребро
+        /// </summary>
         public GraphVertex VertexIn
         {
             get { return _vertexIn; }
             set { _vertexIn = value; }
         }
 
+        /// <summary>
+        /// Ориентировано ли ребро
+        /// </summary>
         public bool Directed
         {
             get { return _directed; }
             set { _directed = value; }
         }
 
+        /// <summary>
+        /// Является ли ребро петлёй
+        /// </summary>
         public bool Loop
         {
             get { return _vertexIn == _vertexOut; }
         }
 
+        /// <summary>
+        /// Вес ребра
+        /// </summary>
         public float Weight
         {
             get { return _weight; }
@@ -53,11 +71,21 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Contrusctors
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public GraphEdge()
         {
 
         }
 
+        /// <summary>
+        /// Конструктор по исходящей вершине, входящей вершине, весу и ориентированности
+        /// </summary>
+        /// <param name="vertexOut">исходящая вершина</param>
+        /// <param name="vertexIn">входящая вершина</param>
+        /// <param name="weight">вес ребра</param>
+        /// <param name="isDirected">ориентировано ли ребро</param>
         public GraphEdge(GraphVertex vertexOut, GraphVertex vertexIn, float weight, bool isDirected)
         {
             VertexOut = vertexOut;
@@ -71,6 +99,11 @@ namespace AllAboutGraph.MVC.Model
         #region Methods
 
         #region DrawMethods
+        /// <summary>
+        /// Отобразить ребро на экране
+        /// </summary>
+        /// <param name="graphics">объект графики</param>
+        /// <param name="pen">Цвет выделения ребра</param>
         public void DrawEdge(Graphics graphics, Pen pen)
         {
             graphics.DrawLine(pen, VertexIn.Center, VertexOut.Center);
@@ -86,6 +119,12 @@ namespace AllAboutGraph.MVC.Model
 
         }
 
+        /// <summary>
+        /// Изобразить указатель ориентированного ребра - стрелку
+        /// </summary>
+        /// <param name="graphics">объект графики</param>
+        /// <param name="pen">Цвет выделения ребра</param>
+        /// <param name="angle">Угол наклона ребра</param>
         private void DrawArrowPointer(Graphics graphics, Pen pen, double angle)
         {
             PointF vertexBorderPoint = GetVertexBorderArrowPoint(angle);
@@ -98,6 +137,12 @@ namespace AllAboutGraph.MVC.Model
             graphics.FillPolygon(pen.Brush, trianglePoints);
         }
 
+        /// <summary>
+        /// Изобразить вес ребра
+        /// </summary>
+        /// <param name="graphics">объект графики</param>
+        /// <param name="pen">Цвет выделения ребра</param>
+        /// <param name="angle">Угол наклона ребра</param>
         private void DrawWeight(Graphics graphics, Pen pen, float angle)
         {
             Font font = new Font("Segoe UI", 14);

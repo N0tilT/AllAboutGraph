@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс матрицы смежности
+    /// </summary>
     public class AdjacencyMatrix
     {
         #region Constants
@@ -22,12 +25,18 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Доступ к матрице
+        /// </summary>
         public float[,] Matrix 
         {
             get 
             { return _matrix; } 
         }
-
+        
+        /// <summary>
+        /// Ранк матрицы
+        /// </summary>
         public int Rank
         {
             get {return Matrix.GetLength(0); }
@@ -36,23 +45,40 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public AdjacencyMatrix() 
         {
             _matrix = new float[0, 0]; 
         }
 
+        /// <summary>
+        /// Конструктор по числу строк и столбцов
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="columns"></param>
         public AdjacencyMatrix(int rows, int columns) 
         {
             _matrix = new float[rows, columns];
             ResetMatrix();
         }
 
+        /// <summary>
+        /// Коснтруктор по матрице смежности
+        /// </summary>
+        /// <param name="matrix"></param>
         public AdjacencyMatrix(int[,] matrix)
         {
             _matrix = new float[matrix.GetLength(0), matrix.GetLength(1)];
             FillMatrixCopying(matrix);
         }
 
+        /// <summary>
+        /// Конструктор по списку вершин и рёбер графа
+        /// </summary>
+        /// <param name="graphVertices">список вершин рёбер</param>
+        /// <param name="graphEdges">список рёбер графа</param>
         public AdjacencyMatrix(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
         {
             _matrix = new float[graphVertices.Count, graphVertices.Count];
@@ -71,6 +97,10 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        /// <summary>
+        /// Конструктор по списку смежности
+        /// </summary>
+        /// <param name="adjList">список смежности</param>
         public AdjacencyMatrix(AdjacencyList adjList)
         {
             _matrix = new float[adjList.CountVertices, adjList.CountVertices];
@@ -80,6 +110,10 @@ namespace AllAboutGraph.MVC.Model
 
         }
 
+        /// <summary>
+        /// Коснтруктор по матрице инцидентности
+        /// </summary>
+        /// <param name="incidenceMatrix">матрица иницидентности</param>
         public AdjacencyMatrix(IncidenceMatrix incidenceMatrix) 
         {
             _matrix = new float[incidenceMatrix.CountVertices, incidenceMatrix.CountVertices];
@@ -91,7 +125,9 @@ namespace AllAboutGraph.MVC.Model
 
         #region Methods
         
-
+        /// <summary>
+        /// Очистить матрицу
+        /// </summary>
         private void ResetMatrix()
         {
             for (int i = 0; i < Rank; i++)
@@ -103,6 +139,10 @@ namespace AllAboutGraph.MVC.Model
             }
         }
 
+        /// <summary>
+        /// Заполнить матрицу копированием
+        /// </summary>
+        /// <param name="matrix">копируемая матрица</param>
         private void FillMatrixCopying(int[,] matrix)
         {
             for (int i = 0; i < this.Rank; i++)
@@ -115,7 +155,7 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// Create adjacency matrix from incidence matrix
+        /// Получить матрицу смежности из матрицы инцидентности
         /// </summary>
         /// <param name="incidenceMatrix"></param>
         private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
@@ -143,11 +183,11 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// find vertex, for which current edge wull be ingoing
+        /// Поиск исходящей вершины
         /// </summary>
         /// <param name="incidenceMatrix"></param>
         /// <param name="currentEdge"></param>
-        /// <returns>found vertex index in incidence matrix</returns>
+        /// <returns> индекс найденной вершины</returns>
         private static int FindInVertex(IncidenceMatrix incidenceMatrix, int currentVertex, int currentEdge)
         {
             int inVertexIndex = -1;
@@ -167,7 +207,7 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// create adjacency matrix from adjacency list
+        /// Получить матрицу смежности по списку смежности
         /// </summary>
         /// <param name="adjList"></param>
         private void FromAdjacencyList(List<List<int>> adjList)

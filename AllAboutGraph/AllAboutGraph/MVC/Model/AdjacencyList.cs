@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс списка смежности
+    /// </summary>
     public class AdjacencyList
     {
         #region Fields
@@ -15,29 +18,51 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Доступ к списку
+        /// </summary>
         public List<List<int>> List { get { return _list; } }
 
+        /// <summary>
+        /// Получить количество вершин
+        /// </summary>
         public int CountVertices { get { return _list.Count; } }
 
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public AdjacencyList()
         {
             _list = new List<List<int>>();
         }
 
+        /// <summary>
+        /// Конструктор из списка списков
+        /// </summary>
+        /// <param name="list">список списков</param>
         public AdjacencyList(List<List<int>> list)
         {
             _list = list;
         }
 
+        /// <summary>
+        /// Конструктор по списку врешин и рёбер графа
+        /// </summary>
+        /// <param name="graphVertices">список вершин графа</param>
+        /// <param name="graphEdges">список рёбер графа</param>
         public AdjacencyList(List<GraphVertex> graphVertices, List<GraphEdge> graphEdges)
         {
             AdjacencyMatrix adjMatrix = new AdjacencyMatrix(graphVertices,graphEdges);
             _list = new AdjacencyList(adjMatrix).List;
         }
 
+        /// <summary>
+        /// Конструктор по матрице смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">матрица смежности</param>
         public AdjacencyList(AdjacencyMatrix adjacencyMatrix)
         {
             _list  = new List<List<int>>();
@@ -45,6 +70,10 @@ namespace AllAboutGraph.MVC.Model
             FromAdjacencyMatrix(adjacencyMatrix);
         }
 
+        /// <summary>
+        /// Конструктор по матрице инцидентности
+        /// </summary>
+        /// <param name="incidenceMatrix">матрица инцидентности</param>
         public AdjacencyList(IncidenceMatrix incidenceMatrix)
         {
             _list = new List<List<int>>();
@@ -57,15 +86,18 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Очистить список смежности
+        /// </summary>
         private void ResetList()
         {
             _list.Clear();
         }
 
         /// <summary>
-        /// Create adjacency list from adjacency matrix
+        /// Получить список смежности из матрицы смежности
         /// </summary>
-        /// <param name="matrix"></param>
+        /// <param name="matrix">матрица смежности</param>
         private void FromAdjacencyMatrix(AdjacencyMatrix matrix)
         {
             for (int currentVertex = 0; currentVertex < matrix.Rank; currentVertex++)
@@ -85,9 +117,9 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// Create adjacency list from incidence matrix
+        /// Получить список смежности из матрицы инцидентности
         /// </summary>
-        /// <param name="incidenceMatrix"></param>
+        /// <param name="incidenceMatrix">матрица инцидентности</param>
         private void FromIncidenceMatrix(IncidenceMatrix incidenceMatrix)
         {
             for (int currentVertex = 0; currentVertex < incidenceMatrix.CountVertices; currentVertex++)
@@ -119,11 +151,11 @@ namespace AllAboutGraph.MVC.Model
         }
 
         /// <summary>
-        /// find vertex, for which current edge wull be ingoing
+        /// Поиск исходящей вершины
         /// </summary>
         /// <param name="incidenceMatrix"></param>
         /// <param name="currentEdge"></param>
-        /// <returns>found vertex index in incidence matrix</returns>
+        /// <returns>индекс найденной вершины</returns>
         private int FindInVertex(IncidenceMatrix incidenceMatrix, int currentEdge, int currentVertex)
         {
             int inVertexIndex = -1;
@@ -142,11 +174,6 @@ namespace AllAboutGraph.MVC.Model
             }
 
             return inVertexIndex;
-        }
-
-        public List<int> GetAdjacentVertices(int vertexIndex)
-        {
-            return _list[vertexIndex];
         }
         #endregion
     }

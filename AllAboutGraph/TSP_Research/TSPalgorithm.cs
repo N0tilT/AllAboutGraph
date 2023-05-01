@@ -42,16 +42,24 @@ namespace TSP_Research
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Доступ к графу
+        /// </summary>
         public MyGraph Graph { get => _graph; set => _graph = value; }
+        /// <summary>
+        /// Доступ к таблице расстояний графа
+        /// </summary>
         public float[,] DistanceTable { get => _distanceTable; set => _distanceTable = value; }
 
         #region Results
+        //Результирующие пути алгоритмов
         public List<int> FullSearchResultPath { get => _fullSearchResultPath; set => _fullSearchResultPath = value; }
         public List<int> NearestNeighbourResultPath { get => _nearestNeighbourResultPath; set => _nearestNeighbourResultPath = value; }
         public List<int> ImprovedNearestNeighbourResultPath { get => _improvedNearestNeighbourResultPath; set => _improvedNearestNeighbourResultPath = value; }
         public List<int> SimulatedAnnealingResultPath { get => _simulatedAnnealingResultPath; set => _simulatedAnnealingResultPath = value; }
         public List<int> BranchesAndBoundariesResultPath { get => _branchesAndBoundariesResultPath; set => _branchesAndBoundariesResultPath = value; }
         public List<int> AntColonyAlgorithmResultPath { get => _antColonyAlgorithmResultPath; set => _antColonyAlgorithmResultPath = value; }
+        //Результирующие длины путей алгоритмов
         public float FullSearchResultPathLength { get => _fullSearchResultPathLength; set => _fullSearchResultPathLength = value; }
         public float NearestNeighbourResultPathLength { get => _nearestNeighbourResultPathLength; set => _nearestNeighbourResultPathLength = value; }
         public float ImprovedNearestNeighbourResultPathLength { get => _improvedNearestNeighbourResultPathLength; set => _improvedNearestNeighbourResultPathLength = value; }
@@ -63,7 +71,14 @@ namespace TSP_Research
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public TSPalgorithm() { }
+        /// <summary>
+        /// Конструктор по заданному графу
+        /// </summary>
+        /// <param name="graph"></param>
         public TSPalgorithm(MyGraph graph)
         {
             Graph = graph;
@@ -75,6 +90,12 @@ namespace TSP_Research
         #region Methods
 
         #region Other
+        /// <summary>
+        /// Вычислить длину пути
+        /// </summary>
+        /// <param name="path">путь</param>
+        /// <param name="distanceTable">таблица расстояний</param>
+        /// <returns></returns>
         private float Distance(int[] path, float[,] distanceTable)
         {
             float distance = 0;
@@ -84,6 +105,12 @@ namespace TSP_Research
             }
             return distance;
         }
+        /// <summary>
+        /// Найти минимальный путь в списке
+        /// </summary>
+        /// <param name="paths">список путей</param>
+        /// <param name="distanceTable">таблица расстояний</param>
+        /// <returns>минимальный путь - массив вершин</returns>
         private int[] FindMinPath(List<int[]> paths, float[,] distanceTable)
         {
             int[] minPath = paths[0];
@@ -99,6 +126,13 @@ namespace TSP_Research
             }
             return minPath;
         }
+
+        /// <summary>
+        /// Найти минимальный путь в списке
+        /// </summary>
+        /// <param name="paths">список путей</param>
+        /// <param name="distanceTable">таблица расстояний</param>
+        /// <returns>минимальный путь - список вершин</returns>
         private List<int> FindMinPath(List<List<int>> paths, float[,] distanceTable)
         {
             List<int> minPath = paths[0];

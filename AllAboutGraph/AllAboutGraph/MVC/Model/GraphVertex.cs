@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace AllAboutGraph.MVC.Model
 {
+    /// <summary>
+    /// Класс вершины графа
+    /// </summary>
     public class GraphVertex
     {
         #region Fields
@@ -22,16 +25,25 @@ namespace AllAboutGraph.MVC.Model
 
         #region Properties
 
+        /// <summary>
+        /// Имя вершины
+        /// </summary>
         public string Name 
         { 
             get { return _name; } 
             set { _name = value; }
         }
 
+        /// <summary>
+        /// Исходящие рёбра
+        /// </summary>
         public List<GraphEdge> OutEdges
         {
             get { return _outEdges; }
         }
+        /// <summary>
+        /// Входящиеи рёбра
+        /// </summary>
         public List<GraphEdge> InEdges
         {
             get { return _inEdges; }
@@ -45,17 +57,27 @@ namespace AllAboutGraph.MVC.Model
             get { return OutEdges.Count; }
         }
 
+        /// <summary>
+        /// Позиция вершины на холсте
+        /// </summary>
         public PointF Location
         {
             get { return _location; }
             set { _location = value; }
         }
+
+        /// <summary>
+        /// Размер вершины
+        /// </summary>
         public SizeF Size
         {
             get { return _size; }
             set { _size = value; }
         }
 
+        /// <summary>
+        /// Центр вершины
+        /// </summary>
         public PointF Center 
         { 
             get 
@@ -70,6 +92,9 @@ namespace AllAboutGraph.MVC.Model
 
         }
 
+        /// <summary>
+        /// Радиус вершины
+        /// </summary>
         public float Radius
         {
             get { return _radius; }
@@ -79,6 +104,9 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public GraphVertex()
         {
             _inEdges= new List<GraphEdge>();
@@ -87,15 +115,21 @@ namespace AllAboutGraph.MVC.Model
             Size = new SizeF(Radius*2, Radius * 2);
         }
 
-        public GraphVertex(string name)
+        /// <summary>
+        /// Конструктор по имени вершины
+        /// </summary>
+        /// <param name="name"></param>
+        public GraphVertex(string name) : this()
         {
             Name = name;
-            _inEdges = new List<GraphEdge>();
-            _outEdges = new List<GraphEdge>();
-            Radius = 25;
-            Size = new SizeF(Radius * 2, Radius * 2);
         }
 
+        /// <summary>
+        /// Конструктор по имени, позиции и радиусу
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="location"></param>
+        /// <param name="radius"></param>
         public GraphVertex(string name, PointF location, float radius)
         {
             Name = name;
@@ -104,6 +138,13 @@ namespace AllAboutGraph.MVC.Model
             Size = new SizeF(Radius * 2, Radius * 2);
         }
 
+        /// <summary>
+        /// Конструктор по имени, входящим, исходящим рёбрам и радиусу
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inEdges"></param>
+        /// <param name="outEdges"></param>
+        /// <param name="radius"></param>
         public GraphVertex(string name, List<GraphEdge> inEdges, List<GraphEdge> outEdges, float radius)
         {
             Name = name;
@@ -116,6 +157,10 @@ namespace AllAboutGraph.MVC.Model
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Получить список входящих и исодящих рёбер
+        /// </summary>
+        /// <returns></returns>
         public List<GraphEdge> GetAllEdges()
         {
             List<GraphEdge> allVertexEdges = new List<GraphEdge>();
@@ -133,6 +178,15 @@ namespace AllAboutGraph.MVC.Model
             return allVertexEdges;
         }
 
+        /// <summary>
+        /// Изобразить вершину
+        /// </summary>
+        /// <param name="g">объект графики</param>
+        /// <param name="pen">цвет обводки вершины</param>
+        /// <param name="backgroundBrush">цвет заливки вершины</param>
+        /// <param name="fontBrush">цвет текста</param>
+        /// <param name="font">шрифт текста</param>
+        /// <param name="format">формат текста</param>
         public void DrawVertex(Graphics g, Pen pen, Brush backgroundBrush, Brush fontBrush, Font font,StringFormat format)
         {
             g.FillEllipse(backgroundBrush, new RectangleF(Location, Size));
