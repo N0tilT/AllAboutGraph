@@ -1,5 +1,8 @@
 ﻿namespace TSP_Research
 {
+    /// <summary>
+    /// Форма для вывода результатов работы алгоритмов решения TSP
+    /// </summary>
     partial class TSPForm
     {
         /// <summary>

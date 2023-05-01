@@ -13,6 +13,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace TSP_Research
 {
+    /// <summary>
+    /// Форма для визуализации алгоритмов решения TSP
+    /// </summary>
     public partial class TSPForm : Form
     {
         #region Fields
@@ -32,14 +35,31 @@ namespace TSP_Research
         private int maxVerticesCount;
         #endregion
         #region Properties
+
+        /// <summary>
+        /// Шаг увеличения количества вершин графа
+        /// </summary>
         public int VerticesCountStep { get => verticesCountStep; set => verticesCountStep = value; }
+
+        /// <summary>
+        /// Максимальное количество вершин графа
+        /// </summary>
         public int MaxVerticesCount { get => maxVerticesCount; set => maxVerticesCount = value; }
 
+        /// <summary>
+        /// Список графов
+        /// </summary>
         public List<MyGraph> Graphs { get => graphs; set => graphs = value; }
-
+        
+        /// <summary>
+        /// Текущий обрабатываемый граф
+        /// </summary>
         public MyGraph SelectedGraph { get => _selectedGraph; set => _selectedGraph = value; }
 
         #region Painting
+        /// <summary>
+        /// Пустая белая заливка для холста
+        /// </summary>
         public Bitmap WhitePlaneBitmap
         {
             get
@@ -59,29 +79,45 @@ namespace TSP_Research
             set { _selectedPen = value; }
         }
 
+        /// <summary>
+        /// Доступ к кисти выделения ребра
+        /// </summary>
         public Pen HighlightPen
         {
             get { return _highlightPen; }
             set { _highlightPen = value; }
         }
 
+        /// <summary>
+        /// Доступ к цвету заливки
+        /// </summary>
         public Brush SelectedBackgroundBrush
         {
             get { return _selectedVertexBackGroundBrush; }
             set { _selectedVertexBackGroundBrush = value; }
         }
+
+        /// <summary>
+        /// Доступ к цвету шрифта
+        /// </summary>
         public Brush SelectedFontBrush
         {
             get { return _selectedFontBrush; }
             set { _selectedFontBrush = value; }
         }
 
+        /// <summary>
+        /// Доступ к выбранному шрифту
+        /// </summary>
         public Font SelectedFont
         {
             get { return _selectedFont; }
             set { _selectedFont = value; }
         }
 
+        /// <summary>
+        /// Доступ к выбранному формату строки
+        /// </summary>
         public StringFormat SelectedStringFormat
         {
             get { return _selectedStringFormat; }
@@ -91,6 +127,10 @@ namespace TSP_Research
         #endregion
 
         #region Initialization
+
+        /// <summary>
+        /// Конструктор формы по умолчанию
+        /// </summary>
         public TSPForm()
         {
             InitializeComponent();

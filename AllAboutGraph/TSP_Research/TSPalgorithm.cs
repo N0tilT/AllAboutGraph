@@ -15,6 +15,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace TSP_Research
 {
+    /// <summary>
+    /// Класс алгоритмов для решения задачи коммивояжёра
+    /// </summary>
     public class TSPalgorithm
     {
         #region Fields
@@ -52,19 +55,57 @@ namespace TSP_Research
         public float[,] DistanceTable { get => _distanceTable; set => _distanceTable = value; }
 
         #region Results
-        //Результирующие пути алгоритмов
+
+        /// <summary>
+        /// Список вершин - результат работы метода полного перебора
+        /// </summary>
         public List<int> FullSearchResultPath { get => _fullSearchResultPath; set => _fullSearchResultPath = value; }
+        /// <summary>
+        /// Список вершин - результат работы метода ближайшего соседа
+        /// </summary>
         public List<int> NearestNeighbourResultPath { get => _nearestNeighbourResultPath; set => _nearestNeighbourResultPath = value; }
+        /// <summary>
+        /// Список вершин - результат работы усовершенствованного метода ближайшего соседа
+        /// </summary>
         public List<int> ImprovedNearestNeighbourResultPath { get => _improvedNearestNeighbourResultPath; set => _improvedNearestNeighbourResultPath = value; }
+        /// <summary>
+        /// Список вершин - результат работы метода имитации отжига
+        /// </summary>
         public List<int> SimulatedAnnealingResultPath { get => _simulatedAnnealingResultPath; set => _simulatedAnnealingResultPath = value; }
+        /// <summary>
+        /// Список вершин - результат работы метода ветвей и границ
+        /// </summary>
         public List<int> BranchesAndBoundariesResultPath { get => _branchesAndBoundariesResultPath; set => _branchesAndBoundariesResultPath = value; }
+        /// <summary>
+        /// Список вершин - результат работы алгоритма муравьиной колонии
+        /// </summary>
         public List<int> AntColonyAlgorithmResultPath { get => _antColonyAlgorithmResultPath; set => _antColonyAlgorithmResultPath = value; }
-        //Результирующие длины путей алгоритмов
+
+        //Результаты работы
+
+        /// <summary>
+        /// Длина пути-результата работы метода полного перебора
+        /// </summary>
         public float FullSearchResultPathLength { get => _fullSearchResultPathLength; set => _fullSearchResultPathLength = value; }
+        /// <summary>
+        /// Длина пути-результата работы метода ближайшего соседа
+        /// </summary>
         public float NearestNeighbourResultPathLength { get => _nearestNeighbourResultPathLength; set => _nearestNeighbourResultPathLength = value; }
+        /// <summary>
+        /// Длина пути-результата работы усовершенствованного метода ближайшего соседа
+        /// </summary>
         public float ImprovedNearestNeighbourResultPathLength { get => _improvedNearestNeighbourResultPathLength; set => _improvedNearestNeighbourResultPathLength = value; }
+        /// <summary>
+        /// Длина пути-результата работы метода имитации отжига
+        /// </summary>
         public float SimulatedAnnealingResultPathLength { get => _simulatedAnnealingResultPathLength; set => _simulatedAnnealingResultPathLength = value; }
+        /// <summary>
+        /// Длина пути-результата работы метода ветвей и границ
+        /// </summary>
         public float BranchesAndBoundariesResultPathLength { get => _branchesAndBoundariesResultPathLength; set => _branchesAndBoundariesResultPathLength = value; }
+        /// <summary>
+        /// Длина пути-результата работы алгоритма муравьиной колонии
+        /// </summary>
         public float AntColonyAlgorithmResultPathLength { get => _antColonyAlgorithmResultPathLength; set => _antColonyAlgorithmResultPathLength = value; }
         #endregion
 
@@ -151,6 +192,10 @@ namespace TSP_Research
         #endregion
 
         #region FullSearch
+        /// <summary>
+        /// Подсчёт времени работы метода полного перебора
+        /// </summary>
+        /// <returns></returns>
         internal double FullSearchTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -166,6 +211,12 @@ namespace TSP_Research
             return stopwatch.Elapsed.TotalSeconds/100;
         }
 
+        /// <summary>
+        /// Метод полного перебора
+        /// </summary>
+        /// <param name="graph">граф</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <returns>путь - последовательность вершин</returns>
         private List<int> FullSearch(MyGraph graph, float[,] distanceTable)
         {
             if(graph.GraphVertices.Count >=12) return new List<int> { 0 };
@@ -175,6 +226,13 @@ namespace TSP_Research
 
         private static int[] minimumPermutation;
         private static float minPathLength;
+
+        /// <summary>
+        /// Получить минимальный путь - перестановку
+        /// </summary>
+        /// <param name="graphVertices">список вершин графа</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <returns></returns>
         private int[] GetMinimumPath(List<GraphVertex> graphVertices, float[,] distanceTable)
         {
             minimumPermutation = new int[graphVertices.Count];
@@ -191,6 +249,12 @@ namespace TSP_Research
             return minimumPermutation;
         }
 
+        /// <summary>
+        /// Получить следующую пепрестановку
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="start"></param>
+        /// <param name="distanceTable"></param>
         private void Permutate(int[] row, int start, float[,] distanceTable)
         {
             if(start >= row.Length)
@@ -223,6 +287,12 @@ namespace TSP_Research
 
         }
 
+        /// <summary>
+        /// Поменять элементы местами
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="start"></param>
+        /// <param name="i"></param>
         private void Swap(int[] row, int start, int i)
         {
             int tmp = row[i];
@@ -232,6 +302,11 @@ namespace TSP_Research
         #endregion
 
         #region NearestNeighbour
+
+        /// <summary>
+        /// Подсчёт времени работы метода ближайшего соседа
+        /// </summary>
+        /// <returns></returns>
         internal double NearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -244,7 +319,13 @@ namespace TSP_Research
             return stopwatch.Elapsed.TotalSeconds*10000;
         }
 
-
+        /// <summary>
+        /// Метод ближайшего соседа
+        /// </summary>
+        /// <param name="graph">граф</param>
+        /// <param name="startIndex">начальная вершина</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <returns></returns>
         private List<int> NearestNeighbour(MyGraph graph, int startIndex, float[,] distanceTable)
         {
             int n = graph.GraphVertices.Count;
@@ -271,6 +352,13 @@ namespace TSP_Research
             return path;
         }
 
+        /// <summary>
+        /// Найти кратчайшее ребро
+        /// </summary>
+        /// <param name="distanceTable"></param>
+        /// <param name="currentVertexIndex"></param>
+        /// <param name="visited"></param>
+        /// <returns></returns>
         private int FindShortestEdge(float[,] distanceTable, int currentVertexIndex, bool[] visited)
         {
             float shortestEdge = int.MaxValue;
@@ -292,6 +380,11 @@ namespace TSP_Research
         #endregion
 
         #region ImprovedNearestNeighbour
+
+        /// <summary>
+        /// Подсчёт времени работы усовершенствованного метода ближайшего соседа
+        /// </summary>
+        /// <returns></returns>
         internal double ImprovedNearestNeighbourTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -304,6 +397,12 @@ namespace TSP_Research
             return stopwatch.Elapsed.TotalSeconds * 100;
         }
 
+        /// <summary>
+        /// Усовершенствованный метод ближайшего соседа
+        /// </summary>
+        /// <param name="graph">граф</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <returns></returns>
         private List<int> ImprovedNearestNeighbour(MyGraph graph, float[,] distanceTable)
         {
             List<int[]> possiblePaths = new List<int[]>();
@@ -316,6 +415,11 @@ namespace TSP_Research
         #endregion
 
         #region SimulatedAnnealing
+
+        /// <summary>
+        /// Подсчёт времени работы метода имитации отжига
+        /// </summary>
+        /// <returns></returns>
         internal double SimulatedAnnealingTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -328,6 +432,14 @@ namespace TSP_Research
             return stopwatch.Elapsed.TotalSeconds*10;
         }
 
+        /// <summary>
+        /// Метод имитации отжига
+        /// </summary>
+        /// <param name="graph">граф</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <param name="initialTemperature">начальная температура</param>
+        /// <param name="endTemperature">конечная температура</param>
+        /// <returns></returns>
         private List<int> SimulatedAnnealing(MyGraph graph, float[,] distanceTable, double initialTemperature, double endTemperature)
         {
             List<int> localBestPath = new List<int>();
@@ -374,11 +486,22 @@ namespace TSP_Research
             return localBestPath;
         }
 
+        /// <summary>
+        /// Нахождение вероятности перехода
+        /// </summary>
+        /// <param name="delta"></param>
+        /// <param name="temperature"></param>
+        /// <returns></returns>
         private double GetTransitionProbability(float delta, double temperature)
         {
             return Math.Exp((-1) * delta/temperature);
         }
 
+        /// <summary>
+        /// Сгенерировать следующего кандидата на минимум
+        /// </summary>
+        /// <param name="localBestPath">Локальный лучший результат</param>
+        /// <returns></returns>
         private List<int> GenerateCandidate(List<int> localBestPath)
         {
             Random random = new Random();
@@ -396,6 +519,13 @@ namespace TSP_Research
             }
         }
 
+        /// <summary>
+        /// "Перевернуть" часть массива
+        /// </summary>
+        /// <param name="array">массив</param>
+        /// <param name="start">индекс начала переворачиваемой части</param>
+        /// <param name="end">индекс конца переворачиваемой части</param>
+        /// <returns></returns>
         private int[] ReverseArray(int[] array, int start, int end)
         {
             int[] answer = new int[array.Length];
@@ -428,6 +558,10 @@ namespace TSP_Research
         #endregion
 
         #region AntColony
+        /// <summary>
+        /// Подсчёт времени работы алгоритма муравьиной колонии
+        /// </summary>
+        /// <returns></returns>
         internal double AntColonyAlgorithmTimer()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -440,6 +574,17 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
+        /// <summary>
+        /// Алгоритм муравьиной колонии
+        /// </summary>
+        /// <param name="graph">граф</param>
+        /// <param name="distancetable">матрица расстояний</param>
+        /// <param name="itetationsCount">количество итераций алгоритма</param>
+        /// <param name="alpha">коэффициент расстояния</param>
+        /// <param name="beta">коэффициент феромонов</param>
+        /// <param name="q">коэффициент увеличения количества феромонов</param>
+        /// <param name="oblivionNumber">коэффициент забвения предыдущих результатов</param>
+        /// <returns></returns>
         private List<int> AntColonyAlgorithm(MyGraph graph, float[,] distancetable, int itetationsCount, double alpha, double beta, double q, double oblivionNumber)
         {
             List<List<int>> Iterations = new List<List<int>>();
@@ -522,11 +667,26 @@ namespace TSP_Research
 
         }
 
+        /// <summary>
+        /// Вычисление привлекательности ребра
+        /// </summary>
+        /// <param name="i">Исходящая вершина</param>
+        /// <param name="j">Конечная вершина</param>
+        /// <param name="distancetable">матрица расстояний</param>
+        /// <param name="feromoneTable">таблица феромонов</param>
+        /// <param name="alpha">коэффициент расстояния</param>
+        /// <param name="beta">коэффициент феромона</param>
+        /// <returns></returns>
         private double Attractiveness(int i, int j, float[,] distancetable, double[,] feromoneTable, double alpha, double beta)
         {
             return Math.Pow(feromoneTable[i, j], beta) / Math.Pow(distancetable[i, j], alpha);
         }
 
+        /// <summary>
+        /// Инициализация массива посещённости вершин
+        /// </summary>
+        /// <param name="verticesCount">количество вершин</param>
+        /// <returns></returns>
         private bool[] InitializeVisited(int verticesCount)
         {
             bool[] visited = new bool[verticesCount];
@@ -537,6 +697,11 @@ namespace TSP_Research
             return visited;
         }
 
+        /// <summary>
+        /// Инициализация таблицы феромонов
+        /// </summary>
+        /// <param name="verticesCount">количество вершин</param>
+        /// <returns></returns>
         private double[,] InitializeFeromoneTable(int verticesCount)
         {
             double[,] table = new double[verticesCount, verticesCount];
@@ -559,6 +724,10 @@ namespace TSP_Research
         #endregion
 
         #region BranchesAndBoundaries
+        /// <summary>
+        /// Подсчёт времени работы метода ветвей и границ
+        /// </summary>
+        /// <returns></returns>
         internal double BranchesAndBoundariesTimer()
         {
             float[,] distanceTableReorganized = ReorganizeDistanceTable(DistanceTable, int.MaxValue);
@@ -574,6 +743,10 @@ namespace TSP_Research
             return stopwatch.ElapsedMilliseconds;
         }
 
+        /// <summary>
+        /// Класс ребра решения
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         private class SolutionEdge<T>
         {
             /// <summary>
@@ -600,6 +773,10 @@ namespace TSP_Research
             }
         }
 
+        /// <summary>
+        /// Класс узла дерева решений
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         private class SolutionNode<T>
         {
             /// <summary>
@@ -662,6 +839,12 @@ namespace TSP_Research
             public SolutionNode(T item, T[,] matrix) : this(item) { Matrix = matrix; }
         }
 
+        /// <summary>
+        /// Метод ветвей и границ
+        /// </summary>
+        /// <param name="graph">Граф</param>
+        /// <param name="distanceTable">матрица расстояний</param>
+        /// <returns>Кратчайший путь</returns>
         public List<int> BranchesAndBoundaries(MyGraph graph,float[,] distanceTable)
         {
             //Reduce Matrix
@@ -772,6 +955,12 @@ namespace TSP_Research
             return GetPath(currentNode.CutEdgesList);
         }
 
+        /// <summary>
+        /// Получить путь по списку рёбер решения
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cutEdgesList">список рёбер решения</param>
+        /// <returns></returns>
         private List<int> GetPath<T>(List<SolutionEdge<T>> cutEdgesList)
         {
             List<int> path = new List<int>();
@@ -792,6 +981,13 @@ namespace TSP_Research
             return path;
         }
 
+        /// <summary>
+        /// Поиск ребра в списке, котрое входит в указанную вершину
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="v">Вершина, в которую входит ребро</param>
+        /// <param name="cutEdgesList">список рёбер решения</param>
+        /// <returns></returns>
         private int FindVertexOut<T>(int v, List<SolutionEdge<T>> cutEdgesList)
         {
             for (int i = 0; i < cutEdgesList.Count; i++)
@@ -806,7 +1002,7 @@ namespace TSP_Research
 
 
         /// <summary>
-        /// Put "infinity" in cells with zero - no path between vertices
+        /// Заменить нули на "бесконечность" в таблице расстояний (нет пути между вершинами)
         /// </summary>
         /// <param name="distanceTable"></param>
         /// <param name="maxValue"></param>
@@ -827,6 +1023,12 @@ namespace TSP_Research
             return reorganized;
         }
 
+        /// <summary>
+        /// Поиск листа дерева решений с минимальным значением
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
         private SolutionNode<T> FindMinLeaf<T>(SolutionNode<T> node) where T: IComparable<T>
         {
             List<SolutionNode<T>> leafs = new List<SolutionNode<T>>();
@@ -855,6 +1057,12 @@ namespace TSP_Research
             return minLeaf;
         }
 
+        /// <summary>
+        /// Сбор всех листьев дерева решения
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
         private IEnumerable<SolutionNode<T>> CollectLeafs<T>(SolutionNode<T> node)
         {
             List<SolutionNode<T>> values = new List<SolutionNode<T>>();
@@ -886,6 +1094,11 @@ namespace TSP_Research
             return values;
         }
 
+        /// <summary>
+        /// Найти максимальную оценку в списке
+        /// </summary>
+        /// <param name="scores"></param>
+        /// <returns></returns>
         private List<float> FindMaxScore(List<List<float>> scores)
         {
             float max = scores[0][0];
@@ -903,7 +1116,7 @@ namespace TSP_Research
         }
 
         /// <summary>
-        /// Find smallest number in each row
+        /// Найти наименьшее число в каждой строке
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
@@ -917,7 +1130,7 @@ namespace TSP_Research
             return deltas.ToArray();
         }
         /// <summary>
-        /// Find smallest number in each column
+        /// Найти наименьшее число в каждом столбце
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
@@ -931,6 +1144,11 @@ namespace TSP_Research
             return deltas.ToArray();
         }
 
+        /// <summary>
+        /// Найти нулевые оценки матрицы
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         private List<List<float>> ZeroScores(float[,] matrix)
         {
             List<List<float>> scores = new List<List<float>>();
@@ -950,6 +1168,13 @@ namespace TSP_Research
             return scores;
         }
 
+        /// <summary>
+        /// найти минимум в указанном столбце
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
         private float FindColumnMinimumZeroScore(float[,] matrix, int row, int column)
         {
             float min = int.MaxValue;
@@ -968,6 +1193,13 @@ namespace TSP_Research
             return min;
         }
 
+        /// <summary>
+        /// найти минимум в указанной строке
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
         private float FindRowMinimumZeroScore(float[,] matrix, int row, int column)
         {
             float min = int.MaxValue;
@@ -986,6 +1218,13 @@ namespace TSP_Research
             return min;
         }
 
+        /// <summary>
+        /// Вычислить нижнюю границу узла решения
+        /// </summary>
+        /// <param name="rootScore">корневая оценка</param>
+        /// <param name="rowDeltas">наименьшие значения в строках</param>
+        /// <param name="columnDeltas">наименьшие значения в столбцах</param>
+        /// <returns></returns>
         private float BottomScore(float rootScore, float[] rowDeltas, float[] columnDeltas)
         {
             float score = rootScore;
@@ -999,10 +1238,10 @@ namespace TSP_Research
         }
 
         /// <summary>
-        /// Sustract column delta from each column item
+        /// Вычесть соответствующее значение из каждой строки матрицы 
         /// </summary>
-        /// <param name="matrix"></param>
-        /// <param name="delta"></param>
+        /// <param name="matrix">матрица</param>
+        /// <param name="delta">массив вычитаемых значений</param>
         /// <returns></returns>
         private float[,] ReduceMatrixColumns(float[,] matrix, float[] delta)
         {
@@ -1027,10 +1266,10 @@ namespace TSP_Research
         }
 
         /// <summary>
-        /// Substract row delta from each row item
+        /// Вычесть соответствующее значение из каждого столбца матрицы
         /// </summary>
-        /// <param name="matrix"></param>
-        /// <param name="delta"></param>
+        /// <param name="matrix">матрица</param>
+        /// <param name="delta">массив вычитаемых значений</param>
         /// <returns></returns>
         private float[,] ReduceMatrixRows(float[,] matrix, float[] delta)
         {
@@ -1054,6 +1293,12 @@ namespace TSP_Research
             return reduced;
         }
 
+        /// <summary>
+        /// найти минимальный элемент строки матрицы
+        /// </summary>
+        /// <param name="matrix">матрица</param>
+        /// <param name="row">строка</param>
+        /// <returns></returns>
         private float FindRowMinimum(float[,] matrix, int row)
         {
             float min = int.MaxValue;
@@ -1067,6 +1312,12 @@ namespace TSP_Research
             return min;
         }
 
+        /// <summary>
+        /// Найти наименьший элемент столбца матрицы
+        /// </summary>
+        /// <param name="matrix">матрица</param>
+        /// <param name="column">столбец</param>
+        /// <returns></returns>
         private float FindColumnMinimum(float[,] matrix, int column)
         {
             float min = int.MaxValue;
@@ -1080,6 +1331,14 @@ namespace TSP_Research
             return min;
         }
 
+        /// <summary>
+        /// Вырезать строку и столбец матрицы
+        /// </summary>
+        /// <param name="matrix">матрица</param>
+        /// <param name="node">узел дерева решений</param>
+        /// <param name="row">строка</param>
+        /// <param name="column">столбец</param>
+        /// <returns></returns>
         private float[,] CutRowAndColumnFromMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
         {
             float[,] prepared = PrepareMatrix(matrix, node, row, column);
@@ -1107,6 +1366,14 @@ namespace TSP_Research
             return cut;
         }
 
+        /// <summary>
+        /// Подготовка матрицы к удалению строки и столбца
+        /// </summary>
+        /// <param name="matrix">матрица</param>
+        /// <param name="node">текущий узел дерева решений</param>
+        /// <param name="row">строка</param>
+        /// <param name="column">столбец</param>
+        /// <returns></returns>
         private float[,] PrepareMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
         {
             float[,] prepared = new float[matrix.GetLength(0), matrix.GetLength(1)];
