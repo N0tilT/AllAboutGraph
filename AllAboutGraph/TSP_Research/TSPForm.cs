@@ -109,7 +109,6 @@ namespace TSP_Research
             TSPchart.Series[2].Points.Clear();
             TSPchart.Series[3].Points.Clear();
             TSPchart.Series[4].Points.Clear();
-            TSPchart.Series[5].Points.Clear();
 
             Graphs = InitializeGraphs(MaxVerticesCount, VerticesCountStep);
 
@@ -120,25 +119,16 @@ namespace TSP_Research
                 //tspAlgorithm.Initialize();
                 //tspAlgorithm.Initialize();
 
-                //TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
-                //TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
+                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
                 TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
-                //TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
-                TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
-                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
+                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
 
-                //MessageBox.Show(PrintPath(tspAlgorithm.FullSearchResultPath) + " " + tspAlgorithm.FullSearchResultPathLength);
-                //MessageBox.Show(PrintPath(tspAlgorithm.NearestNeighbourResultPath) + " " + tspAlgorithm.NearestNeighbourResultPathLength);
-                //MessageBox.Show(PrintPath(tspAlgorithm.ImprovedNearestNeighbourResultPath) + " " + tspAlgorithm.ImprovedNearestNeighbourResultPathLength);
-                //MessageBox.Show(PrintPath(tspAlgorithm.SimulatedAnnealingResultPath) + " " + tspAlgorithm.SimulatedAnnealingResultPathLength);
-                //MessageBox.Show(PrintPath(tspAlgorithm.BranchesAndBoundariesResultPath) + " " + tspAlgorithm.BranchesAndBoundariesResultPathLength);
-                //MessageBox.Show(PrintPath(tspAlgorithm.AntColonyAlgorithmResultPath) + " " + tspAlgorithm.AntColonyAlgorithmResultPathLength);
-
-                FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength;
+                FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength == "0" ? "Время ожидания превышено": Convert.ToString(tspAlgorithm.FullSearchResultPathLength);
                 NearestNeighbourResult.Text = "" + tspAlgorithm.NearestNeighbourResultPathLength;
                 ImprovedNearestNeighbourResult.Text = "" + tspAlgorithm.ImprovedNearestNeighbourResultPathLength;
                 SimulatedAnnealingResult.Text = "" + tspAlgorithm.SimulatedAnnealingResultPathLength;
-                BranchesAndBoundariesResult.Text = "" + tspAlgorithm.BranchesAndBoundariesResultPathLength;
                 AntColonyResult.Text = "" + tspAlgorithm.AntColonyAlgorithmResultPathLength;
             }
 
@@ -238,7 +228,8 @@ namespace TSP_Research
                     if (vertex != neighbour)
                     {
                         float distance = GetDistance(vertex.Center,neighbour.Center);
-                        graph.AddEdge(new GraphEdge(vertex,neighbour,distance,false));
+                        graph.AddEdge(new GraphEdge(vertex,neighbour,distance,true));
+                        graph.AddEdge(new GraphEdge(neighbour, vertex, distance*random.Next(0,3), true));
                     }
                 }
             }
@@ -266,6 +257,7 @@ namespace TSP_Research
             catch (Exception)
             {
                 MessageBox.Show("Неверно введён шаг","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                return;
             }
 
             try
@@ -275,6 +267,7 @@ namespace TSP_Research
             catch (Exception)
             {
                 MessageBox.Show("Неверно введено максимальное количество вершин", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             CalculateTSP();

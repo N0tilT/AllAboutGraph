@@ -287,7 +287,7 @@ namespace TSP_Research
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, DistanceTable, 10,0.00001);
+            SimulatedAnnealingResultPath = SimulatedAnnealing(Graph, DistanceTable, 100,0.00001);
 
             stopwatch.Stop();
             SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),DistanceTable);
@@ -399,7 +399,7 @@ namespace TSP_Research
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable, 10, 1, 1, 1, 1);
+            AntColonyAlgorithmResultPath = AntColonyAlgorithm(Graph, DistanceTable, 1000, 1, 1, 1, 1);
 
             stopwatch.Stop();
             AntColonyAlgorithmResultPathLength = Distance(AntColonyAlgorithmResultPath.ToArray(), DistanceTable);
@@ -786,6 +786,7 @@ namespace TSP_Research
                 for (int j = 0; j < reorganized.GetLength(1); j++)
                 {
                     reorganized[i, j] = distanceTable[i, j] == 0 ? maxValue : distanceTable[i, j];
+                    
                 }
             }
 
