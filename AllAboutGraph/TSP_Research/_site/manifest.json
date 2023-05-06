@@ -60,7 +60,7 @@
           "hash": "LspVjoB+A28sFYzxyRRWMDrzrWUkdO0p1GG9eqt7K0Q="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -69,10 +69,10 @@
       "output": {
         ".html": {
           "relative_path": "api/TSP_Research.TSPalgorithm.html",
-          "hash": "Ua5vsJlyjtjrTOss0IMJn8ryEV33R3azIEvz0CsHwHM="
+          "hash": "wPQ3VqICx2bxBJ8t2BtogHH53IfDdQzq41uFvlzpcQc="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -84,7 +84,7 @@
           "hash": "NdD0dgpM6/VNcfJS3fVX7SGWI6SxyDGu1CvmjFxKuWE="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -131,7 +131,7 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 3,
-          "skipped_file_count": 1
+          "skipped_file_count": 3
         },
         "TocDocumentProcessor": {
           "can_incremental": false,

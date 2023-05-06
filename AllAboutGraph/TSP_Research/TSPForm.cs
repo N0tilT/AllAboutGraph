@@ -160,20 +160,29 @@ namespace TSP_Research
                 //tspAlgorithm.Initialize();
 
                 //TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
-                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
-                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
-                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                //TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                //TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
+                //TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
                 //TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
+                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
 
                 FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength == "0" ? "Время ожидания превышено": Convert.ToString(tspAlgorithm.FullSearchResultPathLength);
                 NearestNeighbourResult.Text = "" + tspAlgorithm.NearestNeighbourResultPathLength;
                 ImprovedNearestNeighbourResult.Text = "" + tspAlgorithm.ImprovedNearestNeighbourResultPathLength;
                 SimulatedAnnealingResult.Text = "" + tspAlgorithm.SimulatedAnnealingResultPathLength;
                 AntColonyResult.Text = "" + tspAlgorithm.AntColonyAlgorithmResultPathLength;
+                BranchesAndBoundariesResult.Text = "" + tspAlgorithm.BranchesAndBoundariesResultPathLength;
+
+                //string allPaths = "";
+                //allPaths += "FullSearch " + PrintPath(tspAlgorithm.FullSearchResultPath) + "\n" +
+                //    "Nearest " + PrintPath(tspAlgorithm.NearestNeighbourResultPath) + "\n" +
+                //    "ImprovedNearest " + PrintPath(tspAlgorithm.ImprovedNearestNeighbourResultPath) + "\n" +
+                //    "SimAnnealing " + PrintPath(tspAlgorithm.SimulatedAnnealingResultPath) + "\n" +
+                //    "AntColony " + PrintPath(tspAlgorithm.AntColonyAlgorithmResultPath) + "\n" +
+                //    "BranchesAndBoundaries " + PrintPath(tspAlgorithm.BranchesAndBoundariesResultPath);
+                //MessageBox.Show(allPaths);
             }
-
-
-            SelectedGraph = Graphs[0];
+            SelectedGraph = Graphs[Graphs.Count-1];
         }
 
         private string PrintPath(List<int> path)

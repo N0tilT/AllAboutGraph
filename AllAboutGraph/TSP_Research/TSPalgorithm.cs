@@ -735,7 +735,7 @@ namespace TSP_Research
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            BranchesAndBoundariesResultPath = BranchesAndBoundaries(Graph, distanceTableReorganized);
+            BranchesAndBoundariesResultPath = BranchesAndBoundaries(distanceTableReorganized);
 
             stopwatch.Stop();
 
@@ -809,25 +809,17 @@ namespace TSP_Research
             /// </summary>
             public SolutionNode<T> Parent { get; set; }
 
-            /// <summary>
-            /// Порядок матрицы расстояний
-            /// </summary>
-            public int NumberOfVertices { get => Matrix.GetLength(0); }
-
-            /// <summary>
-            /// Матрица расстояний
-            /// </summary>
             public T[,] Matrix { get; set; }
 
             /// <summary>
-            /// Доступные в строке матрицы расстояний вершины
+            /// Вырезанные индексы строк
             /// </summary>
-            public List<int> RowVertices { get; set; }
+            public List<int> BannedRowIndexes { get; set; }
 
             /// <summary>
-            /// Доступные в столбце матрицы расстояний вершины
+            /// Вырезанные индексы столбцов
             /// </summary>
-            public List<int> ColumnVertices { get; set; }
+            public List<int> BannedColumnIndexes { get; set; }
 
             /// <summary>
             /// Список вычеркнутых рёбер в узле
@@ -835,23 +827,21 @@ namespace TSP_Research
             public List<SolutionEdge<T>> CutEdgesList { get; set; }
 
             public SolutionNode() { }
-            public SolutionNode(T item) { Value = item; }
-            public SolutionNode(T item, T[,] matrix) : this(item) { Matrix = matrix; }
+            public SolutionNode(T item, T[,] matrix) { Value = item; Matrix = matrix; }
         }
 
         /// <summary>
         /// Метод ветвей и границ
         /// </summary>
-        /// <param name="graph">Граф</param>
         /// <param name="distanceTable">матрица расстояний</param>
         /// <returns>Кратчайший путь</returns>
-        public List<int> BranchesAndBoundaries(MyGraph graph,float[,] distanceTable)
+        public List<int> BranchesAndBoundaries(float[,] distanceTable)
         {
             //Reduce Matrix
-            float[] rowDeltas = GetRowDeltas(distanceTable);
+            float[] rowDeltas = GetRowDeltas(distanceTable, new List<int>(), new List<int>());
             float[,] rowsReduced = ReduceMatrixRows(distanceTable, rowDeltas);
 
-            float[] columnDeltas = GetColumnDeltas(rowsReduced);
+            float[] columnDeltas = GetColumnDeltas(rowsReduced, new List<int>(), new List<int>());
             float[,] reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
 
             //Calc root score
@@ -864,16 +854,10 @@ namespace TSP_Research
             {
                 IsRoot = true,
                 Nodes = 1,
+                CutEdgesList = new List<SolutionEdge<float>>(),
+                BannedRowIndexes = new List<int>(),
+                BannedColumnIndexes = new List<int>(),
             };
-
-            List<int> vertices = new List<int>();
-            for (int i = 0; i < graph.GraphVertices.Count; i++)
-            {
-                vertices.Add(i);
-            }
-            solutionTree.RowVertices = vertices;
-            solutionTree.ColumnVertices = new List<int>(vertices);
-            solutionTree.CutEdgesList = new List<SolutionEdge<float>>();
 
             SolutionNode<float> currentNode = solutionTree;
             float parentValue = rootScore;
@@ -881,61 +865,64 @@ namespace TSP_Research
 
             int counter = 0;
 
-            while (reduced.GetLength(0) != 1)
+            while (currentNode.BannedRowIndexes.Count != distanceTable.GetLength(0))
             {
                 //Reduce matrix
-                rowDeltas = GetRowDeltas(reduced);
+                rowDeltas = GetRowDeltas(reduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
                 rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
 
-                columnDeltas = GetColumnDeltas(rowsReduced);
+                columnDeltas = GetColumnDeltas(rowsReduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
                 reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
 
                 //Find maximum zero score
-                List<List<float>> zeroScores = ZeroScores(reduced);
+                List<List<float>> zeroScores = ZeroScores(reduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
                 //Create new branches - no way to max zero score vertex
                 reduced[(int)maxZeroScore[1], (int)maxZeroScore[2]] = int.MaxValue;
 
-                float[,] reducedWithoutEdge = CutRowAndColumnFromMatrix(reduced, currentNode, (int)maxZeroScore[1], (int)maxZeroScore[2]);
                 
-                //Reduce matrix without max zero score edge
-                float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge);
-                reducedWithoutEdge = ReduceMatrixRows(reducedWithoutEdge, cutRowDeltas);
-                float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge);
-                reducedWithoutEdge = ReduceMatrixColumns(reducedWithoutEdge, cutColumnDeltas);
-
-                //Find scores
-                float cutScore = BottomScore(parentValue, cutRowDeltas, cutColumnDeltas);
-                currentNode.CutEdge = new SolutionNode<float>(cutScore, reducedWithoutEdge) 
+                currentNode.CutEdge = new SolutionNode<float>()
                 {
                     Parent = currentNode,
                 };
 
-                int cutRowVertexTrueIndex = currentNode.RowVertices[(int)maxZeroScore[1]];
-                int cutColumnVertexTrueIndex = currentNode.ColumnVertices[(int)maxZeroScore[2]];
+                SolutionNode<float> cutEdgeNode = currentNode.CutEdge;
+                cutEdgeNode.BannedRowIndexes = new List<int>(currentNode.BannedRowIndexes);
+                cutEdgeNode.BannedRowIndexes.Add((int)maxZeroScore[1]);
 
-                currentNode.CutEdge.CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList)
+
+                cutEdgeNode.BannedColumnIndexes = new List<int>(currentNode.BannedColumnIndexes);
+                cutEdgeNode.BannedColumnIndexes.Add((int)maxZeroScore[2]);
+
+                float[,] reducedWithoutEdge = CopyMatrix(reduced);
+                reducedWithoutEdge[(int)maxZeroScore[2], (int)maxZeroScore[1]] = int.MaxValue;
+
+                //Reduce matrix without max zero score edge
+                float[] cutRowDeltas = GetRowDeltas(reducedWithoutEdge, cutEdgeNode.BannedRowIndexes, cutEdgeNode.BannedColumnIndexes);
+                reducedWithoutEdge = ReduceMatrixRows(reducedWithoutEdge, cutRowDeltas);
+                float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge, cutEdgeNode.BannedRowIndexes, cutEdgeNode.BannedColumnIndexes);
+                reducedWithoutEdge = ReduceMatrixColumns(reducedWithoutEdge, cutColumnDeltas);
+
+
+                //Find scores
+                float cutScore = BottomScore(parentValue, cutRowDeltas, cutColumnDeltas);
+
+                cutEdgeNode.CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList)
                 {
-                    new SolutionEdge<float>(distanceTable[cutRowVertexTrueIndex, cutColumnVertexTrueIndex], cutRowVertexTrueIndex, cutColumnVertexTrueIndex)
+                    new SolutionEdge<float>(distanceTable[(int)maxZeroScore[1],(int)maxZeroScore[2]],(int)maxZeroScore[1] , (int)maxZeroScore[2])
                 };
 
-                List<int> cutRows = new List<int>(currentNode.RowVertices);
-                cutRows.RemoveAt((int)maxZeroScore[1]);
-                currentNode.CutEdge.RowVertices = cutRows;
-
-                List<int> cutColumns = new List<int>(currentNode.ColumnVertices);
-                cutColumns.RemoveAt((int)maxZeroScore[2]);
-                currentNode.CutEdge.ColumnVertices = cutColumns;
-
+                cutEdgeNode.Value = cutScore;
+                cutEdgeNode.Matrix = reducedWithoutEdge;
 
                 float uncutScore = parentValue + maxZeroScore[0];
                 currentNode.UncutEdge = new SolutionNode<float>(uncutScore, reduced)
                 {
                     Parent = currentNode,
                     CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList),
-                    RowVertices = new List<int>(currentNode.RowVertices),
-                    ColumnVertices = new List<int>(currentNode.ColumnVertices)
+                    BannedRowIndexes = currentNode.BannedRowIndexes,
+                    BannedColumnIndexes = currentNode.BannedColumnIndexes,
                 };
 
                 solutionTree.Nodes += 2;
@@ -947,12 +934,23 @@ namespace TSP_Research
                 counter++;
             }
 
-            int lastRowVertex = currentNode.RowVertices[0];
-            int lastColumnVertex = currentNode.ColumnVertices[0];
-
-            currentNode.CutEdgesList.Add(new SolutionEdge<float>(distanceTable[lastRowVertex,lastColumnVertex],lastRowVertex,lastColumnVertex));
+            counter++;
 
             return GetPath(currentNode.CutEdgesList);
+        }
+
+        private float[,] CopyMatrix(float[,] matrix)
+        {
+            float[,] copy = new float[matrix.GetLength(0), matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    copy[i, j] = matrix[i, j];
+                }
+            }
+
+            return copy;
         }
 
         /// <summary>
@@ -1046,7 +1044,7 @@ namespace TSP_Research
                 }
                 else if(leaf.Value.CompareTo(minimum) == 0)
                 {
-                    if(leaf.NumberOfVertices < minLeaf.NumberOfVertices)
+                    if(leaf.BannedRowIndexes.Count > minLeaf.BannedColumnIndexes.Count)
                     {
                         minimum = leaf.Value;
                         minLeaf = leaf;
@@ -1120,28 +1118,34 @@ namespace TSP_Research
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        private float[] GetRowDeltas(float[,] matrix)
+        private float[] GetRowDeltas(float[,] matrix, List<int> bannedRows, List<int> bannedColumns)
         {
-            List<float> deltas = new List<float>();
+            float[] deltas = new float[matrix.GetLength(0)];
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                deltas.Add(FindRowMinimum(matrix,i));
+                if (!bannedRows.Contains(i))
+                {
+                    deltas[i]=FindRowMinimum(matrix, i, bannedColumns);
+                }
             }
-            return deltas.ToArray();
+            return deltas;
         }
         /// <summary>
         /// Найти наименьшее число в каждом столбце
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        private float[] GetColumnDeltas(float[,] matrix)
+        private float[] GetColumnDeltas(float[,] matrix, List<int> bannedRows, List<int> bannedColumns)
         {
-            List<float> deltas = new List<float>();
+            float[] deltas = new float[matrix.GetLength(0)];
             for (int i = 0; i < matrix.GetLength(1); i++)
             {
-                deltas.Add(FindColumnMinimum(matrix, i));
+                if (!bannedColumns.Contains(i))
+                {
+                    deltas[i] = FindColumnMinimum(matrix, i, bannedRows);
+                }
             }
-            return deltas.ToArray();
+            return deltas;
         }
 
         /// <summary>
@@ -1149,18 +1153,24 @@ namespace TSP_Research
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        private List<List<float>> ZeroScores(float[,] matrix)
+        private List<List<float>> ZeroScores(float[,] matrix,List<int> bannedRows,List<int> bannedColumns)
         {
             List<List<float>> scores = new List<List<float>>();
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                for (int j = 0; j < matrix.GetLength(1); j++)
+                if (!bannedRows.Contains(i))
                 {
-                    if (matrix[i,j] == 0)
+                    for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        float score = FindRowMinimumZeroScore(matrix,i,j) + FindColumnMinimumZeroScore(matrix,i,j);
-                        scores.Add(new List<float> { score,i,j});
+                        if (!bannedColumns.Contains(j))
+                        {
+                            if (matrix[i, j] == 0)
+                            {
+                                float score = FindRowMinimumZeroScore(matrix, i, j,bannedColumns) + FindColumnMinimumZeroScore(matrix, i, j,bannedRows);
+                                scores.Add(new List<float> { score, i, j });
+                            }
+                        }
                     }
                 }
             }
@@ -1175,18 +1185,21 @@ namespace TSP_Research
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        private float FindColumnMinimumZeroScore(float[,] matrix, int row, int column)
+        private float FindColumnMinimumZeroScore(float[,] matrix, int row, int column, List<int> bannedRows)
         {
             float min = int.MaxValue;
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                if (i != row)
+                if (!bannedRows.Contains(i))
                 {
-                    if (matrix[i, column] < min && matrix[i, column] != int.MaxValue)
+                    if (i != row)
                     {
-                        min = matrix[i, column];
-                    } 
+                        if (matrix[i, column] < min && matrix[i, column] != int.MaxValue)
+                        {
+                            min = matrix[i, column];
+                        }
+                    }
                 }
             }
 
@@ -1200,17 +1213,20 @@ namespace TSP_Research
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        private float FindRowMinimumZeroScore(float[,] matrix, int row, int column)
+        private float FindRowMinimumZeroScore(float[,] matrix, int row, int column, List<int> bannedColumns)
         {
             float min = int.MaxValue;
 
             for (int i = 0; i < matrix.GetLength(1); i++)
             {
-                if (i != column)
+                if (!bannedColumns.Contains(i))
                 {
-                    if (matrix[row,i] < min && matrix[row,i] != int.MaxValue)
+                    if (i != column)
                     {
-                        min = matrix[row,i];
+                        if (matrix[row, i] < min && matrix[row, i] != int.MaxValue)
+                        {
+                            min = matrix[row, i];
+                        }
                     }
                 }
             }
@@ -1299,14 +1315,17 @@ namespace TSP_Research
         /// <param name="matrix">матрица</param>
         /// <param name="row">строка</param>
         /// <returns></returns>
-        private float FindRowMinimum(float[,] matrix, int row)
+        private float FindRowMinimum(float[,] matrix, int row, List<int> bannedColumns)
         {
             float min = int.MaxValue;
             for (int i = 0; i < matrix.GetLength(1); i++)
             {
-                if (matrix[row, i] < min)
+                if (!bannedColumns.Contains(i))
                 {
-                    min = matrix[row, i];
+                    if (matrix[row, i] < min)
+                    {
+                        min = matrix[row, i];
+                    }
                 }
             }
             return min;
@@ -1318,83 +1337,86 @@ namespace TSP_Research
         /// <param name="matrix">матрица</param>
         /// <param name="column">столбец</param>
         /// <returns></returns>
-        private float FindColumnMinimum(float[,] matrix, int column)
+        private float FindColumnMinimum(float[,] matrix, int column, List<int> bannedRows)
         {
             float min = int.MaxValue;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                if (matrix[i,column] < min)
+                if (!bannedRows.Contains(i))
                 {
-                    min = matrix[i,column];
+                    if (matrix[i, column] < min)
+                    {
+                        min = matrix[i, column];
+                    }
                 }
             }
             return min;
         }
 
-        /// <summary>
-        /// Вырезать строку и столбец матрицы
-        /// </summary>
-        /// <param name="matrix">матрица</param>
-        /// <param name="node">узел дерева решений</param>
-        /// <param name="row">строка</param>
-        /// <param name="column">столбец</param>
-        /// <returns></returns>
-        private float[,] CutRowAndColumnFromMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
-        {
-            float[,] prepared = PrepareMatrix(matrix, node, row, column);
+        ///// <summary>
+        ///// Вырезать строку и столбец матрицы
+        ///// </summary>
+        ///// <param name="matrix">матрица</param>
+        ///// <param name="node">узел дерева решений</param>
+        ///// <param name="row">строка</param>
+        ///// <param name="column">столбец</param>
+        ///// <returns></returns>
+        //private float[,] CutRowAndColumnFromMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
+        //{
+        //    float[,] prepared = PrepareMatrix(matrix, node, row, column);
 
-            float[,] cut = new float[prepared.GetLength(0) - 1, prepared.GetLength(1) - 1];
+        //    float[,] cut = new float[prepared.GetLength(0) - 1, prepared.GetLength(1) - 1];
 
-            for (int i = 0; i < prepared.GetLength(0); i++)
-            {
-                if (i != row)
-                {
-                    for (int j = 0; j < prepared.GetLength(1); j++)
-                    {
-                        if (j != column)
-                        {
-                            int rowDelta = i > row ? 1 : 0;
-                            int columnDelta = j > column ? 1 : 0;
+        //    for (int i = 0; i < prepared.GetLength(0); i++)
+        //    {
+        //        if (i != row)
+        //        {
+        //            for (int j = 0; j < prepared.GetLength(1); j++)
+        //            {
+        //                if (j != column)
+        //                {
+        //                    int rowDelta = i > row ? 1 : 0;
+        //                    int columnDelta = j > column ? 1 : 0;
 
-                            cut[i - rowDelta, j - columnDelta] = prepared[i, j];
+        //                    cut[i - rowDelta, j - columnDelta] = prepared[i, j];
 
-                        }
-                    }
-                }
-            }
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return cut;
-        }
+        //    return cut;
+        //}
 
-        /// <summary>
-        /// Подготовка матрицы к удалению строки и столбца
-        /// </summary>
-        /// <param name="matrix">матрица</param>
-        /// <param name="node">текущий узел дерева решений</param>
-        /// <param name="row">строка</param>
-        /// <param name="column">столбец</param>
-        /// <returns></returns>
-        private float[,] PrepareMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
-        {
-            float[,] prepared = new float[matrix.GetLength(0), matrix.GetLength(1)];
+        ///// <summary>
+        ///// Подготовка матрицы к удалению строки и столбца
+        ///// </summary>
+        ///// <param name="matrix">матрица</param>
+        ///// <param name="node">текущий узел дерева решений</param>
+        ///// <param name="row">строка</param>
+        ///// <param name="column">столбец</param>
+        ///// <returns></returns>
+        //private float[,] PrepareMatrix(float[,] matrix, SolutionNode<float> node, int row, int column)
+        //{
+        //    float[,] prepared = new float[matrix.GetLength(0), matrix.GetLength(1)];
 
-            for (int i = 0; i < prepared.GetLength(0); i++)
-            {
-                for (int j = 0; j < prepared.GetLength(1); j++)
-                {
-                    prepared[i, j] = matrix[i, j];
-                }
-            }
+        //    for (int i = 0; i < prepared.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < prepared.GetLength(1); j++)
+        //        {
+        //            prepared[i, j] = matrix[i, j];
+        //        }
+        //    }
 
-            int rowTrueIndex = node.RowVertices.FindIndex(x => x == node.ColumnVertices[column]);
-            int columnTrueIndex = node.ColumnVertices.FindIndex(x => x== node.RowVertices[row]);
+        //    int rowTrueIndex = node.RowVertices.FindIndex(x => x == node.ColumnVertices[column]);
+        //    int columnTrueIndex = node.ColumnVertices.FindIndex(x => x== node.RowVertices[row]);
 
-            if(rowTrueIndex != -1 && columnTrueIndex != -1)
-            {
-                prepared[rowTrueIndex, columnTrueIndex] = int.MaxValue;
-            }
-            return prepared;
-        }
+        //    if(rowTrueIndex != -1 && columnTrueIndex != -1)
+        //    {
+        //        prepared[rowTrueIndex, columnTrueIndex] = int.MaxValue;
+        //    }
+        //    return prepared;
+        //}
         #endregion
 
         #endregion

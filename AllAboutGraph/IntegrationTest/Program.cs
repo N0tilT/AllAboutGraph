@@ -43,6 +43,9 @@ namespace IntegrationTest
                 {11, 17, 11, INF, 12 },
                 {5, 5, 5, 5, INF }
             };
+
+            List<int> result = tsp.BranchesAndBoundaries(dTable);
+
         }
 
         private static void TestTournamentSort()

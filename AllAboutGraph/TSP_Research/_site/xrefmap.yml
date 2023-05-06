@@ -58,15 +58,15 @@ references:
   isSpec: "True"
   fullName: TSP_Research.TSPalgorithm.AntColonyAlgorithmResultPathLength
   nameWithType: TSPalgorithm.AntColonyAlgorithmResultPathLength
-- uid: TSP_Research.TSPalgorithm.BranchesAndBoundaries(AllAboutGraph.MVC.Model.MyGraph,System.Single[0:,0:])
-  name: BranchesAndBoundaries(MyGraph, Single[,])
-  href: api/TSP_Research.TSPalgorithm.html#TSP_Research_TSPalgorithm_BranchesAndBoundaries_AllAboutGraph_MVC_Model_MyGraph_System_Single_0__0___
-  commentId: M:TSP_Research.TSPalgorithm.BranchesAndBoundaries(AllAboutGraph.MVC.Model.MyGraph,System.Single[0:,0:])
-  name.vb: BranchesAndBoundaries(MyGraph, Single(,))
-  fullName: TSP_Research.TSPalgorithm.BranchesAndBoundaries(AllAboutGraph.MVC.Model.MyGraph, System.Single[,])
-  fullName.vb: TSP_Research.TSPalgorithm.BranchesAndBoundaries(AllAboutGraph.MVC.Model.MyGraph, System.Single(,))
-  nameWithType: TSPalgorithm.BranchesAndBoundaries(MyGraph, Single[,])
-  nameWithType.vb: TSPalgorithm.BranchesAndBoundaries(MyGraph, Single(,))
+- uid: TSP_Research.TSPalgorithm.BranchesAndBoundaries(System.Single[0:,0:])
+  name: BranchesAndBoundaries(Single[,])
+  href: api/TSP_Research.TSPalgorithm.html#TSP_Research_TSPalgorithm_BranchesAndBoundaries_System_Single_0__0___
+  commentId: M:TSP_Research.TSPalgorithm.BranchesAndBoundaries(System.Single[0:,0:])
+  name.vb: BranchesAndBoundaries(Single(,))
+  fullName: TSP_Research.TSPalgorithm.BranchesAndBoundaries(System.Single[,])
+  fullName.vb: TSP_Research.TSPalgorithm.BranchesAndBoundaries(System.Single(,))
+  nameWithType: TSPalgorithm.BranchesAndBoundaries(Single[,])
+  nameWithType.vb: TSPalgorithm.BranchesAndBoundaries(Single(,))
 - uid: TSP_Research.TSPalgorithm.BranchesAndBoundaries*
   name: BranchesAndBoundaries
   href: api/TSP_Research.TSPalgorithm.html#TSP_Research_TSPalgorithm_BranchesAndBoundaries_
