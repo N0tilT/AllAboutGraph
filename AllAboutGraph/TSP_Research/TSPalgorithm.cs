@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
@@ -208,7 +209,7 @@ namespace TSP_Research
             stopwatch.Stop();
 
             FullSearchResultPathLength = Distance(FullSearchResultPath.ToArray(), DistanceTable);
-            return stopwatch.Elapsed.TotalSeconds/100;
+            return stopwatch.ElapsedMilliseconds;
         }
 
         /// <summary>
@@ -316,7 +317,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             NearestNeighbourResultPathLength = Distance(NearestNeighbourResultPath.ToArray(),DistanceTable);
-            return stopwatch.Elapsed.TotalSeconds*10000;
+            return stopwatch.ElapsedMilliseconds;
         }
 
         /// <summary>
@@ -394,7 +395,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             ImprovedNearestNeighbourResultPathLength = Distance(ImprovedNearestNeighbourResultPath.ToArray(), DistanceTable);
-            return stopwatch.Elapsed.TotalSeconds * 100;
+            return stopwatch.ElapsedMilliseconds;
         }
 
         /// <summary>
@@ -429,7 +430,7 @@ namespace TSP_Research
 
             stopwatch.Stop();
             SimulatedAnnealingResultPathLength = Distance(SimulatedAnnealingResultPath.ToArray(),DistanceTable);
-            return stopwatch.Elapsed.TotalSeconds*10;
+            return stopwatch.ElapsedMilliseconds;
         }
 
         /// <summary>
@@ -779,10 +780,7 @@ namespace TSP_Research
         /// <typeparam name="T"></typeparam>
         private class SolutionNode<T>
         {
-            /// <summary>
-            /// Количество узлов
-            /// </summary>
-            public int Nodes { get; set; }
+            public bool WasReduced { get; set; }
 
             /// <summary>
             /// Значение узла
@@ -793,21 +791,6 @@ namespace TSP_Research
             /// Является ли корнем
             /// </summary>
             public bool IsRoot { get; set; }
-
-            /// <summary>
-            /// Ветвь без ребра
-            /// </summary>
-            public SolutionNode<T> CutEdge { get; set; }
-
-            /// <summary>
-            /// Ветвь с ребром
-            /// </summary>
-            public SolutionNode<T> UncutEdge { get; set; }
-
-            /// <summary>
-            /// Родитель узла
-            /// </summary>
-            public SolutionNode<T> Parent { get; set; }
 
             public T[,] Matrix { get; set; }
 
@@ -837,6 +820,8 @@ namespace TSP_Research
         /// <returns>Кратчайший путь</returns>
         public List<int> BranchesAndBoundaries(float[,] distanceTable)
         {
+            int counterCycle = 0;
+            int prevCountBanned;
             //Reduce Matrix
             float[] rowDeltas = GetRowDeltas(distanceTable, new List<int>(), new List<int>());
             float[,] rowsReduced = ReduceMatrixRows(distanceTable, rowDeltas);
@@ -850,50 +835,107 @@ namespace TSP_Research
             //Initialize solutionTree
 
 
-            SolutionNode<float> solutionTree = new SolutionNode<float>(rootScore, reduced)
+            SolutionNode<float> root = new SolutionNode<float>(rootScore, reduced)
             {
                 IsRoot = true,
-                Nodes = 1,
                 CutEdgesList = new List<SolutionEdge<float>>(),
                 BannedRowIndexes = new List<int>(),
                 BannedColumnIndexes = new List<int>(),
+                WasReduced = true
+            };
+            List<SolutionNode<float>> leafs = new List<SolutionNode<float>>
+            {
+                root
             };
 
-            SolutionNode<float> currentNode = solutionTree;
-            float parentValue = rootScore;
+            List<float> values = new List<float>
+            {
+                rootScore
+            };
 
+            SolutionNode<float> currentNode = root;
+            int currentNodeIndex = 0;
+
+            float parentValue = rootScore;
+            float uncutScore, cutScore;
 
             int counter = 0;
 
             while (currentNode.BannedRowIndexes.Count != distanceTable.GetLength(0))
             {
                 //Reduce matrix
-                rowDeltas = GetRowDeltas(reduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
-                rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
+                if (!currentNode.WasReduced)
+                {
+                    rowDeltas = GetRowDeltas(reduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
+                    rowsReduced = ReduceMatrixRows(reduced, rowDeltas);
 
-                columnDeltas = GetColumnDeltas(rowsReduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
-                reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
+                    columnDeltas = GetColumnDeltas(rowsReduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
+                    reduced = ReduceMatrixColumns(rowsReduced, columnDeltas);
+                }
 
                 //Find maximum zero score
                 List<List<float>> zeroScores = ZeroScores(reduced, currentNode.BannedRowIndexes, currentNode.BannedColumnIndexes);
                 List<float> maxZeroScore = FindMaxScore(zeroScores);
 
+                if (currentNode.CutEdgesList.Count > 0)
+                {
+                    if (FindCycle(currentNode.CutEdgesList, maxZeroScore))
+                    {
+                        counterCycle++;
+                        if(currentNode.BannedRowIndexes.Count == distanceTable.GetLength(0) - 1)
+                        {
+                            currentNode.CutEdgesList.Add(new SolutionEdge<float>(distanceTable[(int)maxZeroScore[1], (int)maxZeroScore[2]], (int)maxZeroScore[1], (int)maxZeroScore[2]));
+                            break;
+                        }
+
+                        leafs.RemoveAt(currentNodeIndex);
+
+                        uncutScore = parentValue + maxZeroScore[0];
+                        leafs.Add(new SolutionNode<float>(uncutScore, reduced)
+                        {
+                            CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList),
+                            BannedRowIndexes = currentNode.BannedRowIndexes,
+                            BannedColumnIndexes = currentNode.BannedColumnIndexes,
+                            WasReduced = false
+                        });
+
+                        values.RemoveAt(currentNodeIndex);
+                        values.Add(uncutScore);
+
+                        if (uncutScore <= currentNode.Value)
+                        {
+                            currentNodeIndex = leafs.Count - 1;
+                        }
+                        else
+                        {
+                            currentNodeIndex = values.IndexOf(values.Min());
+                        }
+
+                        currentNode = leafs[currentNodeIndex];
+                        reduced = currentNode.Matrix;
+                        parentValue = currentNode.Value;
+                        counter++;
+
+                        continue;
+                    }
+                }
                 //Create new branches - no way to max zero score vertex
                 reduced[(int)maxZeroScore[1], (int)maxZeroScore[2]] = int.MaxValue;
 
-                
-                currentNode.CutEdge = new SolutionNode<float>()
+
+                SolutionNode<float> cutEdgeNode = new SolutionNode<float>
                 {
-                    Parent = currentNode,
+                    BannedRowIndexes = new List<int>(currentNode.BannedRowIndexes)
+                    {
+                        (int)maxZeroScore[1]
+                    },
+                    BannedColumnIndexes = new List<int>(currentNode.BannedColumnIndexes)
+                    {
+                        (int)maxZeroScore[2]
+                    },
+
+                    WasReduced = true
                 };
-
-                SolutionNode<float> cutEdgeNode = currentNode.CutEdge;
-                cutEdgeNode.BannedRowIndexes = new List<int>(currentNode.BannedRowIndexes);
-                cutEdgeNode.BannedRowIndexes.Add((int)maxZeroScore[1]);
-
-
-                cutEdgeNode.BannedColumnIndexes = new List<int>(currentNode.BannedColumnIndexes);
-                cutEdgeNode.BannedColumnIndexes.Add((int)maxZeroScore[2]);
 
                 float[,] reducedWithoutEdge = CopyMatrix(reduced);
                 reducedWithoutEdge[(int)maxZeroScore[2], (int)maxZeroScore[1]] = int.MaxValue;
@@ -904,31 +946,50 @@ namespace TSP_Research
                 float[] cutColumnDeltas = GetColumnDeltas(reducedWithoutEdge, cutEdgeNode.BannedRowIndexes, cutEdgeNode.BannedColumnIndexes);
                 reducedWithoutEdge = ReduceMatrixColumns(reducedWithoutEdge, cutColumnDeltas);
 
-
                 //Find scores
-                float cutScore = BottomScore(parentValue, cutRowDeltas, cutColumnDeltas);
+                cutScore = BottomScore(parentValue, cutRowDeltas, cutColumnDeltas);
 
                 cutEdgeNode.CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList)
                 {
                     new SolutionEdge<float>(distanceTable[(int)maxZeroScore[1],(int)maxZeroScore[2]],(int)maxZeroScore[1] , (int)maxZeroScore[2])
                 };
 
-                cutEdgeNode.Value = cutScore;
+                cutEdgeNode.Value = cutScore; 
                 cutEdgeNode.Matrix = reducedWithoutEdge;
 
-                float uncutScore = parentValue + maxZeroScore[0];
-                currentNode.UncutEdge = new SolutionNode<float>(uncutScore, reduced)
+                leafs.Add(cutEdgeNode);
+
+                uncutScore = parentValue + maxZeroScore[0];
+                leafs.Add(new SolutionNode<float>(uncutScore, reduced)
                 {
-                    Parent = currentNode,
                     CutEdgesList = new List<SolutionEdge<float>>(currentNode.CutEdgesList),
                     BannedRowIndexes = currentNode.BannedRowIndexes,
                     BannedColumnIndexes = currentNode.BannedColumnIndexes,
-                };
+                    WasReduced = false
+                });
 
-                solutionTree.Nodes += 2;
+                leafs.RemoveAt(currentNodeIndex);
 
-                //Find minimumLeaf
-                currentNode = FindMinLeaf(solutionTree);
+                values.RemoveAt(currentNodeIndex);
+                values.Add(cutScore);
+                values.Add(uncutScore);
+
+                prevCountBanned = currentNode.BannedRowIndexes.Count;
+
+                if(cutScore <= currentNode.Value)
+                {
+                    currentNodeIndex = leafs.Count - 2; 
+                }
+                else if(uncutScore <= currentNode.Value)
+                {
+                    currentNodeIndex = leafs.Count - 1; 
+                }
+                else
+                {
+                    currentNodeIndex = values.IndexOf(values.Min());
+                }
+
+                currentNode = leafs[currentNodeIndex];
                 reduced = currentNode.Matrix;
                 parentValue = currentNode.Value;
                 counter++;
@@ -937,6 +998,46 @@ namespace TSP_Research
             counter++;
 
             return GetPath(currentNode.CutEdgesList);
+        }
+
+        private bool FindCycle<T>(List<SolutionEdge<T>> cutEdgesList, List<float> maxZeroScore)
+        {
+            int n = cutEdgesList.Count;
+
+            SolutionEdge<T> currentEdge;
+            int nextVertexIndex = FindVertexIn((int)maxZeroScore[1], cutEdgesList);
+
+            while (nextVertexIndex != -1)
+            {
+                currentEdge = cutEdgesList[nextVertexIndex];
+                if(currentEdge.VertexOut == (int)maxZeroScore[2])
+                {
+                    return true;
+                }
+
+                nextVertexIndex = FindVertexIn(currentEdge.VertexOut, cutEdgesList);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Поиск ребра в списке, котрое выходит из указанной вершины
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="v">Вершина, в которую входит ребро</param>
+        /// <param name="cutEdgesList">список рёбер решения</param>
+        /// <returns></returns>
+        private int FindVertexIn<T>(int v, List<SolutionEdge<T>> cutEdgesList)
+        {
+            for (int i = 0; i < cutEdgesList.Count; i++)
+            {
+                if (cutEdgesList[i].VertexIn == v)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         private float[,] CopyMatrix(float[,] matrix)
@@ -1027,69 +1128,29 @@ namespace TSP_Research
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
         /// <returns></returns>
-        private SolutionNode<T> FindMinLeaf<T>(SolutionNode<T> node) where T: IComparable<T>
+        private int FindMinLeaf<T>(List<SolutionNode<T>> leafs) where T: IComparable<T>
         {
-            List<SolutionNode<T>> leafs = new List<SolutionNode<T>>();
-            leafs.AddRange(CollectLeafs(node));
-
             T minimum = leafs[0].Value;
-            SolutionNode<T> minLeaf = leafs[0];
+            int minIndex = 0;
 
-            foreach (SolutionNode<T> leaf in leafs)
+            for (int i = 1; i < leafs.Count; i++)
             {
-                if (leaf.Value.CompareTo(minimum)<0)
+                if (leafs[i].Value.CompareTo(minimum) < 0)
                 {
-                    minimum = leaf.Value;
-                    minLeaf = leaf;
+                    minimum = leafs[i].Value;
+                    minIndex = i;
                 }
-                else if(leaf.Value.CompareTo(minimum) == 0)
+                else if (leafs[i].Value.CompareTo(minimum) == 0)
                 {
-                    if(leaf.BannedRowIndexes.Count > minLeaf.BannedColumnIndexes.Count)
+                    if (leafs[i].BannedRowIndexes.Count > leafs[minIndex].BannedColumnIndexes.Count)
                     {
-                        minimum = leaf.Value;
-                        minLeaf = leaf;
+                        minimum = leafs[i].Value;
+                        minIndex = i;
                     }
                 }
             }
 
-            return minLeaf;
-        }
-
-        /// <summary>
-        /// Сбор всех листьев дерева решения
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        private IEnumerable<SolutionNode<T>> CollectLeafs<T>(SolutionNode<T> node)
-        {
-            List<SolutionNode<T>> values = new List<SolutionNode<T>>();
-
-            SolutionNode<T> currentNode = node;
-
-            Queue<SolutionNode<T>> queue = new Queue<SolutionNode<T>>();
-            do
-            {
-                if(currentNode.CutEdge == null && currentNode.UncutEdge == null)
-                {
-                    values.Add(currentNode);
-                }
-
-                if(currentNode.CutEdge!=null) queue.Enqueue(currentNode.CutEdge);
-                if(currentNode.UncutEdge!=null) queue.Enqueue( currentNode.UncutEdge);
-                if (queue.Count != 0)
-                {
-                    currentNode = queue.Dequeue();
-                }
-                else
-                {
-                    break;
-                }
-
-
-            } while (true);
-
-            return values;
+            return minIndex;
         }
 
         /// <summary>
