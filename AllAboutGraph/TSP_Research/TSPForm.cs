@@ -142,59 +142,6 @@ namespace TSP_Research
             InitializeCanvas();
         }
 
-        private void CalculateTSP()
-        {
-            TSPchart.Series[0].Points.Clear();
-            TSPchart.Series[1].Points.Clear();
-            TSPchart.Series[2].Points.Clear();
-            TSPchart.Series[3].Points.Clear();
-            TSPchart.Series[4].Points.Clear();
-
-            Graphs = InitializeGraphs(MaxVerticesCount, VerticesCountStep);
-
-            foreach (MyGraph graph in graphs)
-            {
-                TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
-
-                //tspAlgorithm.Initialize();
-                //tspAlgorithm.Initialize();
-
-                //TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
-                //TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
-                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
-                //TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
-                //TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
-                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
-
-                FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength == "0" ? "Время ожидания превышено": Convert.ToString(tspAlgorithm.FullSearchResultPathLength);
-                NearestNeighbourResult.Text = "" + tspAlgorithm.NearestNeighbourResultPathLength;
-                ImprovedNearestNeighbourResult.Text = "" + tspAlgorithm.ImprovedNearestNeighbourResultPathLength;
-                SimulatedAnnealingResult.Text = "" + tspAlgorithm.SimulatedAnnealingResultPathLength;
-                AntColonyResult.Text = "" + tspAlgorithm.AntColonyAlgorithmResultPathLength;
-                BranchesAndBoundariesResult.Text = "" + tspAlgorithm.BranchesAndBoundariesResultPathLength;
-
-                //string allPaths = "";
-                //allPaths += "FullSearch " + PrintPath(tspAlgorithm.FullSearchResultPath) + "\n" +
-                //    "Nearest " + PrintPath(tspAlgorithm.NearestNeighbourResultPath) + "\n" +
-                //    "ImprovedNearest " + PrintPath(tspAlgorithm.ImprovedNearestNeighbourResultPath) + "\n" +
-                //    "SimAnnealing " + PrintPath(tspAlgorithm.SimulatedAnnealingResultPath) + "\n" +
-                //    "AntColony " + PrintPath(tspAlgorithm.AntColonyAlgorithmResultPath) + "\n" +
-                //    "BranchesAndBoundaries " + PrintPath(tspAlgorithm.BranchesAndBoundariesResultPath);
-                //MessageBox.Show(allPaths);
-            }
-            SelectedGraph = Graphs[Graphs.Count-1];
-        }
-
-        private string PrintPath(List<int> path)
-        {
-            string result = "";
-            foreach(int item in path)
-            {
-                result += Convert.ToString(item) + " ";
-            }
-            return result;
-        }
-
         private void SetDefaultPaintingProperties()
         {
             SetDefaultPen();
@@ -208,7 +155,7 @@ namespace TSP_Research
         #region PaintPropsSetters
         private void SetDefaultPen()
         {
-            SelectedPen = new Pen(Color.Black, 3);
+            SelectedPen = new Pen(Color.Black, 1);
             SelectedPen.SetLineCap(LineCap.Custom, LineCap.Custom, DashCap.Round);
         }
 
@@ -295,6 +242,41 @@ namespace TSP_Research
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
             SelectedGraph.DrawGraph(e.Graphics, SelectedPen, SelectedBackgroundBrush, SelectedFontBrush, SelectedFont, SelectedStringFormat);
+        }
+
+        /// <summary>
+        /// Подсчёт результатов работы алгоритмов решения задачи коммивояжёра
+        /// </summary>
+        private void CalculateTSP()
+        {
+            TSPchart.Series[0].Points.Clear();
+            TSPchart.Series[1].Points.Clear();
+            TSPchart.Series[2].Points.Clear();
+            TSPchart.Series[3].Points.Clear();
+            TSPchart.Series[4].Points.Clear();
+
+            Graphs = InitializeGraphs(MaxVerticesCount, VerticesCountStep);
+
+            foreach (MyGraph graph in graphs)
+            {
+                TSPalgorithm tspAlgorithm = new TSPalgorithm(graph);
+
+                TSPchart.Series[0].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.FullSearchTimer()));
+                TSPchart.Series[1].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.NearestNeighbourTimer()));
+                TSPchart.Series[2].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.ImprovedNearestNeighbourTimer()));
+                TSPchart.Series[3].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.SimulatedAnnealingTimer()));
+                TSPchart.Series[4].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.AntColonyAlgorithmTimer()));
+                TSPchart.Series[5].Points.Add(new DataPoint(graph.GraphVertices.Count, tspAlgorithm.BranchesAndBoundariesTimer()));
+
+                FullSearchResult.Text = "" + tspAlgorithm.FullSearchResultPathLength == "0" ? "Время ожидания превышено" : Convert.ToString(tspAlgorithm.FullSearchResultPathLength);
+                NearestNeighbourResult.Text = "" + tspAlgorithm.NearestNeighbourResultPathLength;
+                ImprovedNearestNeighbourResult.Text = "" + tspAlgorithm.ImprovedNearestNeighbourResultPathLength;
+                SimulatedAnnealingResult.Text = "" + tspAlgorithm.SimulatedAnnealingResultPathLength;
+                AntColonyResult.Text = "" + tspAlgorithm.AntColonyAlgorithmResultPathLength;
+                BranchesAndBoundariesResult.Text = "" + tspAlgorithm.BranchesAndBoundariesResultPathLength;
+
+            }
+            SelectedGraph = Graphs[Graphs.Count - 1];
         }
 
         private void button1_Click(object sender, EventArgs e)

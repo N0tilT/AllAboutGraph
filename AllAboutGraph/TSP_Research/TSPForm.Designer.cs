@@ -48,6 +48,8 @@
             this.AntColonyResult = new System.Windows.Forms.TextBox();
             this.labelLengths = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.BranchesAndBoundariesResult = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -58,8 +60,6 @@
             this.textBoxStep = new System.Windows.Forms.TextBox();
             this.textBoxMaxValue = new System.Windows.Forms.TextBox();
             this.buttonCalc = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.BranchesAndBoundariesResult = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.TSPchart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -106,6 +106,7 @@
             series5.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             series5.Legend = "Legend1";
             series5.Name = "Алгоритм муравьиной колонии";
+            series6.BorderWidth = 3;
             series6.ChartArea = "ChartArea1";
             series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series6.Legend = "Legend1";
@@ -207,6 +208,24 @@
             this.panel1.Size = new System.Drawing.Size(301, 807);
             this.panel1.TabIndex = 9;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label6.Location = new System.Drawing.Point(13, 562);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(147, 17);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Метод ветвей и границ";
+            // 
+            // BranchesAndBoundariesResult
+            // 
+            this.BranchesAndBoundariesResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BranchesAndBoundariesResult.Location = new System.Drawing.Point(13, 582);
+            this.BranchesAndBoundariesResult.Name = "BranchesAndBoundariesResult";
+            this.BranchesAndBoundariesResult.Size = new System.Drawing.Size(275, 33);
+            this.BranchesAndBoundariesResult.TabIndex = 19;
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -301,24 +320,6 @@
             this.buttonCalc.Text = "Рассчитать";
             this.buttonCalc.UseVisualStyleBackColor = true;
             this.buttonCalc.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(13, 562);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(147, 17);
-            this.label6.TabIndex = 20;
-            this.label6.Text = "Метод ветвей и границ";
-            // 
-            // BranchesAndBoundariesResult
-            // 
-            this.BranchesAndBoundariesResult.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.BranchesAndBoundariesResult.Location = new System.Drawing.Point(13, 582);
-            this.BranchesAndBoundariesResult.Name = "BranchesAndBoundariesResult";
-            this.BranchesAndBoundariesResult.Size = new System.Drawing.Size(275, 33);
-            this.BranchesAndBoundariesResult.TabIndex = 19;
             // 
             // TSPForm
             // 
